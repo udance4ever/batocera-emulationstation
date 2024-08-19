@@ -28,6 +28,12 @@ if(NOT WIN32)
 	set(VLC_LIBRARIES ${VLC_LDFLAGS})
 
 	# TODO add argument support to pass version on find_package
+
+  # $$ attempt to use find_package() in macOS (ended up disabling and using external/vlc)
+  #  CMake Error at CMake/Packages/FindVLC.cmake:32 (macro_ensure_version):
+  #  macro_ensure_version Macro invoked with incorrect arguments for macro
+  #  named: MACRO_ENSURE_VERSION
+
 	include(MacroEnsureVersion)
 	macro_ensure_version(1.0.0 ${VLC_VERSION} VLC_VERSION_OK)
 	if(VLC_VERSION_OK)

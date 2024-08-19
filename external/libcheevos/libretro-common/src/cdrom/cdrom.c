@@ -480,12 +480,18 @@ static int cdrom_send_command(libretro_vfs_implementation_file *stream, CDROM_CM
       }
 #endif
 
+// $$ inadvertently didn't define an if statement if not Windows or Linux!
 retry:
 #if defined(__linux__) && !defined(ANDROID)
       if (cached_read || !cdrom_send_command_linux(stream, dir, xfer_buf_pos, request_len, cmd, cmd_len, sense, sizeof(sense)))
 #else
 #if defined(_WIN32) && !defined(_XBOX)
       if (cached_read || !cdrom_send_command_win32(stream, dir, xfer_buf_pos, request_len, cmd, cmd_len, sense, sizeof(sense)))
+#else
+      // (libretro_vfs_implementation_file *stream, CDROM_CMD_Direction dir, void *buf, size_t len, unsigned char *cmd, size_t cmd_len, size_t skip)
+      // linux(const libretro_vfs_implementation_file *stream, CDROM_CMD_Direction dir, void *buf, size_t len, unsigned char *cmd, size_t cmd_len, unsigned char *sense, size_t sense_len)
+
+      if (cached_read || !cdrom_send_command(stream, dir, xfer_buf_pos, request_len, cmd, cmd_len, 0))
 #endif
 #endif
       {

@@ -763,7 +763,7 @@ void VideoVlcComponent::startVideo()
 		mMedia = libvlc_media_new_path(mVLC, path.c_str());
 		if (mMedia)
 		{			
-			// use : vlc –long-help
+			// use : vlc ?long-help
 			// WIN32 ? libvlc_media_add_option(mMedia, ":avcodec-hw=dxva2");
 			// RPI/OMX ? libvlc_media_add_option(mMedia, ":codec=mediacodec,iomx,all"); .
 
@@ -849,8 +849,9 @@ void VideoVlcComponent::startVideo()
 				{
 					if (!getPlayAudio() || (!mScreensaverMode && !Settings::getInstance()->getBool("VideoAudio")) || (Settings::getInstance()->getBool("ScreenSaverVideoMute") && mScreensaverMode))
 						libvlc_audio_set_mute(mMediaPlayer, 1);
-					else
-						AudioManager::setVideoPlaying(true);
+//					else
+// $$
+//						AudioManager::setVideoPlaying(true);
 				}
 
 				libvlc_media_player_play(mMediaPlayer);
@@ -888,7 +889,8 @@ void VideoVlcComponent::stopVideo()
 		
 	freeContext();
 	PowerSaver::resume();	
-	AudioManager::setVideoPlaying(false);
+// $$
+//	AudioManager::setVideoPlaying(false);
 }
 
 void VideoVlcComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
@@ -1034,7 +1036,8 @@ void VideoVlcComponent::pauseVideo()
 		libvlc_media_player_pause(mMediaPlayer);
 		
 		PowerSaver::resume();
-		AudioManager::setVideoPlaying(false);
+// $$
+//		AudioManager::setVideoPlaying(false);
 	}
 }
 
@@ -1052,7 +1055,8 @@ void VideoVlcComponent::resumeVideo()
 	mIsPlaying = true;
 	libvlc_media_player_play(mMediaPlayer);
 	PowerSaver::pause();
-	AudioManager::setVideoPlaying(true);
+// $$
+//	AudioManager::setVideoPlaying(true);
 }
 
 bool VideoVlcComponent::isPaused()

@@ -15,7 +15,9 @@ SwitchComponent::SwitchComponent(Window* window, bool state) : GuiComponent(wind
 	mImage.setColorShift(menuTheme->Text.color);
 	mImage.setResize(0, height);
 
-	if (EsLocale::isRTL())
+// $$
+//	if (EsLocale::isRTL())
+	if (0)
 		mImage.setFlipX(true);
 
 	mSize = mImage.getSize();
@@ -113,7 +115,9 @@ void SwitchComponent::onStateChanged()
 std::vector<HelpPrompt> SwitchComponent::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("CHANGE")));
+// $$
+//	prompts.push_back(HelpPrompt(BUTTON_OK, _("CHANGE")));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("CHANGE")));
 	return prompts;
 }
 

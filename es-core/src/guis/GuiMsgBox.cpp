@@ -59,9 +59,12 @@ GuiMsgBox::GuiMsgBox(Window* window, const std::string& text,
 		break;
 	case ICON_AUTOMATIC:
 
-		if (text.rfind("?") != std::string::npos || name1 == _("YES"))
+// $$
+//		if (text.rfind("?") != std::string::npos || name1 == _("YES"))
+		if (text.rfind("?") != std::string::npos || name1 == std::string("YES"))
 			imageFile = ":/question.svg";
-		else if (name1 == _("OK"))
+//		else if (name1 == _("OK"))
+		else if (name1 == std::string("OK"))
 		{
 			if (name2.empty())
 				imageFile = ":/info.svg";
@@ -105,7 +108,9 @@ GuiMsgBox::GuiMsgBox(Window* window, const std::string& text,
 	{
 		for(auto it = mButtons.cbegin(); it != mButtons.cend(); it++)
 		{
-			if(Utils::String::toUpper((*it)->getText()) == _("OK") || Utils::String::toUpper((*it)->getText()) == _("NO"))
+// $$
+//			if(Utils::String::toUpper((*it)->getText()) == _("OK") || Utils::String::toUpper((*it)->getText()) == _("NO"))
+			if(Utils::String::toUpper((*it)->getText()) == std::string("OK") || Utils::String::toUpper((*it)->getText()) == std::string("NO"))
 			{
 				mAcceleratorFunc = (*it)->getPressedFunc();
 				break;

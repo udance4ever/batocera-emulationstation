@@ -870,7 +870,9 @@ TextCache* Font::buildTextCache(const std::string& _text, Vector2f offset, unsig
 	// vertices by texture
 	std::map< FontTexture*, std::vector<Renderer::Vertex> > vertMap;
 
-	std::string text = EsLocale::isRTL() ? tryFastBidi(_text) : _text;
+// $$
+//	std::string text = EsLocale::isRTL() ? tryFastBidi(_text) : _text;
+	std::string text = 0 ? tryFastBidi(_text) : _text;
 
 	std::map<int, int> tabStops;
 	int tabIndex = 0;

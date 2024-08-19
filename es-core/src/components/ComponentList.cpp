@@ -78,7 +78,9 @@ void ComponentList::addGroup(const std::string& label, bool forceVisible)
 
 	auto group = std::make_shared<TextComponent>(mWindow, label, theme->Group.font, theme->Group.color);
 
-	if (EsLocale::isRTL() && ((Alignment)theme->Group.alignment) == Alignment::ALIGN_LEFT)
+// $$ problems with EsLocale.h declaration
+//	if (EsLocale::isRTL() && ((Alignment)theme->Group.alignment) == Alignment::ALIGN_LEFT)
+	if (0 && ((Alignment)theme->Group.alignment) == Alignment::ALIGN_LEFT)
 		group->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 	else
 		group->setHorizontalAlignment((Alignment) theme->Group.alignment);
@@ -153,7 +155,9 @@ bool ComponentList::input(InputConfig* config, Input input)
 		auto& row = mEntries.at(mCursor).data;
 		if(row.elements.size())
 		{
-			if (EsLocale::isRTL())
+// $$
+//			if (EsLocale::isRTL())
+			if (0)
 			{
 				if (row.elements.front().component->input(config, input))
 					return true;
@@ -264,12 +268,15 @@ void ComponentList::saySelectedLine()
 			float v = slider->getValue();
 			char strval[32];
 			snprintf(strval, 32, "%.0f", v);
-			TextToSpeech::getInstance()->say(std::string(strval) + _(slider->getSuffix().c_str()), n > 0);
+// $$
+//			TextToSpeech::getInstance()->say(std::string(strval) + _(slider->getSuffix().c_str()), n > 0);
+			TextToSpeech::getInstance()->say(std::string(strval) + slider->getSuffix().c_str(), n > 0);
 			n++;
 		}
 		if (element.component->isKindOf<SwitchComponent>())
 		{
-			TextToSpeech::getInstance()->say(((SwitchComponent*)element.component.get())->getState() ? _("ENABLED") : _("DISABLED"), n > 0);
+//			TextToSpeech::getInstance()->say(((SwitchComponent*)element.component.get())->getState() ? _("ENABLED") : _("DISABLED"), n > 0);
+			TextToSpeech::getInstance()->say(((SwitchComponent*)element.component.get())->getState() ? "ENABLED" : "DISABLED", n > 0);
 			n++;
 		}
 		if (element.component->isKindOf<OptionListComponent<std::string>>())
@@ -556,7 +563,9 @@ std::vector<HelpPrompt> ComponentList::getHelpPrompts()
 		}
 
 		if(addMovePrompt)
-			prompts.push_back(HelpPrompt(_("up/down"), _("CHOOSE")));
+// $$
+//			prompts.push_back(HelpPrompt(_("up/down"), _("CHOOSE")));
+			prompts.push_back(HelpPrompt("up/down", "CHOOSE"));
 	}
 
 	return prompts;

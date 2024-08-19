@@ -350,9 +350,12 @@ std::vector<HelpPrompt> CarouselComponent::getHelpPrompts()
 	std::vector<HelpPrompt> prompts;
 
 	if (mType == CarouselType::VERTICAL || mType == CarouselType::VERTICAL_WHEEL)
-		prompts.push_back(HelpPrompt("up/down", _("CHOOSE")));
+// $$
+//		prompts.push_back(HelpPrompt("up/down", _("CHOOSE")));
+		prompts.push_back(HelpPrompt("up/down", std::string("CHOOSE")));
 	else
-		prompts.push_back(HelpPrompt("left/right", _("CHOOSE")));
+//		prompts.push_back(HelpPrompt("left/right", _("CHOOSE")));
+		prompts.push_back(HelpPrompt("left/right", std::string("CHOOSE")));
 
 	return prompts;
 }
@@ -992,7 +995,9 @@ void CarouselItemTemplate::updateBindings(IBindable* bindable)
 	{
 		auto childs = enumerateExtraChildrens();
 
-		if (Utils::String::containsIgnoreCase(mName, _U("\uF006 ")))
+// $$
+//		if (Utils::String::containsIgnoreCase(mName, _U("\uF006 ")))
+		if (Utils::String::containsIgnoreCase(mName, "\uF006 "))
 		{
 			bool hasFavorite = false;
 
@@ -1009,7 +1014,9 @@ void CarouselItemTemplate::updateBindings(IBindable* bindable)
 			}
 
 			if (hasFavorite)
-				mName = Utils::String::replace(mName, _U("\uF006 "), "");
+// $$
+//				mName = Utils::String::replace(mName, _U("\uF006 "), "");
+				mName = Utils::String::replace(mName, "\uF006 ", "");
 		}
 
 		std::vector<IBindable*> bindables;

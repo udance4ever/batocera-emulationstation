@@ -947,7 +947,9 @@ void ImageComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 std::vector<HelpPrompt> ImageComponent::getHelpPrompts()
 {
 	std::vector<HelpPrompt> ret;
-	ret.push_back(HelpPrompt(BUTTON_OK, _("SELECT")));
+// $$
+//	ret.push_back(HelpPrompt(BUTTON_OK, _("SELECT")));
+	ret.push_back(HelpPrompt(BUTTON_OK, std::string("SELECT")));
 	return ret;
 }
 

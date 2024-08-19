@@ -347,7 +347,9 @@ void VideoComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 std::vector<HelpPrompt> VideoComponent::getHelpPrompts()
 {
 	std::vector<HelpPrompt> ret;
-	ret.push_back(HelpPrompt(BUTTON_BACK, _("SELECT")));
+// $$
+//	ret.push_back(HelpPrompt(BUTTON_BACK, _("SELECT")));
+	ret.push_back(HelpPrompt(BUTTON_BACK, std::string("SELECT")));
 	return ret;
 }
 

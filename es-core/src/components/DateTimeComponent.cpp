@@ -52,7 +52,9 @@ std::string DateTimeComponent::getDisplayString() const
 		return Utils::Time::getElapsedSinceString(mTime.getTime());
 
 	if (mTime.getTime() == 0)
-		return _("Unknown");
+// $$
+//		return _("Unknown");
+		return std::string("Unknown");
 
 	return Utils::Time::timeToString(mTime.getTime(), mFormat);
 }

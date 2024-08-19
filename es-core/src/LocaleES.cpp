@@ -33,8 +33,10 @@ std::string EsLocale::changeLocale(const std::string& locale) {
 		if (setenv("LANGUAGE", default_LANGUAGE.c_str(), 1) != 0) { /* hum, ok */ }
 	}
 
-	clocale = setlocale(LC_CTYPE, "");
-	clocale = setlocale(LC_MESSAGES, "");
+// $$ use of undeclared identifier 'LC_CTYPE' and 'LC_MESSAGES'
+// $$ why is locale set twice in a row anyways?
+//	clocale = setlocale(LC_CTYPE, "");
+//	clocale = setlocale(LC_MESSAGES, "");
 
 	if (clocale == NULL) {
 		return "";

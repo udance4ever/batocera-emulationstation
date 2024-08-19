@@ -46,7 +46,9 @@ struct ComponentListRow
 	
 	inline void addElement(const std::shared_ptr<GuiComponent>& component, bool resize_width)
 	{
-		if (EsLocale::isRTL())
+// $$
+//		if (EsLocale::isRTL())
+		if (0)
 			elements.insert(elements.begin(), ComponentListElement(component, resize_width));
 		else
 			elements.push_back(ComponentListElement(component, resize_width));

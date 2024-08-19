@@ -228,7 +228,8 @@ std::weak_ptr<VolumeControl> VolumeControl::sInstance;
 VolumeControl::VolumeControl()
 	: internalVolume(0)
 #if defined (__APPLE__)
-	#error TODO: Not implemented for MacOS yet!!!
+// $$
+//	#error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
 	, mixerIndex(0), mixerHandle(nullptr), mixerElem(nullptr), mixerSelemId(nullptr)
 #elif defined(WIN32) || defined(_WIN32)
@@ -263,7 +264,8 @@ void VolumeControl::init()
 {
 	//initialize audio mixer interface
 #if defined (__APPLE__)
-	#error TODO: Not implemented for MacOS yet!!!
+// $$
+//	#error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
 
 #ifdef _ENABLE_PULSE_
@@ -454,7 +456,8 @@ void VolumeControl::deinit()
 {
 	//deinitialize audio mixer interface
 #if defined (__APPLE__)
-	#error TODO: Not implemented for MacOS yet!!!
+// $$
+//	#error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
 
 #ifdef _ENABLE_PULSE_
@@ -486,7 +489,8 @@ int VolumeControl::getVolume() const
 	int volume = 0;
 
 #if defined (__APPLE__)
-	#error TODO: Not implemented for MacOS yet!!!
+// $$
+//	#error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
 
 #ifdef _ENABLE_PULSE_
@@ -587,7 +591,8 @@ void VolumeControl::setVolume(int volume)
 	//store values in internal variables
 	internalVolume = volume;
 #if defined (__APPLE__)
-	#error TODO: Not implemented for MacOS yet!!!
+// $$
+//	#error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
 
 #ifdef _ENABLE_PULSE_

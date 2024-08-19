@@ -110,15 +110,20 @@ void MenuComponent::addMenuIcon(Window* window, ComponentListRow& row, const std
 
 	std::string label;
 	if (iconName == "audio")
-		label = _U("\uf028");
+//		label = _U("\uf028");
+		label = "\uf028";
 	else if (iconName == "keyboard")
-		label = _U("\uf11c");
+//		label = _U("\uf11c");
+		label = "\uf11c";
 	else if (iconName == "joystick")
-		label = _U("\uf11b");
+//		label = _U("\uf11b");
+		label = "\uf11b";
 	else if (iconName == "mouse")
-		label = _U("\uf124");
+//		label = _U("\uf124");
+		label = "\uf124";
 	else if (iconName == "unknown")
-		label = _U("\uf1de");
+//		label = _U("\uf1de");
+		label = "\uf1de";
 	
 	if (!label.empty())
 	{
@@ -143,7 +148,9 @@ void MenuComponent::addWithLabel(const std::string& label, const std::shared_ptr
 	auto text = std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(label), theme->Text.font, theme->Text.color);
 	row.addElement(text, true);
 
-	if (EsLocale::isRTL())
+// $$
+//	if (EsLocale::isRTL())
+	if (0)
 		text->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 
 	if (comp != nullptr)
@@ -197,14 +204,17 @@ void MenuComponent::addEntry(const std::string& name, bool add_arrow, const std:
 	auto text = std::make_shared<TextComponent>(mWindow, name, font, color);
 	row.addElement(text, true);
 
-	if (EsLocale::isRTL())
+// $$
+//	if (EsLocale::isRTL())
+	if (0)
 		text->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 
 	if (add_arrow)
 	{
 		auto arrow = makeArrow(mWindow);
 
-		if (EsLocale::isRTL())
+//		if (EsLocale::isRTL())
+		if (0)
 			arrow->setFlipX(true);
 
 		row.addElement(arrow, false);

@@ -1255,9 +1255,10 @@ void ImageGridComponent<T>::loadTile(std::shared_ptr<GridTileComponent> tile, ty
 	if (!favorite || tile->hasFavoriteMedia())
 	{
 		// Remove favorite text glyph
-		if (Utils::String::startsWith(name, _U("\uF006 ")))
-			tile->setLabel(name.substr(4));
-		else
+// $$ macOS can't resolve _U macro
+//		if (Utils::String::startsWith(name, _U("\uF006 ")))
+//			tile->setLabel(name.substr(4));
+//		else
 			tile->setLabel(name);
 	}
 	else

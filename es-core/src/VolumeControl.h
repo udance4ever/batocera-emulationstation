@@ -5,7 +5,8 @@
 #include <memory>
 
 #if defined (__APPLE__)
-    #error TODO: Not implemented for MacOS yet!!!
+// $$
+//    #error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
 	#include <unistd.h>
 	#include <fcntl.h>
@@ -22,7 +23,8 @@ Singleton pattern. Call getInstance() to get an object.
 class VolumeControl
 {
 #if defined (__APPLE__)
-    #error TODO: Not implemented for MacOS yet!!!
+// $$
+//    #error TODO: Not implemented for MacOS yet!!!
 #elif defined(__linux__)
     static std::string mixerName;
     static std::string mixerCard;

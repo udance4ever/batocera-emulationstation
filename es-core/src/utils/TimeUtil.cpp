@@ -416,7 +416,9 @@ namespace Utils
 		std::string secondsToString(const long seconds, bool asTime)
 		{
 			if (seconds == 0)
-				return _("never");
+// $$
+//				return _("never");
+				return std::string("never");
 
 			if (asTime)
 			{
@@ -443,15 +445,18 @@ namespace Utils
 			s = seconds % 60;
 			if (d > 1)
 			{
-				snprintf(buf, 256, _("%d d").c_str(), d);
+//				snprintf(buf, 256, _("%d d").c_str(), d);
+				snprintf(buf, 256, std::string("%d d").c_str(), d);
 				if (h > 0)
 				{
 					std::string days(buf);
-					snprintf(buf, 256, _("%d h").c_str(), h);
+//					snprintf(buf, 256, _("%d h").c_str(), h);
+					snprintf(buf, 256, std::string("%d h").c_str(), h);
 					if(m > 0)
 					{
 						std::string hours(buf);
-						snprintf(buf, 256, _("%d mn").c_str(), m);
+//						snprintf(buf, 256, _("%d mn").c_str(), m);
+						snprintf(buf, 256, std::string("%d mn").c_str(), m);
 						return days + " " + hours + " " + std::string(buf);
 					}
 					return days + " " + std::string(buf);
@@ -459,7 +464,8 @@ namespace Utils
 				else if (m > 0)
 				{
 					std::string days(buf);
-					snprintf(buf, 256, _("%d mn").c_str(), m);
+//					snprintf(buf, 256, _("%d mn").c_str(), m);
+					snprintf(buf, 256, std::string("%d mn").c_str(), m);
 					return days + " " + std::string(buf);
 				}
 			}
@@ -468,18 +474,22 @@ namespace Utils
 				if (d > 0)
 					h += d * 24;
 
-				snprintf(buf, 256, _("%d h").c_str(), h);
+//				snprintf(buf, 256, _("%d h").c_str(), h);
+				snprintf(buf, 256, std::string("%d h").c_str(), h);
 				if (m > 0)
 				{
 					std::string hours(buf);
-					snprintf(buf, 256, _("%d mn").c_str(), m);
+//					snprintf(buf, 256, _("%d mn").c_str(), m);
+					snprintf(buf, 256, std::string("%d mn").c_str(), m);
 					return hours + " " + std::string(buf);
 				}
 			}
 			else if (m > 0)
-				snprintf(buf, 256, _("%d mn").c_str(), m);
+//				snprintf(buf, 256, _("%d mn").c_str(), m);
+				snprintf(buf, 256, std::string("%d mn").c_str(), m);
 			else 
-				snprintf(buf, 256, _("%d sec").c_str(), s);
+//				snprintf(buf, 256, _("%d sec").c_str(), s);
+				snprintf(buf, 256, std::string("%d sec").c_str(), s);
 
 			return std::string(buf);	
 		}
@@ -487,7 +497,8 @@ namespace Utils
 		std::string getElapsedSinceString(const time_t& _time)
 		{			
 			if (_time == 0 || _time == -1)
-				return _("never");
+//				return _("never");
+				return std::string("never");
 
 			Utils::Time::DateTime now(Utils::Time::now());
 			Utils::Time::Duration dur(now.getTime() - _time);
@@ -497,18 +508,24 @@ namespace Utils
 			if (dur.getDays() > 365)
 			{
 				unsigned int years = dur.getDays() / 365;
-				snprintf(buf, 256, ngettext("%d year ago", "%d years ago", years), years);
+//				snprintf(buf, 256, ngettext("%d year ago", "%d years ago", years), years);
+				snprintf(buf, 256, "%d years ago", years);
 			}
 			else if (dur.getDays() > 0)
-				snprintf(buf, 256, ngettext("%d day ago", "%d days ago", dur.getDays()), dur.getDays());
+//				snprintf(buf, 256, ngettext("%d day ago", "%d days ago", dur.getDays()), dur.getDays());
+				snprintf(buf, 256, "%d days ago", dur.getDays());
 			else if (dur.getDays() > 0)
-				snprintf(buf, 256, ngettext("%d day ago", "%d days ago", dur.getDays()), dur.getDays());
+//				snprintf(buf, 256, ngettext("%d day ago", "%d days ago", dur.getDays()), dur.getDays());
+				snprintf(buf, 256, "%d days ago", dur.getDays());
 			else if (dur.getHours() > 0)
-				snprintf(buf, 256, ngettext("%d hour ago", "%d hours ago", dur.getHours()), dur.getHours());
+//				snprintf(buf, 256, ngettext("%d hour ago", "%d hours ago", dur.getHours()), dur.getHours());
+				snprintf(buf, 256, "%d hours ago", dur.getHours());
 			else if (dur.getMinutes() > 0)
-				snprintf(buf, 256, ngettext("%d minute ago", "%d minutes ago", dur.getMinutes()), dur.getMinutes());
+//				snprintf(buf, 256, ngettext("%d minute ago", "%d minutes ago", dur.getMinutes()), dur.getMinutes());
+				snprintf(buf, 256, "%d minutes ago", dur.getMinutes());
 			else
-				snprintf(buf, 256, ngettext("%d second ago", "%d seconds ago", dur.getSeconds()), dur.getSeconds());
+//				snprintf(buf, 256, ngettext("%d second ago", "%d seconds ago", dur.getSeconds()), dur.getSeconds());
+				snprintf(buf, 256, "%d seconds ago", dur.getSeconds());
 
 			return std::string(buf);
 		}

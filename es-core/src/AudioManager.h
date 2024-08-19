@@ -1,83 +1,58 @@
-#pragma once
+//  SPDX-License-Identifier: MIT
+//
+//  ES-DE Frontend
+//  AudioManager.h
+//
+//  Low-level audio functions (using SDL2).
+//
+
 #ifndef ES_CORE_AUDIO_MANAGER_H
 #define ES_CORE_AUDIO_MANAGER_H
 
-#include <SDL_audio.h>
+#include <SDL2/SDL_audio.h>
+#include <atomic>
 #include <memory>
 #include <vector>
-#include "SDL_mixer.h"
-#include <string> 
-#include <iostream> 
-#include <deque>
-#include <math.h>
 
 class Sound;
-class ThemeData;
 
 class AudioManager
-{	
-private:
-	AudioManager();
-
-	static std::vector<std::shared_ptr<Sound>> sSoundVector;
-	static AudioManager* sInstance;
-	
-	Mix_Music* mCurrentMusic; 
-	void getMusicIn(const std::string &path, std::vector<std::string>& all_matching_files); 
-	void playMusic(std::string path);
-	static void musicEnd_callback();	
-
-	std::string mSystemName;			// per system music folder
-	std::string mCurrentSong;			// pop-up for SongName.cpp
-	std::string mCurrentThemeMusicDirectory;
-	std::string mCurrentMusicPath;
-	std::deque<std::string> mLastPlayed;    // batocera
-
-	bool		mInitialized;
-	std::string	mPlayingSystemThemeSong;
-
+{
 public:
-	static AudioManager* getInstance();
-	static bool isInitialized();
-	
-	void init();
-	void deinit();
+    virtual ~AudioManager();
+    static AudioManager& getInstance();
 
-	void registerSound(std::shared_ptr<Sound> & sound);
-	void unregisterSound(std::shared_ptr<Sound> & sound);
+    void init();
+    void deinit();
 
-	void play();
-	void stop();
+    void registerSound(std::shared_ptr<Sound> sound);
+    void unregisterSound(std::shared_ptr<Sound> sound);
 
-	void playRandomMusic(bool continueIfPlaying = true);
-	void stopMusic(bool fadeOut=true);
-	
-	inline const std::string getSongName() const { return mCurrentSong; }
+    void play();
+    void stop();
 
-	bool songNameChanged() { return mSongNameChanged; }
-	void resetSongNameChangedFlag() { mSongNameChanged = false; }
-	
-	inline bool isSongPlaying() { return (mCurrentMusic != NULL); }
+    // Used for streaming audio from videos.
+    void setupAudioStream(int sampleRate);
+    void processStream(const void* samples, unsigned count);
+    void clearStream();
 
-	void changePlaylist(const std::shared_ptr<ThemeData>& theme, bool force = false);
+    void muteStream() { sMuteStream = true; }
+    void unmuteStream() { sMuteStream = false; }
 
-	virtual ~AudioManager();
+    bool getHasAudioDevice() { return sHasAudioDevice; }
 
-	float mMusicVolume;
-	int mVideoPlaying;
-
-	static void setVideoPlaying(bool state);
-	static void update(int deltaTime);
-
-	static int getMaxMusicVolume();
+    static inline SDL_AudioDeviceID sAudioDevice {0};
+    static inline SDL_AudioSpec sAudioFormat;
 
 private:
-	void playSong(const std::string& song);
-	void setSongName(const std::string& song);
-	void addLastPlayed(const std::string& newSong, int totalMusic);
-	bool songWasPlayedRecently(const std::string& song);
+    AudioManager() noexcept;
 
-	bool mSongNameChanged;
+    static void mixAudio(void* unused, Uint8* stream, int len);
+
+    static inline SDL_AudioStream* sConversionStream {nullptr};
+    static inline std::vector<std::shared_ptr<Sound>> sSoundVector;
+    static inline std::atomic<bool> sMuteStream {false};
+    static inline bool sHasAudioDevice {true};
 };
 
 #endif // ES_CORE_AUDIO_MANAGER_H

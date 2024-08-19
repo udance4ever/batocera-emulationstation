@@ -36,6 +36,20 @@
 
 #include "Paths.h"
 
+
+// $$$  error: variable has incomplete type 'struct stat64'
+//  https://github.com/rpm-software-management/rpm/pull/1775
+
+#if defined(hpux) || defined(sun) || defined(__APPLE__)
+#   define FTS_FSTAT64(_fd, _sbp)   fstat((_fd), (_sbp))
+#else
+#   define FTS_FSTAT64(_fd, _sbp)   fstat64((_fd), (_sbp))
+#endif
+
+#if defined(__APPLE__)
+#   define stat64		stat
+#endif
+
 namespace Utils
 {
 	namespace FileSystem

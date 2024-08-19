@@ -128,23 +128,31 @@ GuiTextEditPopupKeyboard::GuiTextEditPopupKeyboard(Window* window, const std::st
 
 				if (lower == "DEL")
 				{
-					lower = _U("\uF177");
-					upper = _U("\uF177");
-					alted = _U("\uF177");
+//					lower = _U("\uF177");
+//					upper = _U("\uF177");
+//					alted = _U("\uF177");
+					lower = "\uF177";
+					upper = "\uF177";
+					alted = "\uF177";
 				}
 				else if (lower == "OK")
 				{
-					lower = _U("\uF058");
+//					lower = _U("\uF058");
+					lower = "\uF058";
 
 					if (mMultiLine)
 					{
-						upper = _U("\uF149");
-						alted = _U("\uF149");
+//						upper = _U("\uF149");
+//						alted = _U("\uF149");
+						upper = "\uF149";
+						alted = "\uF149";
 					}
 					else
 					{
-						upper = _U("\uF058");
-						alted = _U("\uF058");
+//						upper = _U("\uF058");
+//						alted = _U("\uF058");
+						upper = "\uF058";
+						alted = "\uF058";
 					}
 				}
 				else if (lower == "SPACE")
@@ -154,20 +162,25 @@ GuiTextEditPopupKeyboard::GuiTextEditPopupKeyboard(Window* window, const std::st
 				}
 				else if (lower != "SHIFT" && lower.length() > 1)
 				{
-					lower = _(lower.c_str());
-					upper = _(upper.c_str());
-					alted = _(alted.c_str());
+//					lower = _(lower.c_str());
+//					upper = _(upper.c_str());
+//					alted = _(alted.c_str());
+					lower = std::string(lower.c_str());
+					upper = std::string(upper.c_str());
+					alted = std::string(alted.c_str());
 				}
 
 				if (lower == "SHIFT")
 				{
 					// Special case for shift key
-					mShiftButton = std::make_shared<ButtonComponent>(mWindow, _U("\uF176"), _("SHIFTS FOR UPPER,LOWER, AND SPECIAL"), [this] { shiftKeys(); }, false);					
+//					mShiftButton = std::make_shared<ButtonComponent>(mWindow, _U("\uF176"), _("SHIFTS FOR UPPER,LOWER, AND SPECIAL"), [this] { shiftKeys(); }, false);					
+					mShiftButton = std::make_shared<ButtonComponent>(mWindow, "\uF176", std::string("SHIFTS FOR UPPER,LOWER, AND SPECIAL"), [this] { shiftKeys(); }, false);					
 					button = mShiftButton;
 				}
 				else if (lower == "ALT")
 				{
-					mAltButton = std::make_shared<ButtonComponent>(mWindow, _U("\uF141"), _("ALT GR"), [this] { altKeys(); }, false);
+//					mAltButton = std::make_shared<ButtonComponent>(mWindow, _U("\uF141"), _("ALT GR"), [this] { altKeys(); }, false);
+					mAltButton = std::make_shared<ButtonComponent>(mWindow, "\uF141", std::string("ALT GR"), [this] { altKeys(); }, false);
 					button = mAltButton;
 				}
 				else
@@ -413,13 +426,19 @@ std::vector<HelpPrompt> GuiTextEditPopupKeyboard::getHelpPrompts()
 	std::vector<HelpPrompt> prompts = mGrid.getHelpPrompts();
 
 	if (mOkCallback != nullptr)
-		prompts.push_back(HelpPrompt("x", _("RESET")));
+//		prompts.push_back(HelpPrompt("x", _("RESET")));
+		prompts.push_back(HelpPrompt("x", std::string("RESET")));
 
-	prompts.push_back(HelpPrompt("y", _("SHIFT")));
-	prompts.push_back(HelpPrompt("start", _("OK")));
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("r", _("SPACE")));
-	prompts.push_back(HelpPrompt("l", _("DELETE")));
+//	prompts.push_back(HelpPrompt("y", _("SHIFT")));
+//	prompts.push_back(HelpPrompt("start", _("OK")));
+//	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
+//	prompts.push_back(HelpPrompt("r", _("SPACE")));
+//	prompts.push_back(HelpPrompt("l", _("DELETE")));
+	prompts.push_back(HelpPrompt("y", std::string("SHIFT")));
+	prompts.push_back(HelpPrompt("start", std::string("OK")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("r", std::string("SPACE")));
+	prompts.push_back(HelpPrompt("l", std::string("DELETE")));
 	return prompts;
 }
 
@@ -427,7 +446,8 @@ std::shared_ptr<ButtonComponent> GuiTextEditPopupKeyboard::makeButton(const std:
 {
 	std::shared_ptr<ButtonComponent> button = std::make_shared<ButtonComponent>(mWindow, key, key, [this, key, shiftedKey, altedKey]
 	{						
-		if (key == _U("\uF058") || key.find("OK") != std::string::npos)
+//		if (key == _U("\uF058") || key.find("OK") != std::string::npos)
+		if (key == "\uF058" || key.find("OK") != std::string::npos)
 		{	
 			if (mMultiLine && (mShift || mAlt))
 			{
@@ -440,23 +460,27 @@ std::shared_ptr<ButtonComponent> GuiTextEditPopupKeyboard::makeButton(const std:
 			}
 			return;
 		}
-		else if (key == _U("\uF177") || key == "DEL")
+//		else if (key == _U("\uF177") || key == "DEL")
+		else if (key == "\uF177" || key == "DEL")
 		{
 			mText->startEditing(); mText->textInput("\b"); mText->stopEditing();
 			return;
 		}
-		else if (key == _("SPACE") || key == " ")
+//		else if (key == _("SPACE") || key == " ")
+		else if (key == std::string("SPACE") || key == " ")
 		{
 			mText->startEditing(); mText->textInput(" "); mText->stopEditing();
 			return;
 		}
-		else if (key == _("RESET"))
+//		else if (key == _("RESET"))
+		else if (key == std::string("RESET"))
 		{
 			mOkCallback(""); 
 			delete this;
 			return;
 		}
-		else if (key == _("CANCEL"))
+//		else if (key == _("CANCEL"))
+		else if (key == std::string("CANCEL"))
 		{
 			delete this;
 			return;

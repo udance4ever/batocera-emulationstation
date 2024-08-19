@@ -396,18 +396,24 @@ void Window::layoutNotificationPopups()
 
 void Window::processSongTitleNotifications()
 {
-	if (AudioManager::getInstance()->songNameChanged())
+// $$ not using Batocera AudioManager code
+//	if (AudioManager::getInstance()->songNameChanged())
+	if (0)
 	{
-		if (Settings::getInstance()->getBool("audio.display_titles"))
+//		if (Settings::getInstance()->getBool("audio.display_titles"))
+		if (0)
 		{
-			std::string songName = AudioManager::getInstance()->getSongName();
+//			std::string songName = AudioManager::getInstance()->getSongName();
+			std::string songName = NULL;
 			if (!songName.empty())
 			{
 				std::unique_lock<std::mutex> lock(mNotificationMessagesLock);
 
 				for (int i = mNotificationPopups.size() - 1; i >= 0; i--)
 				{
-					if (mNotificationPopups[i]->getMessage().find(_U("\uF028")) != std::string::npos)
+// $$ LocaleES
+//					if (mNotificationPopups[i]->getMessage().find(_U("\uF028")) != std::string::npos)
+					if (mNotificationPopups[i]->getMessage().find("\uF028") != std::string::npos)
 					{
 						delete mNotificationPopups[i];
 
@@ -418,11 +424,14 @@ void Window::processSongTitleNotifications()
 				}
 
 				lock.unlock();
-				displayNotificationMessage(_U("\uF028  ") + songName); // _("Now playing: ") + 
+// $$
+//				displayNotificationMessage(_U("\uF028  ") + songName); // _("Now playing: ") + 
+				displayNotificationMessage("\uF028  " + songName); // std::string("Now playing: ") + 
 			}
 		}
 
-		AudioManager::getInstance()->resetSongNameChangedFlag();
+// $$
+//		AudioManager::getInstance()->resetSongNameChangedFlag();
 	}	
 }
 
@@ -530,7 +539,8 @@ void Window::update(int deltaTime)
 	updateAsyncNotifications(deltaTime);
 	updateNotificationPopups(deltaTime);
 
-	AudioManager::update(deltaTime);
+// $$
+//	AudioManager::update(deltaTime);
 }
 
 static std::vector<unsigned int> _gunAimColors = { 0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0xFF0000FF, 0xFFFF0000, 0xFF00FF00 };
@@ -1291,7 +1301,9 @@ void Window::setGunCalibrationState(bool isCalibrating)
 		if (mCalibrationText == nullptr)
 		{
 			mCalibrationText = std::make_shared<TextComponent>(this);
-			mCalibrationText->setText(_("CALIBRATING GUN\nFire on targets to calibrate"));
+// $$
+//			mCalibrationText->setText(_("CALIBRATING GUN\nFire on targets to calibrate"));
+			mCalibrationText->setText("CALIBRATING GUN\nFire on targets to calibrate");
 			mCalibrationText->setFont(Font::get(FONT_SIZE_MEDIUM));
 			mCalibrationText->setHorizontalAlignment(ALIGN_CENTER);
 			mCalibrationText->setVerticalAlignment(ALIGN_CENTER);

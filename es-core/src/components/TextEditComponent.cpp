@@ -386,9 +386,12 @@ std::vector<HelpPrompt> TextEditComponent::getHelpPrompts()
 	std::vector<HelpPrompt> prompts;
 	
 	if(mEditing)
-		prompts.push_back(HelpPrompt("up/down/left/right", _("MOVE CURSOR")));
+// $$
+//		prompts.push_back(HelpPrompt("up/down/left/right", _("MOVE CURSOR")));
+		prompts.push_back(HelpPrompt("up/down/left/right", std::string("MOVE CURSOR")));
 	else
-		prompts.push_back(HelpPrompt(BUTTON_OK, _("EDIT")));
+//		prompts.push_back(HelpPrompt(BUTTON_OK, _("EDIT")));
+		prompts.push_back(HelpPrompt(BUTTON_OK, std::string("EDIT")));
 	
 	return prompts;
 }

@@ -152,7 +152,8 @@ void TextToSpeech::enable(bool v, bool playSay)
 	if (m_isAvailable && playSay)
 	{
 		m_enabled = true; // Force
-		say(v ? _("SCREEN READER ENABLED") : _("SCREEN READER DISABLED"));
+// $$ LocaleES.h #define _(A) std::string(A)
+		say(v ? std::string("SCREEN READER ENABLED") : std::string("SCREEN READER DISABLED"));
 	}
 
 	m_enabled = v;

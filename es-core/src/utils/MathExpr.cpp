@@ -61,7 +61,9 @@ namespace Utils
 		{ { "proper", 1 },        [](const Args& args) { return addStringQuotes(Utils::String::proper(removeStringQuotes(args[0]))); } },
 		{ { "tointeger", 1 },     [](const Args& args) { return removeStringQuotes(args[0]); } },
 		{ { "toboolean", 1 },     [](const Args& args) { return Utils::String::toBoolean(removeStringQuotes(args[0])) ? "1" : "0"; } },		
-		{ { "translate", 1 },     [](const Args& args) { return addStringQuotes(_(removeStringQuotes(args[0]).c_str())); } },
+// $$
+//		{ { "translate", 1 },     [](const Args& args) { return addStringQuotes(_(removeStringQuotes(args[0]).c_str())); } },
+		{ { "translate", 1 },     [](const Args& args) { return addStringQuotes(std::string(removeStringQuotes(args[0]).c_str())); } },
 		{ { "contains", 2 },      [](const Args& args) { return removeStringQuotes(args[0]).find(removeStringQuotes(args[1])) != std::string::npos ? "1" : "0"; } },
 		{ { "startswith", 2 },    [](const Args& args) { return Utils::String::startsWith(removeStringQuotes(args[0]), removeStringQuotes(args[1])) ? "1" : "0"; } },
 		{ { "endswith", 2 },      [](const Args& args) { return Utils::String::endsWith(removeStringQuotes(args[0]), removeStringQuotes(args[1])) ? "1" : "0"; } },
@@ -74,7 +76,8 @@ namespace Utils
 
 		// Misc
 		{ { "default", 1 },       [](const Args& args) { auto dataAsString = removeStringQuotes(args[0]);
-														 return addStringQuotes(dataAsString.empty() ? _("Unknown") : dataAsString == "0" ? _("None") : dataAsString); } },
+//														 return addStringQuotes(dataAsString.empty() ? _("Unknown") : dataAsString == "0" ? _("None") : dataAsString); } },
+														 return addStringQuotes(dataAsString.empty() ? std::string("Unknown") : dataAsString == "0" ? std::string("None") : dataAsString); } },
 		{ { "year", 1 },          [](const Args& args) { auto time = Utils::Time::stringToTime(removeStringQuotes(args[0]), Utils::Time::getSystemDateFormat()); 
 														 return addStringQuotes(time <= 0 ? "" : Utils::Time::timeToString(time, "%Y")); } },
 		{ { "month", 1 },         [](const Args& args) { auto time = Utils::Time::stringToTime(removeStringQuotes(args[0]), Utils::Time::getSystemDateFormat()); 

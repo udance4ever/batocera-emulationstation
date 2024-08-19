@@ -109,7 +109,9 @@ void BindingManager::bindValues(IBindable* current, std::string& xp, bool showDe
 			dataAsEvaluable = "\"" + Utils::String::replace(value.s, "\"", "") + "\""; // Should be managed differenty
 			break;
 		case BindablePropertyType::Bool:
-			dataAsString = value.b ? _("YES") : _("NO");
+// $$ LocaleES.h
+//			dataAsString = value.b ? _("YES") : _("NO");
+			dataAsString = value.b ? std::string("YES") : std::string("NO");
 			dataAsEvaluable = value.b ? "1" : "0";
 			break;
 		case BindablePropertyType::Int:
@@ -123,7 +125,9 @@ void BindingManager::bindValues(IBindable* current, std::string& xp, bool showDe
 		}
 
 		if (showDefaultText && value.type != BindablePropertyType::Path)
-			dataAsString = dataAsString.empty() ? _("Unknown") : dataAsString == "0" ? _("None") : dataAsString;
+// $$
+//			dataAsString = dataAsString.empty() ? _("Unknown") : dataAsString == "0" ? _("None") : dataAsString;
+			dataAsString = dataAsString.empty() ? "Unknown" : dataAsString == "0" ? "None" : dataAsString;
 
 		xp = Utils::String::replace(xp, "{" + typeName + ":" + name + "}", dataAsString);
 		evaluableExpression = Utils::String::replace(evaluableExpression, "{" + typeName + ":" + name + "}", dataAsEvaluable);

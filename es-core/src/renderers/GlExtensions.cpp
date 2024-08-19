@@ -6,6 +6,7 @@
 namespace glext
 {
 	PFNGLCOMPILESHADERPROC glCompileShader = nullptr;
+	// $$ this looks like the correct name...
 	PFNGLCREATEPROGRAMPROC glCreateProgram = nullptr;
 	PFNGLGENBUFFERSPROC	glGenBuffers = nullptr;		
 	PFNGLBINDBUFFERPROC glBindBuffer = nullptr;
@@ -79,7 +80,9 @@ namespace glext
 
 		glCreateShader = (PFNGLCREATESHADERPROC)_glProcAddress("glCreateShader");
 		glCompileShader = (PFNGLCOMPILESHADERPROC)_glProcAddress("glCompileShader");
-		glCreateProgram = (PFNGLCREATEPROGRAMOBJECTARBPROC)_glProcAddress("glCreateProgram");
+// $$$
+//		glCreateProgram = (PFNGLCREATEPROGRAMOBJECTARBPROC)_glProcAddress("glCreateProgram");
+		glCreateProgram = (PFNGLCREATEPROGRAMPROC)_glProcAddress("glCreateProgram");
 		glGenBuffers = (PFNGLGENBUFFERSPROC)_glProcAddress("glGenBuffers");
 		glBindBuffer = (PFNGLBINDBUFFERPROC)_glProcAddress("glBindBuffer");
 		glShaderSource = (PFNGLSHADERSOURCEPROC)_glProcAddress("glShaderSource");

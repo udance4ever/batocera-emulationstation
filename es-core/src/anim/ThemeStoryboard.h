@@ -2,7 +2,7 @@
 
 #include "ThemeAnimation.h"
 #include "ThemeVariables.h"
-#include <pugixml/src/pugixml.hpp>
+#include <pugixml.hpp>
 #include <vector>
 
 class ThemeStoryboard

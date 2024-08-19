@@ -21,7 +21,9 @@ struct ComponentTabItem
 
 	inline void addElement(const std::shared_ptr<GuiComponent>& component, bool resize_width, bool invert_when_selected = true)
 	{
-		if (EsLocale::isRTL())
+//
+//		if (EsLocale::isRTL())
+		if (0)
 			elements.insert(elements.begin(), ComponentTabElement(component, resize_width, invert_when_selected));
 		else
 			elements.push_back(ComponentTabElement(component, resize_width, invert_when_selected));

@@ -6,7 +6,7 @@
 #include "utils/Platform.h"
 #include "Scripting.h"
 #include "Window.h"
-#include <pugixml/src/pugixml.hpp>
+#include <pugixml.hpp>
 #include <SDL.h>
 #include <iostream>
 #include <assert.h>
@@ -631,9 +631,14 @@ bool InputManager::parseEvent(const SDL_Event& ev, Window* window)
 
 			if (Settings::getInstance()->getBool("ShowControllerNotifications") && !addedDeviceName.empty()) {
 			  if(isWheel) {
-			    window->displayNotificationMessage(_U("\uF1B9 ") + Utils::String::format(_("%s connected").c_str(), Utils::String::trim(addedDeviceName).c_str()));
+// $$ why isn't _U defined from LocaleES.h: #define _U(x) x
+//			    window->displayNotificationMessage(_U("\uF1B9 ") + Utils::String::format(_("%s connected").c_str(), Utils::String::trim(addedDeviceName).c_str()));
+			    window->displayNotificationMessage("\uF1B9 " + Utils::String::format(std::string("%s connected").c_str(), Utils::String::trim(addedDeviceName).c_str()));
 			  } else {
-			    window->displayNotificationMessage(_U("\uF11B ") + Utils::String::format(_("%s connected").c_str(), Utils::String::trim(addedDeviceName).c_str()));
+// $$ why isn't _U defined from LocaleES.h: #define _U(x) x
+// $$ _U macro not defined in macOS?
+//			    window->displayNotificationMessage(_U("\uF11B ") + Utils::String::format(std::string("%s connected").c_str(), Utils::String::trim(addedDeviceName).c_str()));
+			    window->displayNotificationMessage("\uF11B " + Utils::String::format(std::string("%s connected").c_str(), Utils::String::trim(addedDeviceName).c_str()));
 			  }
 			}
 		}
@@ -644,9 +649,13 @@ bool InputManager::parseEvent(const SDL_Event& ev, Window* window)
 			auto it = mInputConfigs.find(ev.jdevice.which);
 			if (Settings::getInstance()->getBool("ShowControllerNotifications") && it != mInputConfigs.cend() && it->second != nullptr) {
 			  if(it->second->isWheel()) {
-			    window->displayNotificationMessage(_U("\uF1B9 ") + Utils::String::format(_("%s disconnected").c_str(), Utils::String::trim(it->second->getDeviceName()).c_str()));
+// $$ why isn't _U defined from LocaleES.h: #define _U(x) x
+//			    window->displayNotificationMessage(_U("\uF1B9 ") + Utils::String::format(_("%s disconnected").c_str(), Utils::String::trim(it->second->getDeviceName()).c_str()));
+			    window->displayNotificationMessage("\uF1B9 " + Utils::String::format(std::string("%s disconnected").c_str(), Utils::String::trim(it->second->getDeviceName()).c_str()));
 			  } else {
-			    window->displayNotificationMessage(_U("\uF11B ") + Utils::String::format(_("%s disconnected").c_str(), Utils::String::trim(it->second->getDeviceName()).c_str()));
+// $$ why isn't _U defined from LocaleES.h: #define _U(x) x
+//			    window->displayNotificationMessage(_U("\uF11B ") + Utils::String::format(_("%s disconnected").c_str(), Utils::String::trim(it->second->getDeviceName()).c_str()));
+			    window->displayNotificationMessage("\uF11B " + Utils::String::format(std::string("%s disconnected").c_str(), Utils::String::trim(it->second->getDeviceName()).c_str()));
 			  }
 			}
 	

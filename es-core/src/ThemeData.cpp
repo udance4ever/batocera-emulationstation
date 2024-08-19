@@ -2026,7 +2026,9 @@ std::string ThemeData::getViewDisplayName(const std::string& view)
 	if (viewIt != mViews.cend())
 	{
 		if (viewIt->second.displayName.empty())
-			return _(view.c_str());
+// $$
+//			return _(view.c_str());
+			return view.c_str();
 
 		return viewIt->second.displayName;
 	}

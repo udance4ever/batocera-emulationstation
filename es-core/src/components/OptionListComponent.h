@@ -104,7 +104,9 @@ private:
 					else
 					{
 						auto text = std::make_shared<TextComponent>(mWindow, e.treeChild ? "      " + Utils::String::toUpper(it->name) : Utils::String::toUpper(it->name), font, color);
-						if (EsLocale::isRTL())
+// $$
+//						if (EsLocale::isRTL())
+						if (0)
 							text->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 
 						row.addElement(text, true);
@@ -155,11 +157,14 @@ private:
 				mMenu.addRow(row, (!mParent->mMultiSelect && it->selected), false);
 			}
 
-			mMenu.addButton(_("BACK"), _("accept"), [this] { delete this; }); 
+// $$ ESLocale
+//			mMenu.addButton(_("BACK"), _("accept"), [this] { delete this; }); 
+			mMenu.addButton("BACK", "accept", [this] { delete this; }); 
 
 			if (mParent->mMultiSelect)
 			{
-				mMenu.addButton(_("SELECT ALL"), _("select all"), [this]
+//				mMenu.addButton(_("SELECT ALL"), _("select all"), [this]
+				mMenu.addButton("SELECT ALL", "select all", [this]
 				{
 					for (unsigned int i = 0; i < mParent->mEntries.size(); i++)
 					{
@@ -169,7 +174,8 @@ private:
 					mParent->onSelectedChanged();
 				});
 
-				mMenu.addButton(_("SELECT NONE"), _("select none"), [this]
+//				mMenu.addButton(_("SELECT NONE"), _("select none"), [this]
+				mMenu.addButton("SELECT NONE", "select none", [this]
 				{
 					for (unsigned int i = 0; i < mParent->mEntries.size(); i++)
 					{
@@ -202,7 +208,9 @@ private:
 		std::vector<HelpPrompt> getHelpPrompts() override
 		{
 			auto prompts = mMenu.getHelpPrompts();
-			prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
+// $$
+//			prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
+			prompts.push_back(HelpPrompt(BUTTON_BACK, "BACK"));
 			return prompts;
 		}
 	};
@@ -226,7 +234,9 @@ public:
 
 		if(mMultiSelect)
 		{
-			if (EsLocale::isRTL())
+// $$
+//			if (EsLocale::isRTL())
+			if (0)
 			{
 				mLeftArrow.setImage(ThemeData::getMenuTheme()->Icons.arrow);
 				mLeftArrow.setColorShift(theme->Text.color);
@@ -434,7 +444,8 @@ public:
 	void addRange(const std::vector<std::string> values, const std::string selectedValue = "")
 	{
 		for (auto value : values)
-			add(_(value.c_str()), value, selectedValue == value);
+//			add(_(value.c_str()), value, selectedValue == value);
+			add(value.c_str(), value, selectedValue == value);
 
 		if (!hasSelection())
 			selectFirstItem();
@@ -601,7 +612,9 @@ private:
 			// display # selected
 		  	char strbuf[256];
 			int x = getSelectedObjects().size();
-		  	snprintf(strbuf, 256, ngettext("%i SELECTED", "%i SELECTED", x), x);
+// $$ the text is teh same so what's the point of using ngettext()
+//		  	snprintf(strbuf, 256, ngettext("%i SELECTED", "%i SELECTED", x), x);
+		  	snprintf(strbuf, 256, "%i SELECTED", x);
 			mText.setText(strbuf);
 
 			mText.setSize(0, mText.getSize().y());
@@ -637,9 +650,12 @@ private:
 	{
 		std::vector<HelpPrompt> prompts;
 		if(!mMultiSelect)
-			prompts.push_back(HelpPrompt("left/right", _("CHANGE")));
+// $$
+//			prompts.push_back(HelpPrompt("left/right", _("CHANGE")));
+			prompts.push_back(HelpPrompt("left/right", "CHANGE"));
 
-		prompts.push_back(HelpPrompt(BUTTON_OK, _("SELECT")));
+//		prompts.push_back(HelpPrompt(BUTTON_OK, _("SELECT")));
+		prompts.push_back(HelpPrompt(BUTTON_OK, "SELECT"));
 		return prompts;
 	}
 
