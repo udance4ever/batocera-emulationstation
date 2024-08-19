@@ -105,35 +105,36 @@ DetailedContainer::DetailedContainer(ISimpleGameListView* parent, GuiComponent* 
 	if (mViewType == DetailedContainerType::DetailedView)
 		createImageComponent(&mImage);
 
-	mLblRating.setText(_("Rating") + ": ");
+// $$ _()
+	mLblRating.setText(std::string("Rating") + ": ");
 	addChild(&mLblRating);
 	addChild(&mRating);
-	mLblReleaseDate.setText(_("Released") + ": ");
+	mLblReleaseDate.setText(std::string("Released") + ": ");
 	addChild(&mLblReleaseDate);
 	addChild(&mReleaseDate);
-	mLblDeveloper.setText(_("Developer") + ": ");
+	mLblDeveloper.setText(std::string("Developer") + ": ");
 	addChild(&mLblDeveloper);
 	addChild(&mDeveloper);
-	mLblPublisher.setText(_("Publisher") + ": ");
+	mLblPublisher.setText(std::string("Publisher") + ": ");
 	addChild(&mLblPublisher);
 	addChild(&mPublisher);
-	mLblGenre.setText(_("Genre") + ": ");
+	mLblGenre.setText(std::string("Genre") + ": ");
 	addChild(&mLblGenre);
 	addChild(&mGenre);
-	mLblPlayers.setText(_("Players") + ": ");
+	mLblPlayers.setText(std::string("Players") + ": ");
 	addChild(&mLblPlayers);
 	addChild(&mPlayers);
-	mLblLastPlayed.setText(_("Last played") + ": ");
+	mLblLastPlayed.setText(std::string("Last played") + ": ");
 	addChild(&mLblLastPlayed);
 	mLastPlayed.setDisplayRelative(true);
 	addChild(&mLastPlayed);
-	mLblPlayCount.setText(_("Times played") + ": ");
+	mLblPlayCount.setText(std::string("Times played") + ": ");
 	addChild(&mLblPlayCount);
 	addChild(&mPlayCount);
-	mLblGameTime.setText(_("Game time") + ": ");
+	mLblGameTime.setText(std::string("Game time") + ": ");
 	addChild(&mLblGameTime);
 	addChild(&mGameTime);
-	mLblFavorite.setText(_("Favorite") + ": ");
+	mLblFavorite.setText(std::string("Favorite") + ": ");
 	addChild(&mLblFavorite);
 	addChild(&mTextFavorite);
 
@@ -593,9 +594,12 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 		int count = games.size();
 
 		char trstring[2048];
-		snprintf(trstring, 2048, ngettext(
-			"This folder contains %i game, including :%s",
-			"This folder contains %i games, including :%s", count), count, desc.c_str());
+// $$
+//		snprintf(trstring, 2048, ngettext(
+//			"This folder contains %i game, including :%s",
+//			"This folder contains %i games, including :%s", count), count, desc.c_str());
+		snprintf(trstring, 2048, 
+			"This folder contains %i games, including :%s", count, desc.c_str());
 
 		mDescription.setText(trstring);
 	}	
@@ -944,7 +948,7 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 	
 		mDescription.setText(file->getMetadata(MetaDataId::Desc));
 
-		auto valueOrUnknown = [](const std::string value) { return value.empty() ? _("Unknown") : value; };
+		auto valueOrUnknown = [](const std::string value) { return value.empty() ? std::string("Unknown") : value; };
 		auto valueOrOne = [](const std::string value) 
 		{ 
 			auto split = value.rfind("+");
@@ -977,7 +981,7 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 			mPlayers.setValue(valueOrUnknown(file->getMetadata(MetaDataId::Players)));
 
 		mName.setValue(file->getMetadata(MetaDataId::Name));
-		mTextFavorite.setText(file->getFavorite()?_("YES"):_("NO"));
+		mTextFavorite.setText(file->getFavorite()?std::string("YES"):std::string("NO"));
 
 		if (file->getType() == GAME)
 		{

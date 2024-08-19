@@ -252,11 +252,14 @@ std::pair<std::string, int> ApiSystem::updateSystem(const std::function<void(con
 			func(std::string(line));		
 	}
 
-	int exitCode = WEXITSTATUS(pclose(pipe));
+	// $$$  error: cannot take the address of an rvalue of type 'int'
+	//  https://stackoverflow.com/a/13674801
+//	int exitCode = WEXITSTATUS(pclose(pipe));
+	int exitCode = pclose(pipe);
 
 	if (flog != NULL)
 	{
-		fprintf(flog, "Exit code : %d\n", exitCode);
+		fprintf(flog, "Exit code : %d\n", WEXITSTATUS(exitCode));
 		fclose(flog);
 	}
 
@@ -288,8 +291,8 @@ std::pair<std::string, int> ApiSystem::backupSystem(BusyComponent* ui, std::stri
 	if (flog != NULL) 
 		fclose(flog);
 
-	int exitCode = WEXITSTATUS(pclose(pipe));
-	return std::pair<std::string, int>(std::string(line), exitCode);
+	int exitCode = pclose(pipe);
+	return std::pair<std::string, int>(std::string(line), WEXITSTATUS(exitCode));
 }
 
 std::pair<std::string, int> ApiSystem::installSystem(BusyComponent* ui, std::string device, std::string architecture) 
@@ -311,11 +314,11 @@ std::pair<std::string, int> ApiSystem::installSystem(BusyComponent* ui, std::str
 		ui->setText(std::string(line));
 	}
 
-	int exitCode = WEXITSTATUS(pclose(pipe));
+	int exitCode = pclose(pipe);
 
 	if (flog != NULL)
 	{
-		fprintf(flog, "Exit code : %d\n", exitCode);
+		fprintf(flog, "Exit code : %d\n", WEXITSTATUS(exitCode));
 		fclose(flog);
 	}
 
@@ -347,8 +350,8 @@ std::pair<std::string, int> ApiSystem::scrape(BusyComponent* ui)
 	if (flog != nullptr)
 		fclose(flog);
 
-	int exitCode = WEXITSTATUS(pclose(pipe));
-	return std::pair<std::string, int>(std::string(line), exitCode);
+	int exitCode = pclose(pipe);
+	return std::pair<std::string, int>(std::string(line), WEXITSTATUS(exitCode));
 }
 
 bool ApiSystem::ping() 
@@ -382,8 +385,8 @@ bool ApiSystem::canUpdate(std::vector<std::string>& output)
 		output.push_back(std::string(line));
 	}
 
-	int res = WEXITSTATUS(pclose(pipe));
-	if (res == 0) 
+	int res = pclose(pipe);
+	if (WEXITSTATUS(res) == 0) 
 	{
 		LOG(LogInfo) << "Can update ";
 		return true;
@@ -434,12 +437,12 @@ bool ApiSystem::launchKodi(Window *window)
 	// WIFEXITED returns a nonzero value if the child process terminated normally with exit or _exit.
 	// https://www.gnu.org/software/libc/manual/html_node/Process-Completion-Status.html
 	if (WIFEXITED(exitCode))
-		exitCode = WEXITSTATUS(exitCode);
+		exitCode = exitCode;
 
 	ApiSystem::launchExternalWindow_after(window);
 
 	// handle end of kodi
-	switch (exitCode) 
+	switch (WEXITSTATUS(exitCode)) 
 	{
 	case 10: // reboot code
 		Utils::Platform::quitES(Utils::Platform::QuitMode::REBOOT);
@@ -1015,7 +1018,8 @@ std::pair<std::string, int> ApiSystem::installBatoceraTheme(std::string thname, 
 		if (downloadGitRepository(theme.url, branch, zipFile, thname, func, theme.size * 1024LL * 1024))
 		{
 			if (func != nullptr)
-				func(_("Extracting") + " " + thname);
+//				func(_("Extracting") + " " + thname);
+				func(std::string("Extracting") + " " + thname);
 
 			unzipFile(zipFile, extractionDirectory);
 			
@@ -1596,8 +1600,8 @@ std::pair<std::string, int> ApiSystem::executeScript(const std::string command, 
 			func(std::string(line));
 	}
 
-	int exitCode = WEXITSTATUS(pclose(pipe));
-	return std::pair<std::string, int>(line, exitCode);
+	int exitCode = pclose(pipe);
+	return std::pair<std::string, int>(line, WEXITSTATUS(exitCode));
 }
 
 bool ApiSystem::executeScript(const std::string command)

@@ -31,7 +31,9 @@
 
 SystemView::SystemView(Window* window) : GuiComponent(window),
 	mViewNeedsReload(true),
-	mSystemInfo(window, _("SYSTEM INFO"), Font::get(FONT_SIZE_SMALL), 0x33333300, ALIGN_CENTER), mYButton("y")
+// $$ global replace _()
+//	mSystemInfo(window, _("SYSTEM INFO"), Font::get(FONT_SIZE_SMALL), 0x33333300, ALIGN_CENTER), mYButton("y")
+	mSystemInfo(window, std::string("SYSTEM INFO"), Font::get(FONT_SIZE_SMALL), 0x33333300, ALIGN_CENTER), mYButton("y")
 {
 	mExtraTransitionSpeed = 500.0f;
 	mExtraTransitionHorizontal = false;
@@ -255,7 +257,7 @@ void SystemView::populate()
 
 			// refresh GUI
 			populate();
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("ERROR: EVERY SYSTEM IS HIDDEN, RE-DISPLAYING ALL OF THEM NOW"), _("OK"), nullptr));
+			mWindow->pushGui(new GuiMsgBox(mWindow, std::string("ERROR: EVERY SYSTEM IS HIDDEN, RE-DISPLAYING ALL OF THEM NOW"), std::string("OK"), nullptr));
 		}
 
 		return;
@@ -364,9 +366,9 @@ void SystemView::showQuickSearch()
 		};
 
 		if (Settings::getInstance()->getBool("UseOSK"))
-			mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _("QUICK SEARCH"), "", updateVal, false));
+			mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, std::string("QUICK SEARCH"), "", updateVal, false));
 		else
-			mWindow->pushGui(new GuiTextEditPopup(mWindow, _("QUICK SEARCH"), "", updateVal, false));
+			mWindow->pushGui(new GuiTextEditPopup(mWindow, std::string("QUICK SEARCH"), "", updateVal, false));
 	}
 }
 
@@ -376,7 +378,7 @@ void SystemView::showNetplay()
 		return;
 
 	if (ApiSystem::getInstance()->getIpAdress() == "NOT CONNECTED")
-		mWindow->pushGui(new GuiMsgBox(mWindow, _("YOU ARE NOT CONNECTED TO A NETWORK"), _("OK"), nullptr));
+		mWindow->pushGui(new GuiMsgBox(mWindow, std::string("YOU ARE NOT CONNECTED TO A NETWORK"), std::string("OK"), nullptr));
 	else
 		mWindow->pushGui(new GuiNetPlay(mWindow));
 }
@@ -535,22 +537,22 @@ bool SystemView::showNavigationBar()
 	auto sortMode = Settings::getInstance()->getString("SortSystems");
 	if (sortMode == "alpha")
 	{
-		showNavigationBar(_("GO TO LETTER"), [](SystemData* meta) { if (meta->isCollection()) return _("COLLECTIONS"); return Utils::String::toUpper(meta->getSystemMetadata().fullName.substr(0, 1)); });
+		showNavigationBar(std::string("GO TO LETTER"), [](SystemData* meta) { if (meta->isCollection()) return std::string("COLLECTIONS"); return Utils::String::toUpper(meta->getSystemMetadata().fullName.substr(0, 1)); });
 		return true;
 	}
 	else if (sortMode == "manufacturer" || sortMode == "subgroup")
 	{
-		showNavigationBar(_("GO TO MANUFACTURER"), [](SystemData* meta) { return meta->getSystemMetadata().manufacturer; });
+		showNavigationBar(std::string("GO TO MANUFACTURER"), [](SystemData* meta) { return meta->getSystemMetadata().manufacturer; });
 		return true;
 	}
 	else if (sortMode == "hardware")
 	{
-		showNavigationBar(_("GO TO HARDWARE"), [](SystemData* meta) { return meta->getSystemMetadata().hardwareType; });
+		showNavigationBar(std::string("GO TO HARDWARE"), [](SystemData* meta) { return meta->getSystemMetadata().hardwareType; });
 		return true;
 	}
 	else if (sortMode == "releaseDate")
 	{
-		showNavigationBar(_("GO TO DECADE"), [](SystemData* meta) { if (meta->getSystemMetadata().releaseYear == 0) return _("Unknown"); return std::to_string((meta->getSystemMetadata().releaseYear / 10) * 10) + "'s"; });
+		showNavigationBar(std::string("GO TO DECADE"), [](SystemData* meta) { if (meta->getSystemMetadata().releaseYear == 0) return std::string("Unknown"); return std::to_string((meta->getSystemMetadata().releaseYear / 10) * 10) + "'s"; });
 		return true;
 	}
 
@@ -719,7 +721,7 @@ void SystemView::onCursorChanged(const CursorState& state)
 		setAnimation(infoFadeOut, 0, [this, gameCount]
 			{
 				if (!getSelected()->isGameSystem() && !getSelected()->isGroupSystem())
-					mSystemInfo.setText(_("CONFIGURATION"));
+					mSystemInfo.setText(std::string("CONFIGURATION"));
 				else if (mSystemInfoCountOnly)
 					mSystemInfo.setText(std::to_string(gameCount));
 				else
@@ -730,12 +732,15 @@ void SystemView::onCursorChanged(const CursorState& state)
 					if (getSelected() == CollectionSystemManager::get()->getCustomCollectionsBundle())
 					{
 						int collectionCount = getSelected()->getRootFolder()->getChildren().size();
-						snprintf(strbuf, 256, ngettext("%i COLLECTION", "%i COLLECTIONS", collectionCount), collectionCount);
+//						snprintf(strbuf, 256, ngettext("%i COLLECTION", "%i COLLECTIONS", collectionCount), collectionCount);
+						snprintf(strbuf, 256, "%i COLLECTIONS", collectionCount);
 					}
 					else if (getSelected()->hasPlatformId(PlatformIds::PLATFORM_IGNORE) && !getSelected()->isCollection())
-						snprintf(strbuf, 256, ngettext("%i ITEM", "%i ITEMS", gameCount), gameCount);
+//						snprintf(strbuf, 256, ngettext("%i ITEM", "%i ITEMS", gameCount), gameCount);
+						snprintf(strbuf, 256, "%i ITEMS", gameCount);
 					else
-						snprintf(strbuf, 256, ngettext("%i GAME", "%i GAMES", gameCount), gameCount);
+//						snprintf(strbuf, 256, ngettext("%i GAME", "%i GAMES", gameCount), gameCount);
+						snprintf(strbuf, 256, "%i GAMES", gameCount);
 
 					ss << strbuf;
 					mSystemInfo.setText(ss.str());
@@ -905,28 +910,28 @@ std::vector<HelpPrompt> SystemView::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mCarousel.getHelpPrompts();
 
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("SELECT"), [&] {ViewController::get()->goToGameList(getSelected()); }));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("SELECT"), [&] {ViewController::get()->goToGameList(getSelected()); }));
 
 	bool netPlay = SystemData::isNetplayActivated() && SystemConf::getInstance()->getBool("global.netplay");
 
 	if (netPlay)
 	{
-		prompts.push_back(HelpPrompt("x", _("NETPLAY"), [&] { showNetplay(); }));
-		prompts.push_back(HelpPrompt("y", _("SEARCH") + std::string("/") + _("RANDOM"), [&] { showQuickSearch(); })); // QUICK 
+		prompts.push_back(HelpPrompt("x", std::string("NETPLAY"), [&] { showNetplay(); }));
+		prompts.push_back(HelpPrompt("y", std::string("SEARCH") + std::string("/") + std::string("RANDOM"), [&] { showQuickSearch(); })); // QUICK 
 	}
 	else
 	{
-		prompts.push_back(HelpPrompt("x", _("RANDOM")));
+		prompts.push_back(HelpPrompt("x", std::string("RANDOM")));
 		if (SystemData::getSystem("all") != nullptr)
-			prompts.push_back(HelpPrompt("y", _("SEARCH"), [&] { showQuickSearch(); })); // QUICK 
+			prompts.push_back(HelpPrompt("y", std::string("SEARCH"), [&] { showQuickSearch(); })); // QUICK 
 	}
 
 	if (SystemData::IsManufacturerSupported)
-		prompts.push_back(HelpPrompt("b", _("NAVIGATION BAR"), [&] { showNavigationBar(); }));
+		prompts.push_back(HelpPrompt("b", std::string("NAVIGATION BAR"), [&] { showNavigationBar(); }));
 
 #ifdef _ENABLE_FILEMANAGER_
 	if (UIModeController::getInstance()->isUIModeFull()) {
-		prompts.push_back(HelpPrompt("F1", _("FILES")));
+		prompts.push_back(HelpPrompt("F1", std::string("FILES")));
 	}
 #endif
 
@@ -1639,7 +1644,7 @@ bool SystemView::onAction(const std::string& action)
 		if (SystemConf::getInstance()->getBool("global.retroachievements") && !Settings::getInstance()->getBool("RetroachievementsMenuitem") && SystemConf::getInstance()->get("global.retroachievements.username") != "")
 		{
 			if (ApiSystem::getInstance()->getIpAdress() == "NOT CONNECTED")
-				mWindow->pushGui(new GuiMsgBox(mWindow, _("YOU ARE NOT CONNECTED TO A NETWORK"), _("OK"), nullptr));
+				mWindow->pushGui(new GuiMsgBox(mWindow, std::string("YOU ARE NOT CONNECTED TO A NETWORK"), std::string("OK"), nullptr));
 			else
 				GuiRetroAchievements::show(mWindow);
 		}

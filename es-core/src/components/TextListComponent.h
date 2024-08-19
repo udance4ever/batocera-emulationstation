@@ -30,35 +30,40 @@ struct TextListData
 template <typename T>
 struct is_textlist_bindable : std::is_base_of<IBindable, std::remove_pointer_t<T>> {};
 
+// $$ borrow clean up from ES-DE (use alias "List")
+//     error: dependent using declaration resolved to type without 'typename'
+
 //A graphical list. Supports multiple colors for rows and scrolling.
 template <typename T>
 class TextListComponent : public IList<TextListData, T>
 {
+	using List = IList<TextListData, T>;
+
 protected:
-	using IList<TextListData, T>::mEntries;
-	using IList<TextListData, T>::listUpdate;
-	using IList<TextListData, T>::listInput;
-	using IList<TextListData, T>::listRenderTitleOverlay;
-	using IList<TextListData, T>::getTransform;
-	using IList<TextListData, T>::mSize;
-	using IList<TextListData, T>::mCursor;
-	using IList<TextListData, T>::mIsMouseOver;
-	using IList<TextListData, T>::mScrollVelocity;
-	using IList<TextListData, T>::mWindow;
-	using IList<TextListData, T>::Entry;
+	using List::mEntries;
+	using List::listUpdate;
+	using List::listInput;
+	using List::listRenderTitleOverlay;
+	using List::getTransform;
+	using List::mSize;
+	using List::mCursor;
+	using List::mIsMouseOver;
+	using List::mScrollVelocity;
+	using List::mWindow;
+	using Entry = typename IList<TextListData, T>::Entry;
 
 public:
-	using IList<TextListData, T>::size;
-	using IList<TextListData, T>::getSize;
-	using IList<TextListData, T>::getChild;
-	using IList<TextListData, T>::getChildCount;
-	using IList<TextListData, T>::isScrolling;
-	using IList<TextListData, T>::stopScrolling;
-	using IList<TextListData, T>::setOpacity;
-	using IList<TextListData, T>::getOpacity;
-	using IList<TextListData, T>::onShow;
-	using IList<TextListData, T>::onHide;
-	using IList<TextListData, T>::isShowing;
+	using List::size;
+	using List::getSize;
+	using List::getChild;
+	using List::getChildCount;
+	using List::isScrolling;
+	using List::stopScrolling;
+	using List::setOpacity;
+	using List::getOpacity;
+	using List::onShow;
+	using List::onHide;
+	using List::isShowing;
 	
 	TextListComponent(Window* window);
 

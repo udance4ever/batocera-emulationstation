@@ -112,11 +112,14 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 			if (!game->isFeatureSupported(EmulatorFeatures::cheevos))
 			{
 				std::string coreList = game->getSourceFileData()->getSystem()->getCompatibleCoreNames(EmulatorFeatures::cheevos);
-				std::string msg = _U("\uF06A  ");
+// $$
+//				std::string msg = _U("\uF06A  ");
+				std::string msg = "\uF06A  ";
 				msg += std::string("CURRENT CORE IS NOT COMPATIBLE") + ": " + Utils::String::toUpper(game->getCore(true).empty()? game->getEmulator(true): game->getCore(true));
 				if (!coreList.empty())
 				{
-					msg += _U("\r\n\uF05A  ");
+//					msg += _U("\r\n\uF05A  ");
+					msg += "\r\n\uF05A  ";
 					msg += std::string("COMPATIBLE CORE(S)") + ": " + Utils::String::toUpper(coreList);
 				}
 
@@ -173,7 +176,8 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 				msgBox->setSubTitle(game->getName());
 				msgBox->addGroup(std::string("START GAME"));
 
-				msgBox->addEntry(_U("\uF144 ") + std::string("HOST A NETPLAY GAME"), false, [window, msgBox, game]
+//				msgBox->addEntry(_U("\uF144 ") + std::string("HOST A NETPLAY GAME"), false, [window, msgBox, game]
+				msgBox->addEntry("\uF144 " + std::string("HOST A NETPLAY GAME"), false, [window, msgBox, game]
 				{
 					if (ApiSystem::getInstance()->getIpAdress() == "NOT CONNECTED")
 					{

@@ -59,29 +59,32 @@ struct ImageGridData
 template <typename T>
 struct is_bindable : std::is_base_of<IBindable, std::remove_pointer_t<T>> {};
 
+// $$ error: dependent using declaration resolved to type without 'typename'
+
 template<typename T>
 class ImageGridComponent : public IList<ImageGridData, T>
 {
 protected:
-	using IList<ImageGridData, T>::mEntries;
-	using IList<ImageGridData, T>::mScrollTier;
-	using IList<ImageGridData, T>::listUpdate;
-	using IList<ImageGridData, T>::listInput;
-	using IList<ImageGridData, T>::listRenderTitleOverlay;
-	using IList<ImageGridData, T>::getTransform;
-	using IList<ImageGridData, T>::mSize;
-	using IList<ImageGridData, T>::mCursor;
-	using IList<ImageGridData, T>::mShowing;
-	using IList<ImageGridData, T>::mVisible;
-// $$$ error: dependent using declaration resolved to type without 'typename'
-	using IList<ImageGridData, T>::Entry;
-	using IList<ImageGridData, T>::mWindow;
+	using List = IList<ImageGridData, T>;
+
+	using List::mEntries;
+	using List::mScrollTier;
+	using List::listUpdate;
+	using List::listInput;
+	using List::listRenderTitleOverlay;
+	using List::getTransform;
+	using List::mSize;
+	using List::mCursor;
+	using List::mShowing;
+	using List::mVisible;
+	using Entry = typename IList<ImageGridData, T>::Entry;
+	using List::mWindow;
 
 public:
-	using IList<ImageGridData, T>::size;
-	using IList<ImageGridData, T>::isScrolling;
-	using IList<ImageGridData, T>::stopScrolling;
-	using IList<ImageGridData, T>::updateBindings;
+	using List::size;
+	using List::isScrolling;
+	using List::stopScrolling;
+	using List::updateBindings;
 
 	ImageGridComponent(Window* window);
 

@@ -124,7 +124,8 @@ void ViewController::goToStart(bool forceImmediate)
 
 void ViewController::ReloadAndGoToStart()
 {
-	mWindow->renderSplashScreen(_("Loading..."));
+// $$ global replace _()
+	mWindow->renderSplashScreen(std::string("Loading..."));
 	ViewController::get()->reloadAll();
 	ViewController::get()->goToStart(true);
 	mWindow->closeSplashScreen();
@@ -480,9 +481,9 @@ bool ViewController::checkLaunchOptions(FileData* game, LaunchGameOptions option
 
 	if (!game->isExtensionCompatible())
 	{
-		auto gui = new GuiMsgBox(mWindow, _("WARNING: THE EMULATOR/CORE CURRENTLY SET DOES NOT SUPPORT THIS GAME'S FILE FORMAT.\nDO YOU WANT TO LAUNCH IT ANYWAY?"),
-			_("YES"), [this, game, options, center] { launch(game, options, center, false); },
-			_("NO"), nullptr, ICON_ERROR);
+		auto gui = new GuiMsgBox(mWindow, std::string("WARNING: THE EMULATOR/CORE CURRENTLY SET DOES NOT SUPPORT THIS GAME'S FILE FORMAT.\nDO YOU WANT TO LAUNCH IT ANYWAY?"),
+			std::string("YES"), [this, game, options, center] { launch(game, options, center, false); },
+			std::string("NO"), nullptr, ICON_ERROR);
 
 		mWindow->pushGui(gui);
 		return false;
@@ -500,9 +501,9 @@ bool ViewController::checkLaunchOptions(FileData* game, LaunchGameOptions option
 				bool hasMissing = std::find_if(it->bios.cbegin(), it->bios.cend(), [&systemName](const BiosFile& x) { return x.status == "MISSING"; }) != it->bios.cend();
 				if (hasMissing)
 				{
-					auto gui = new GuiMsgBox(mWindow, _("WARNING: THE SYSTEM HAS MISSING BIOS FILE(S) AND THE GAME MAY NOT WORK CORRECTLY.\nDO YOU WANT TO LAUNCH IT ANYWAY?"),
-						_("YES"), [this, game, options, center] { launch(game, options, center, false); },
-						_("NO"), nullptr, ICON_ERROR);
+					auto gui = new GuiMsgBox(mWindow, std::string("WARNING: THE SYSTEM HAS MISSING BIOS FILE(S) AND THE GAME MAY NOT WORK CORRECTLY.\nDO YOU WANT TO LAUNCH IT ANYWAY?"),
+						std::string("YES"), [this, game, options, center] { launch(game, options, center, false); },
+						std::string("NO"), nullptr, ICON_ERROR);
 
 					mWindow->pushGui(gui);
 					return false;
@@ -994,7 +995,7 @@ void ViewController::preload()
 	if (!preloadUI)
 		return;
 
-	mWindow->renderSplashScreen(_("Preloading UI"), 0);
+	mWindow->renderSplashScreen(std::string("Preloading UI"), 0);
 	getSystemListView();
 
 	int i = 1;
@@ -1014,7 +1015,7 @@ void ViewController::preload()
 			i++;
 
 			if ((i % 4) == 0)
-				mWindow->renderSplashScreen(_("Preloading UI"), (float)i / (float)max);
+				mWindow->renderSplashScreen(std::string("Preloading UI"), (float)i / (float)max);
 		}
 
 		(*it)->resetFilters();
@@ -1182,7 +1183,7 @@ void ViewController::reloadAll(Window* window, bool reloadTheme)
 			{
 				int px = processedSystem;
 				if (px >= 0 && px < systemCount)
-					window->renderSplashScreen(_("Loading theme"), (float)px / (float)systemCount);
+					window->renderSplashScreen(std::string("Loading theme"), (float)px / (float)systemCount);
 			}, 5);
 		}
 		else
@@ -1196,7 +1197,7 @@ void ViewController::reloadAll(Window* window, bool reloadTheme)
 		int lastTime = SDL_GetTicks() - 50;
 
 		if (window)
-			window->renderSplashScreen(_("Loading gamelists"), 0.0f);
+			window->renderSplashScreen(std::string("Loading gamelists"), 0.0f);
 
 		float idx = 0;
 		// load themes, create gamelistviews and reset filters
@@ -1219,13 +1220,13 @@ void ViewController::reloadAll(Window* window, bool reloadTheme)
 			if (window && time - lastTime >= 20)
 			{
 				lastTime = time;
-				window->renderSplashScreen(_("Loading gamelists"), (float)idx / (float)gameListCount);
+				window->renderSplashScreen(std::string("Loading gamelists"), (float)idx / (float)gameListCount);
 			}
 		}
 	}
 
 	if (window != nullptr)
-		window->renderSplashScreen(_("Loading..."));
+		window->renderSplashScreen(std::string("Loading..."));
 
 	if (SystemData::sSystemVector.size() > 0)
 	{
@@ -1273,7 +1274,7 @@ std::vector<HelpPrompt> ViewController::getHelpPrompts()
 	prompts = mCurrentView->getHelpPrompts();
 
 	if (!UIModeController::getInstance()->isUIModeKid())
-		prompts.push_back(HelpPrompt("start", _("MENU"), [&] { mWindow->pushGui(new GuiMenu(mWindow)); }));
+		prompts.push_back(HelpPrompt("start", std::string("MENU"), [&] { mWindow->pushGui(new GuiMenu(mWindow)); }));
 
 	return prompts;
 }
@@ -1327,7 +1328,7 @@ void ViewController::reloadAllGames(Window* window, bool deleteCurrentGui, bool 
 	auto systemName = ViewController::get()->getSelectedSystem()->getName();
 
 	window->closeSplashScreen();
-	window->renderSplashScreen(_("Loading..."));
+	window->renderSplashScreen(std::string("Loading..."));
 
 	if (!deleteCurrentGui)
 	{

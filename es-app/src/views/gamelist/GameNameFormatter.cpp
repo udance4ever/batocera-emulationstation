@@ -10,44 +10,46 @@
 #include "SaveStateRepository.h"
 #include "CollectionSystemManager.h"
 
-#define FOLDERICON	 _U("\uF07C ")
-#define FAVORITEICON _U("\uF006 ")
+// $$ _U()
 
-#define CHEEVOSICON _U("\uF091")
-#define SAVESTATE	_U("\uF0C7")
-#define MANUAL		_U("\uF02D")
+#define FOLDERICON	 "\uF07C "
+#define FAVORITEICON "\uF006 "
 
-#define GUN			_U("\uF05B")
-#define WHEEL			_U("\uF1B9")
+#define CHEEVOSICON "\uF091"
+#define SAVESTATE	"\uF0C7"
+#define MANUAL		"\uF02D"
 
-#define RATINGSTAR _U("\uF005")
+#define GUN			"\uF05B"
+#define WHEEL			"\uF1B9"
+
+#define RATINGSTAR "\uF005"
 #define SEPARATOR_BEFORE "["
 #define SEPARATOR_AFTER "] "
 
 std::map<std::string, std::string> langFlag =
 {
-	{ "au", _U("\uF300") },
-	{ "br", _U("\uF301") },
-	{ "ca", _U("\uF302") },
-	{ "ch", _U("\uF303") },
-	{ "de", _U("\uF304") },
-	{ "es", _U("\uF305") },
-	{ "eu", _U("\uF306") },
-	{ "fr", _U("\uF307") },
-	{ "gr", _U("\uF308") },
-	{ "in", _U("\uF309") },
-	{ "it", _U("\uF30A") },
-	{ "jp", _U("\uF30B") },
-	{ "kr", _U("\uF30C") },
-	{ "nl", _U("\uF30D") },
-	{ "no", _U("\uF30E") },
-	{ "pt", _U("\uF30F") },
-	{ "ru", _U("\uF310") },
-	{ "sw", _U("\uF311") },
-	{ "uk", _U("\uF312") },
-	{ "us", _U("\uF313") },
-	{ "wr", _U("\uF314") },
-	{ "pl", _U("\uF315") }
+	{ "au", "\uF300" },
+	{ "br", "\uF301" },
+	{ "ca", "\uF302" },
+	{ "ch", "\uF303" },
+	{ "de", "\uF304" },
+	{ "es", "\uF305" },
+	{ "eu", "\uF306" },
+	{ "fr", "\uF307" },
+	{ "gr", "\uF308" },
+	{ "in", "\uF309" },
+	{ "it", "\uF30A" },
+	{ "jp", "\uF30B" },
+	{ "kr", "\uF30C" },
+	{ "nl", "\uF30D" },
+	{ "no", "\uF30E" },
+	{ "pt", "\uF30F" },
+	{ "ru", "\uF310" },
+	{ "sw", "\uF311" },
+	{ "uk", "\uF312" },
+	{ "us", "\uF313" },
+	{ "wr", "\uF314" },
+	{ "pl", "\uF315" }
 };
 
 std::string getLangFlag(const std::string lang)
@@ -104,7 +106,8 @@ GameNameFormatter::GameNameFormatter(SystemData* system)
 		mShowSystemName = false;
 }
 
-std::string valueOrDefault(const std::string value, const std::string defaultValue = _("Unknown"))
+//std::string valueOrDefault(const std::string value, const std::string defaultValue = _("Unknown"))
+std::string valueOrDefault(const std::string value, const std::string defaultValue = std::string("Unknown"))
 {
 	if (value.empty())
 		return defaultValue;

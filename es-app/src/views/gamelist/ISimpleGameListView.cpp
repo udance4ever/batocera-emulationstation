@@ -453,10 +453,11 @@ void ISimpleGameListView::showQuickSearch()
 			ViewController::get()->reloadGameListView(mRoot->getSystem());
 	};
 
+// $$ global replace _()
 	if (Settings::getInstance()->getBool("UseOSK"))
-		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _("FILTER GAMES BY TEXT"), searchText, updateVal, false));
+		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, std::string("FILTER GAMES BY TEXT"), searchText, updateVal, false));
 	else
-		mWindow->pushGui(new GuiTextEditPopup(mWindow, _("FILTER GAMES BY TEXT"), searchText, updateVal, false));
+		mWindow->pushGui(new GuiTextEditPopup(mWindow, std::string("FILTER GAMES BY TEXT"), searchText, updateVal, false));
 }
 
 void ISimpleGameListView::moveToRandomGame()
@@ -537,7 +538,7 @@ void ISimpleGameListView::setPopupContext(std::shared_ptr<IGameListView> pThis, 
 
 	if (mHeaderImage.hasImage())
 	{
-		mHeaderText.setText(_("Games similar to") + " " + label); // 
+		mHeaderText.setText(std::string("Games similar to") + " " + label); // 
 
 		mHeaderImage.setImage("");
 		addChild(&mHeaderText);
@@ -566,44 +567,44 @@ std::vector<HelpPrompt> ISimpleGameListView::getHelpPrompts()
 	if (Renderer::getScreenProportion() > 1.4)
 	{
 		if (mPopupSelfReference == nullptr && Settings::getInstance()->getBool("QuickSystemSelect") && getQuickSystemSelectLeftButton() == "left")
-			prompts.push_back(HelpPrompt("left/right", _("SYSTEM")));
+			prompts.push_back(HelpPrompt("left/right", std::string("SYSTEM")));
 
-		prompts.push_back(HelpPrompt("up/down", _("CHOOSE")));
+		prompts.push_back(HelpPrompt("up/down", std::string("CHOOSE")));
 	}
 
 	bool invertNorthButton = Settings::getInstance()->getBool("GameOptionsAtNorth");
 
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK"), [&] { goBack(); }));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK"), [&] { goBack(); }));
 
 	if (invertNorthButton)
-		prompts.push_back(HelpPrompt(BUTTON_OK, _("SAVE STATES (HOLD)"), [&] { showSelectedGameSaveSnapshots(); }));
+		prompts.push_back(HelpPrompt(BUTTON_OK, std::string("SAVE STATES (HOLD)"), [&] { showSelectedGameSaveSnapshots(); }));
 	else 
-		prompts.push_back(HelpPrompt(BUTTON_OK, _("GAME OPTIONS (HOLD)"), [&] { showSelectedGameOptions(); }));
+		prompts.push_back(HelpPrompt(BUTTON_OK, std::string("GAME OPTIONS (HOLD)"), [&] { showSelectedGameOptions(); }));
 
 	if (!UIModeController::getInstance()->isUIModeKid())
-		prompts.push_back(HelpPrompt("select", _("OPTIONS"), [&] { showGamelistOptions(); }));
+		prompts.push_back(HelpPrompt("select", std::string("OPTIONS"), [&] { showGamelistOptions(); }));
 
 	if (cursorHasSaveStatesEnabled())
 	{
 		if (invertNorthButton)
 		{
 			if (UIModeController::getInstance()->isUIModeKid())
-				prompts.push_back(HelpPrompt("x", _("GAME OPTIONS"), [&] { showSelectedGameOptions(); }));
+				prompts.push_back(HelpPrompt("x", std::string("GAME OPTIONS"), [&] { showSelectedGameOptions(); }));
 			else
-				prompts.push_back(HelpPrompt("x", _("GAME OPTIONS") + std::string("/") + _("FAVORITE"), [&] { showSelectedGameOptions(); }));
+				prompts.push_back(HelpPrompt("x", std::string("GAME OPTIONS") + std::string("/") + std::string("FAVORITE"), [&] { showSelectedGameOptions(); }));
 		}
 		else
 		{
 			if (UIModeController::getInstance()->isUIModeKid())
-				prompts.push_back(HelpPrompt("x", _("SAVE STATES"), [&] { showSelectedGameSaveSnapshots(); }));
+				prompts.push_back(HelpPrompt("x", std::string("SAVE STATES"), [&] { showSelectedGameSaveSnapshots(); }));
 			else
-				prompts.push_back(HelpPrompt("x", _("SAVE STATES") + std::string("/") + _("FAVORITE"), [&] { showSelectedGameSaveSnapshots(); }));
+				prompts.push_back(HelpPrompt("x", std::string("SAVE STATES") + std::string("/") + std::string("FAVORITE"), [&] { showSelectedGameSaveSnapshots(); }));
 		}
 	}
 	else if (!UIModeController::getInstance()->isUIModeKid())
-		prompts.push_back(HelpPrompt("x", _("FAVORITE")));
+		prompts.push_back(HelpPrompt("x", std::string("FAVORITE")));
 
-	prompts.push_back(HelpPrompt("y", _("SEARCH") + std::string("/") + _("RANDOM"), [&] { showQuickSearch(); }));
+	prompts.push_back(HelpPrompt("y", std::string("SEARCH") + std::string("/") + std::string("RANDOM"), [&] { showQuickSearch(); }));
 
 	return prompts;
 }
@@ -757,8 +758,8 @@ FolderData* ISimpleGameListView::createParentFolderData()
 		folder->setMetadata(MetaDataId::Marquee, top->getMetadata(MetaDataId::Marquee));
 	}
 
-	auto backTo = Utils::String::format(_("Back to %s").c_str(), dest.c_str());
-	folder->setMetadata(MetaDataId::Desc, backTo); // _("Parent folder")
+	auto backTo = Utils::String::format(std::string("Back to %s").c_str(), dest.c_str());
+	folder->setMetadata(MetaDataId::Desc, backTo); // std::string("Parent folder")
 
 	if (mCursorStack.size() <= 1)
 	{
@@ -782,7 +783,7 @@ FolderData* ISimpleGameListView::createParentFolderData()
 FileData* ISimpleGameListView::createNoEntriesPlaceholder()
 {
 	// empty grid - add a placeholder
-	FileData* placeholder = new FileData(PLACEHOLDER, "<" + _("No Entries Found") + ">", mRoot->getSystem());
+	FileData* placeholder = new FileData(PLACEHOLDER, "<" + std::string("No Entries Found") + ">", mRoot->getSystem());
 
 	if (mLastParentFolderData != nullptr)
 		delete mLastParentFolderData;

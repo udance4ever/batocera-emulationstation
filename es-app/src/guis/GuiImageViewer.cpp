@@ -270,15 +270,20 @@ private:
 
 static bool g_isGuiImageViewerRunning = false;
 
+// $$ think this is necessary because "virtual void" GuiComponent::setSize
+//  https://stackoverflow.com/a/357312
+void GuiImageViewer::setSize(float w, float h) { GuiComponent::setSize(w, h); }
+
 GuiImageViewer::GuiImageViewer(Window* window, bool linearSmooth) :
 	GuiComponent(window), mGrid(window), mPdfThreads(nullptr)
 {
 	g_isGuiImageViewerRunning = true;
 
+	// $$  error: no matching member function for call to 'setSize'
 	// $$$  error: no matching member function for call to 'setPosition'
-	//      this is odd given GuiImageViewer should inherit setPosition from subclass of GuiComponent
-	setPosition(0, 0);
+	//      this is odd given GuiImageViewer should inherit setPosition() and setSize() from subclass of GuiComponent
 	setSize(Renderer::getScreenWidth(), Renderer::getScreenHeight());
+	GuiComponent::setPosition(0, 0);
 		
 	mGrid.setPosition(0, 0);
 	mGrid.setSize(mSize);
@@ -326,7 +331,8 @@ GuiImageViewer::GuiImageViewer(Window* window, bool linearSmooth) :
 
 	mGrid.applyTheme(mTheme, "grid", "gamegrid", 0);
 
-	animateTo(Vector2f(0, Renderer::getScreenHeight()), Vector2f(0, 0));
+	// $$$  error: no matching member function for call to 'animateTo'
+	GuiComponent::animateTo(Vector2f(0, Renderer::getScreenHeight()), Vector2f(0, 0));
 }
 
 void GuiImageViewer::loadPdf(const std::string& imagePath)
@@ -394,6 +400,7 @@ void GuiImageViewer::loadPdf(const std::string& imagePath)
 				mGrid.setImage(fileList[i], std::to_string(i + 1));
 			}
 
+			// $$$ error: cannot initialize a parameter of type 'GuiComponent *' with an rvalue of type 'GuiImageViewer *'
 			window->pushGui(this);
 		}));
 }
@@ -433,6 +440,7 @@ void GuiImageViewer::loadImages(std::vector<std::string>& images)
 		for (int i = 0; i < images.size(); i++)
 			mGrid.add("", images[i], std::to_string(i + 1));
 
+		// $$$ error: cannot initialize a parameter of type 'GuiComponent *' with an rvalue of type 'GuiImageViewer *'
 		window->pushGui(this);
 	});
 }
@@ -544,6 +552,7 @@ void GuiImageViewer::loadCbz(const std::string& imagePath)
 				mGrid.setImage(fileList[i], std::to_string(i + 1));
 			}
 
+			// error: cannot initialize a parameter of type 'GuiComponent *' with an rvalue of type 'GuiImageViewer *'
 			window->pushGui(this);
 		}
 	));
@@ -613,6 +622,7 @@ bool GuiImageViewer::input(InputConfig* config, Input input)
 		return true;
 	}
 
+	// $$$  error: cannot initialize object parameter of type 'GuiComponent' with an expression of type 'GuiImageViewer'
 	return GuiComponent::input(config, input);
 }
 
@@ -684,6 +694,7 @@ void GuiImageViewer::showImage(Window* window, const std::string imagePath, bool
 	auto imgViewer = new GuiImageViewer(window, false);
 	imgViewer->add(imagePath);
 	imgViewer->setCursor(imagePath);
+	/// $$$ error: cannot initialize a parameter of type 'GuiComponent *' with an lvalue of type 'GuiImageViewer *'
 	window->pushGui(imgViewer);
 }
 

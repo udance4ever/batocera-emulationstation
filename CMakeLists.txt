@@ -87,8 +87,6 @@ endif()
 
 # $$ end ES-DE
 
-# $$ ES-DE
-
 
 
 
@@ -204,23 +202,25 @@ endif()
 #-------------------------------------------------------------------------------
 #set up OpenGL system variable
 if(GLES)
-    set(GLSystem "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
+    set(GLSYSTEM "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
 elseif(GLES2)
-    set(GLSystem "OpenGL ES 2.0" CACHE STRING "The OpenGL system to be used")
+    set(GLSYSTEM "OpenGL ES 2.0" CACHE STRING "The OpenGL system to be used")
 elseif(GL)
-    set(GLSystem "Desktop OpenGL" CACHE STRING "The OpenGL system to be used")
+    MESSAGE("Desktop OpenGL")
+
+    set(GLSYSTEM "Desktop OpenGL" CACHE STRING "The OpenGL system to be used")
 #-------------------------------------------------------------------------------
 #check if we're running on Raspberry Pi
 elseif(EXISTS "${CMAKE_FIND_ROOT_PATH}/opt/vc/include/bcm_host.h")
     MESSAGE("bcm_host.h found")
     set(BCMHOST found)
-    set(GLSystem "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
+    set(GLSYSTEM "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
 #-------------------------------------------------------------------------------
 #check if we're running on OSMC Vero4K
 elseif(EXISTS "${CMAKE_FIND_ROOT_PATH}/opt/vero3/lib/libMali.so")
     MESSAGE("libMali.so found")
     set(VERO4K found)
-    set(GLSystem "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
+    set(GLSYSTEM "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
 #-------------------------------------------------------------------------------
 #check if we're running on olinuxino / odroid / etc
 elseif(EXISTS "${CMAKE_FIND_ROOT_PATH}/usr/lib/libMali.so" OR
@@ -230,13 +230,12 @@ elseif(EXISTS "${CMAKE_FIND_ROOT_PATH}/usr/lib/libMali.so" OR
     EXISTS "${CMAKE_FIND_ROOT_PATH}/usr/lib/arm-linux-gnueabihf/mali-egl/libmali.so" OR
     EXISTS "${CMAKE_FIND_ROOT_PATH}/usr/lib/arm-linux-gnueabihf/libmali.so")
     MESSAGE("libMali.so found")
-    set(GLSystem "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
+    set(GLSYSTEM "Embedded OpenGL" CACHE STRING "The OpenGL system to be used")
 else()
-    # $$ ES-DE default
-    set(GLSystem "Desktop OpenGL" CACHE STRING "The OpenGL system to be used")
+    set(GLSYSTEM "Desktop OpenGL" CACHE STRING "The OpenGL system to be used")
 endif(GLES)
 
-set_property(CACHE GLSystem PROPERTY STRINGS "Desktop OpenGL" "Embedded OpenGL")
+set_property(CACHE GLSYSTEM PROPERTY STRINGS "Desktop OpenGL" "Embedded OpenGL")
 
 
 # https://stackoverflow.com/a/2211981
@@ -247,6 +246,7 @@ list(APPEND CMAKE_LIBRARY_PATH /opt/local/lib)
 # Package dependencies.
 
 if(GLSYSTEM MATCHES "Desktop OpenGL")
+    MESSAGE("Checking Desktop OpenGL dependency...")
     set(OpenGL_GL_PREFERENCE GLVND)
     find_package(OpenGL REQUIRED)
 elseif(ANDROID)
@@ -258,9 +258,9 @@ endif()
 # $$ commenting batocera version out
 #finding necessary packages
 #-------------------------------------------------------------------------------
-#if(${GLSystem} MATCHES "Desktop OpenGL")
+#if(${GLSYSTEM} MATCHES "Desktop OpenGL")
 #    find_package(OpenGL REQUIRED)
-#elseif(${GLSystem} MATCHES "OpenGL ES 2.0")
+#elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
 #    find_package(OpenGLES2 REQUIRED)
 #else()
 #    find_package(OpenGLES REQUIRED)
@@ -717,9 +717,9 @@ else()
 endif()
 endif()
 
-if(${GLSystem} MATCHES "Desktop OpenGL")
+if(${GLSYSTEM} MATCHES "Desktop OpenGL")
     add_definitions(-DUSE_OPENGL_21)
-elseif(${GLSystem} MATCHES "OpenGL ES 2.0")
+elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
     add_definitions(-DUSE_OPENGLES_20)
 else()
     add_definitions(-DUSE_OPENGLES_10)
@@ -872,11 +872,11 @@ elseif(DEFINED VERO4K)
         "${CMAKE_FIND_ROOT_PATH}/opt/vero3/include"
     )
 else()
-    if(${GLSystem} MATCHES "Desktop OpenGL")
+    if(${GLSYSTEM} MATCHES "Desktop OpenGL")
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGL_INCLUDE_DIR}
         )
-    elseif(${GLSystem} MATCHES "OpenGL ES 2.0")
+    elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGLES2_INCLUDE_DIR}
         )
@@ -1122,12 +1122,12 @@ else()
     # $$ merge w ES-DE
 
 
-    if(${GLSystem} MATCHES "Desktop OpenGL")
+    if(${GLSYSTEM} MATCHES "Desktop OpenGL")
 	# $$ ES-DE default
         LIST(APPEND COMMON_LIBRARIES
             ${OPENGL_LIBRARIES}
         )
-    elseif(${GLSystem} MATCHES "OpenGL ES 2.0")
+    elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_LIBRARIES
             EGL
             ${OPENGLES2_LIBRARIES}
@@ -1178,9 +1178,8 @@ set(LIBRARY_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)
 
 # $$ ES-DE
 if(COMPILE_LOCALIZATIONS)
-    MESSAGE("Compiling localizations (not)")
-# $$ cmake won't listen to COMPILE_LOCALIZATION OFF (!)
-#    add_subdirectory(locale)
+    MESSAGE("Compiling localizations")
+    add_subdirectory(locale)
 endif()
 
 if(NOT HAIKU)
@@ -1199,23 +1198,20 @@ add_subdirectory("es-app")
 # Make sure that es-pdf-convert is built first, and then that rlottie is built before es-core.
 # Also set lottie2gif to not be built.
 if(NOT HAIKU)
-# $$$ can't figure out where lunasvg target is defined
-#    add_dependencies(lunasvg es-pdf-convert)
+    add_dependencies(lunasvg es-pdf-convert)
 endif()
 
 if(COMPILE_LOCALIZATIONS)
     if(NOT HAIKU)
 	# $$$ can't figure out where localization target is defined
-        # add_dependencies(es-pdf-convert localization)
+        add_dependencies(es-pdf-convert localization)
     else()
-	# $$$ can't figure out where lunasvg target is defined
-        # add_dependencies(lunasvg localization)
+        add_dependencies(lunasvg localization)
     endif()
 endif()
 
-# $$$ can't figure out where rlottie target is defined
-#add_dependencies(es-core rlottie)
-#set_target_properties(lottie2gif PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+add_dependencies(es-core rlottie)
+set_target_properties(lottie2gif PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
 # $$ end ES-DE
 
 if(MSGFMT_EXECUTABLE AND MSGMERGE_EXECUTABLE AND XGETTEXT_EXECUTABLE AND Intl_FOUND)

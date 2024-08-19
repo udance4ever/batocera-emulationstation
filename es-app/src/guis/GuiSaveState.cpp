@@ -210,8 +210,10 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 
 	if (input.value != 0 && config->isMappedTo(BUTTON_OK, input))
 	{
+		// $$$ error: cannot initialize object parameter of type 'const IList<ImageGridData, SaveStateItem>' with an expression of type 'element_type' (aka 'ImageGridComponent<SaveStateItem>')
 		if (mGrid->size())
 		{
+			// $$$ error: cannot initialize object parameter of type 'const IList<ImageGridData, SaveStateItem>' with an expression of type 'element_type' (aka 'ImageGridComponent<SaveStateItem>')
 			const SaveStateItem& item = mGrid->getSelected();
 			mRunCallback(item.saveState);
 		}

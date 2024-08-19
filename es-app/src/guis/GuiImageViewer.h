@@ -25,6 +25,9 @@ public:
 	void add(const std::string imagePath);
 	void setCursor(const std::string imagePath);
 
+	// $$$ workaround
+	void setSize(float w, float h);
+
 protected:
 	void loadPdf(const std::string& imagePath);
 	void loadCbz(const std::string& imagePath);
