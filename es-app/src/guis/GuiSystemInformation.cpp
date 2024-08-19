@@ -5,7 +5,7 @@
 #include "ApiSystem.h"
 #include "views/UIModeController.h"
 
-GuiSystemInformation::GuiSystemInformation(Window* window) : GuiSettings(window, _("INFORMATION").c_str())
+GuiSystemInformation::GuiSystemInformation(Window* window) : GuiSettings(window, std::string("INFORMATION").c_str())
 {
 	auto theme = ThemeData::getMenuTheme();
 	std::shared_ptr<Font> font = theme->Text.font;
@@ -13,16 +13,16 @@ GuiSystemInformation::GuiSystemInformation(Window* window) : GuiSettings(window,
 
 	bool warning = ApiSystem::getInstance()->isFreeSpaceLimit();
 
-	addGroup(_("INFORMATION"));
+	addGroup(std::string("INFORMATION"));
 
-	addWithLabel(_("VERSION"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getVersion(), font, color));
-	addWithLabel(_("USER DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceUserInfo(), font, warning ? 0xFF0000FF : color));
-	addWithLabel(_("SYSTEM DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceSystemInfo(), font, color));
+	addWithLabel(std::string("VERSION"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getVersion(), font, color));
+	addWithLabel(std::string("USER DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceUserInfo(), font, warning ? 0xFF0000FF : color));
+	addWithLabel(std::string("SYSTEM DISK USAGE"), std::make_shared<TextComponent>(window, ApiSystem::getInstance()->getFreeSpaceSystemInfo(), font, color));
 	
 	std::vector<std::string> infos = ApiSystem::getInstance()->getSystemInformations();
 	if (infos.size() > 0)
 	{
-		addGroup(_("SYSTEM"));
+		addGroup(std::string("SYSTEM"));
 
 		for (auto info : infos)
 		{
@@ -37,12 +37,12 @@ GuiSystemInformation::GuiSystemInformation(Window* window) : GuiSettings(window,
 					vname += tokens.at(i);
 				}
 
-				addWithLabel(_(tokens.at(0).c_str()), std::make_shared<TextComponent>(window, vname, font, color));
+				addWithLabel(std::string(tokens.at(0).c_str()), std::make_shared<TextComponent>(window, vname, font, color));
 			}
 		}
 	}
 
-	addGroup(_("VIDEO DRIVER"));
+	addGroup(std::string("VIDEO DRIVER"));
 	for (auto info : Renderer::getDriverInformation())
-		addWithLabel(_(info.first.c_str()), std::make_shared<TextComponent>(window, info.second, font, color));
+		addWithLabel(std::string(info.first.c_str()), std::make_shared<TextComponent>(window, info.second, font, color));
 }

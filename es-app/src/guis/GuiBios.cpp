@@ -20,12 +20,12 @@
 
 void GuiBios::show(Window* window)
 {
-	window->pushGui(new GuiLoading<std::vector<BiosSystem>>(window, _("PLEASE WAIT"),
+	window->pushGui(new GuiLoading<std::vector<BiosSystem>>(window, std::string("PLEASE WAIT"),
 		[](auto gui) { return ApiSystem::getInstance()->getBiosInformations(); },
 		[window](std::vector<BiosSystem> ra) 
 	{ 
 		if (ra.size() == 0)
-			window->pushGui(new GuiMsgBox(window, _("NO MISSING BIOS FILES"), _("OK")));
+			window->pushGui(new GuiMsgBox(window, std::string("NO MISSING BIOS FILES"), std::string("OK")));
 		else
 			window->pushGui(new GuiBios(window, ra)); 
 	}));
@@ -48,13 +48,13 @@ GuiBios::GuiBios(Window* window, const std::vector<BiosSystem> bioses)
 	mBackground.setPostProcessShader(theme->Background.menuShader);
 
 	// Title
-	mTitle = std::make_shared<TextComponent>(mWindow, _("MISSING BIOS CHECK"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
+	mTitle = std::make_shared<TextComponent>(mWindow, std::string("MISSING BIOS CHECK"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
 	mGrid.setEntry(mTitle, Vector2i(0, 0), false, true);
 
 	// Tabs
 	mTabs = std::make_shared<ComponentTab>(mWindow);
-	mTabs->addTab(_("Installed systems"));
-	mTabs->addTab(_("All"));	
+	mTabs->addTab(std::string("Installed systems"));
+	mTabs->addTab(std::string("All"));	
 
 	mTabs->setCursorChangedCallback([&](const CursorState& /*state*/)
 		{			
@@ -75,8 +75,8 @@ GuiBios::GuiBios(Window* window, const std::vector<BiosSystem> bioses)
 
 	// Buttons
 	std::vector<std::shared_ptr<ButtonComponent>> buttons;
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("REFRESH"), _("refresh"), [&] { refresh(); }));
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("BACK"), _("BACK"), [this] { delete this; }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("REFRESH"), std::string("refresh"), [&] { refresh(); }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("BACK"), std::string("BACK"), [this] { delete this; }));
 
 	mButtonGrid = makeButtonGrid(mWindow, buttons);
 	mGrid.setEntry(mButtonGrid, Vector2i(0, 3), true, false);
@@ -115,15 +115,18 @@ void GuiBios::onSizeChanged()
 
 void GuiBios::refresh()
 {
-	mWindow->pushGui(new GuiLoading<std::vector<BiosSystem>>(mWindow, _("PLEASE WAIT"),
+	mWindow->pushGui(new GuiLoading<std::vector<BiosSystem>>(mWindow, std::string("PLEASE WAIT"),
 		[](auto gui) { return ApiSystem::getInstance()->getBiosInformations(); },
 		[this](std::vector<BiosSystem> ra) { mBios = ra; loadList(); }));
 }
 
 void GuiBios::loadList()
 {
-#define INVALID_ICON _U("\uF071")
-#define MISSING_ICON _U("\uF127")
+// $$
+//#define INVALID_ICON _U("\uF071")
+//#define MISSING_ICON _U("\uF127")
+#define INVALID_ICON "\uF071"
+#define MISSING_ICON "\uF127"
 	
 	auto theme = ThemeData::getMenuTheme();
 
@@ -137,8 +140,9 @@ void GuiBios::loadList()
 		unsigned int color = theme->Text.color;
 
 		ComponentListRow row;
-		auto text = std::make_shared<TextComponent>(mWindow, _("NO MISSING BIOS"), font, color);
-		if (EsLocale::isRTL())
+		auto text = std::make_shared<TextComponent>(mWindow, std::string("NO MISSING BIOS"), font, color);
+//		if (EsLocale::isRTL())
+		if (0)
 			text->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 
 		row.addElement(text, true);
@@ -186,7 +190,7 @@ void GuiBios::loadList()
 			spacer->setSize(14, 0);
 			row.addElement(spacer, false);
 
-			std::string status = _(biosFile.status.c_str()) + std::string(biosFile.md5.empty() || biosFile.md5 == "-" ? "" : " - MD5: " + biosFile.md5);
+			std::string status = std::string(biosFile.status.c_str()) + std::string(biosFile.md5.empty() || biosFile.md5 == "-" ? "" : " - MD5: " + biosFile.md5);
 
 			auto line = std::make_shared<MultiLineMenuEntry>(mWindow, biosFile.path, status);
 			row.addElement(line, true);
@@ -234,7 +238,7 @@ bool GuiBios::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiBios::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts; // = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("REFRESH")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("REFRESH")));
 	return prompts;
 }

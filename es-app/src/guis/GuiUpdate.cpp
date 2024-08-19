@@ -20,8 +20,9 @@ public:
 
 		mWndNotification = mWindow->createAsyncNotificationComponent();
 
-		auto label = Utils::String::format(_("UPDATING %s").c_str(), ApiSystem::getInstance()->getApplicationName().c_str());
-		mWndNotification->updateTitle(_U("\uF019 ") + label);
+		auto label = Utils::String::format(std::string("UPDATING %s").c_str(), ApiSystem::getInstance()->getApplicationName().c_str());
+//		mWndNotification->updateTitle(_U("\uF019 ") + label);
+		mWndNotification->updateTitle("\uF019 " + label);
 
 		mHandle = new std::thread(&ThreadedUpdater::threadUpdate, this);
 	}
@@ -63,8 +64,9 @@ public:
 		{
 			GuiUpdate::state = GuiUpdateState::State::UPDATE_READY;
 
-			mWndNotification->updateTitle(_U("\uF019 ") + _("UPDATE IS READY"));
-			mWndNotification->updateText(_("REBOOT TO APPLY"));
+//			mWndNotification->updateTitle(_U("\uF019 ") + std::string("UPDATE IS READY"));
+			mWndNotification->updateTitle("\uF019 " + std::string("UPDATE IS READY"));
+			mWndNotification->updateText(std::string("REBOOT TO APPLY"));
 
 			std::this_thread::yield();
 			std::this_thread::sleep_for(std::chrono::hours(12));
@@ -73,7 +75,7 @@ public:
 		{
 			GuiUpdate::state = GuiUpdateState::State::NO_UPDATE;
 
-			std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+			std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 			mWindow->displayNotificationMessage(error);
 		}
 
@@ -161,17 +163,17 @@ void GuiUpdate::update(int deltaTime)
 		{
 			mState = 0;
 
-			std::string message = _("REALLY UPDATE?");
+			std::string message = std::string("REALLY UPDATE?");
 
 			if (!mUpdateVersion.empty()) 
 			{
 				std::string versionExtra = ApiSystem::getInstance()->getVersion(true);
 				if (versionExtra == "none")
-					message = Utils::String::format(_("YOU ARE CURRENTLY USING VERSION %s\nDO YOU WANT TO UPDATE TO VERSION %s?").c_str(), ApiSystem::getInstance()->getVersion().c_str(), mUpdateVersion.c_str());
+					message = Utils::String::format(std::string("YOU ARE CURRENTLY USING VERSION %s\nDO YOU WANT TO UPDATE TO VERSION %s?").c_str(), ApiSystem::getInstance()->getVersion().c_str(), mUpdateVersion.c_str());
 				else
-					message = Utils::String::format(_("UNOFFICIAL SYSTEM MODIFICATIONS DETECTED.\nUPGRADING COULD BREAK YOUR SYSTEM.\nDO YOU WANT TO UPDATE TO VERSION %s?").c_str(), mUpdateVersion.c_str());
+					message = Utils::String::format(std::string("UNOFFICIAL SYSTEM MODIFICATIONS DETECTED.\nUPGRADING COULD BREAK YOUR SYSTEM.\nDO YOU WANT TO UPDATE TO VERSION %s?").c_str(), mUpdateVersion.c_str());
 
-				window->pushGui(new GuiMsgBox(window, message, _("YES"), [this]
+				window->pushGui(new GuiMsgBox(window, message, std::string("YES"), [this]
 				{
 					mState = 2;
 					mLoading = true;
@@ -179,7 +181,7 @@ void GuiUpdate::update(int deltaTime)
 					mState = -1;
 					new ThreadedUpdater(mWindow);
 
-				}, _("NO"), [this] { mState = -1; }));
+				}, std::string("NO"), [this] { mState = -1; }));
 			}
 		}		
 		break;
@@ -187,7 +189,7 @@ void GuiUpdate::update(int deltaTime)
 		case 3:
 		
 			mState = 0;
-			window->pushGui(new GuiMsgBox(window, _("NETWORK CONNECTION NEEDED"), _("OK"), [this] 
+			window->pushGui(new GuiMsgBox(window, std::string("NETWORK CONNECTION NEEDED"), std::string("OK"), [this] 
 			{
 				mState = -1;
 			}));			
@@ -197,7 +199,7 @@ void GuiUpdate::update(int deltaTime)
 		case 6:
 
 			mState = 0;
-			window->pushGui(new GuiMsgBox(window, _("NO UPDATE AVAILABLE"), _("OK"), [this] 
+			window->pushGui(new GuiMsgBox(window, std::string("NO UPDATE AVAILABLE"), std::string("OK"), [this] 
 			{
 				mState = -1;
 			}));

@@ -11,30 +11,30 @@
 #include "guis/GuiTextEditPopupKeyboard.h"
 #include "guis/GuiFileBrowser.h"
 
-#define fake_gettext_dim			_("dim")
-#define fake_gettext_black			_("black")
-#define fake_gettext_randomvideo	_("random video")
-#define fake_gettext_slideshow		_("slideshow")
-#define fake_gettext_suspend		_("suspend")
+#define fake_gettext_dim			std::string("dim")
+#define fake_gettext_black			std::string("black")
+#define fake_gettext_randomvideo	std::string("random video")
+#define fake_gettext_slideshow		std::string("slideshow")
+#define fake_gettext_suspend		std::string("suspend")
 
-#define fake_gettext_always			_("always")
-#define fake_gettext_start_end		_("start & end")
-#define fake_gettext_never			_("never")
+#define fake_gettext_always			std::string("always")
+#define fake_gettext_start_end		std::string("start & end")
+#define fake_gettext_never			std::string("never")
 
-#define fake_gettext_none			_("none")
-#define fake_gettext_systems		_("systems")
-#define fake_gettext_random			_("random")
+#define fake_gettext_none			std::string("none")
+#define fake_gettext_systems		std::string("systems")
+#define fake_gettext_random			std::string("random")
 
-GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int selectItem) : GuiSettings(window, _("SCREENSAVER SETTINGS"))
+GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int selectItem) : GuiSettings(window, std::string("SCREENSAVER SETTINGS"))
 {
 	std::string ssBehavior = Settings::getInstance()->getString("ScreenSaverBehavior");
 
-	mMenu.addGroup(_("SETTINGS"));
+	mMenu.addGroup(std::string("SETTINGS"));
 
 	// Screensaver time
 	auto ctlTime = std::make_shared<SliderComponent>(mWindow, 0.f, 120.0f, 1.f, "m");
 	ctlTime->setValue((float)(Settings::getInstance()->getInt("ScreenSaverTime") / (1000 * 60)));
-	addWithLabel(_("START SCREENSAVER AFTER"), ctlTime);
+	addWithLabel(std::string("START SCREENSAVER AFTER"), ctlTime);
 	addSaveFunc([ctlTime]
 	{
 	    Settings::getInstance()->setInt("ScreenSaverTime", (int)Math::round(ctlTime->getValue()) * (1000 * 60));
@@ -42,14 +42,14 @@ GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int s
 	});
 	
 	// Screensaver behavior
-	auto ctlBehavior = std::make_shared< OptionListComponent<std::string> >(mWindow, _("SCREENSAVER TYPE"), false);
+	auto ctlBehavior = std::make_shared< OptionListComponent<std::string> >(mWindow, std::string("SCREENSAVER TYPE"), false);
 
 	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::SUSPEND))
 		ctlBehavior->addRange({ "dim", "black", "random video", "slideshow", "suspend" }, ssBehavior);
 	else
 		ctlBehavior->addRange({ "dim", "black", "random video", "slideshow" }, ssBehavior);
 
-	addWithLabel(_("SCREENSAVER TYPE"), ctlBehavior, selectItem == 1);
+	addWithLabel(std::string("SCREENSAVER TYPE"), ctlBehavior, selectItem == 1);
 	ctlBehavior->setSelectedChangedCallback([this](const std::string& name)
 	{
 		if (Settings::getInstance()->setString("ScreenSaverBehavior", name))
@@ -67,7 +67,7 @@ GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int s
 	{
 		auto ctlStopMusic = std::make_shared<SwitchComponent>(mWindow);
 		ctlStopMusic->setState(Settings::getInstance()->getBool("StopMusicOnScreenSaver"));
-		addWithLabel(_("STOP MUSIC ON SCREENSAVER"), ctlStopMusic);
+		addWithLabel(std::string("STOP MUSIC ON SCREENSAVER"), ctlStopMusic);
 		addSaveFunc([ctlStopMusic] { Settings::getInstance()->setBool("StopMusicOnScreenSaver", ctlStopMusic->getState()); });
 	}
 
@@ -79,7 +79,7 @@ GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int s
 
 void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 {
-	mMenu.addGroup(_("RANDOM VIDEO SCREENSAVER SETTINGS"));
+	mMenu.addGroup(std::string("RANDOM VIDEO SCREENSAVER SETTINGS"));
 
 	auto theme = ThemeData::getMenuTheme();
 
@@ -88,7 +88,7 @@ void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 	// timeout to swap videos
 	auto swap = std::make_shared<SliderComponent>(mWindow, 10.f, 1000.f, 1.f, "s");
 	swap->setValue((float)(Settings::getInstance()->getInt("ScreenSaverSwapVideoTimeout") / (1000)));
-	addWithLabel(_("VIDEO DURATION (SECS)"), swap);
+	addWithLabel(std::string("VIDEO DURATION (SECS)"), swap);
 	addSaveFunc([swap] {
 		int playNextTimeout = (int)Math::round(swap->getValue()) * (1000);
 		Settings::getInstance()->setInt("ScreenSaverSwapVideoTimeout", playNextTimeout);
@@ -98,7 +98,7 @@ void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 #ifdef _RPI_
 	auto ss_omx = std::make_shared<SwitchComponent>(mWindow);
 	ss_omx->setState(Settings::getInstance()->getBool("ScreenSaverOmxPlayer"));
-	addWithLabel(_("USE OMX PLAYER FOR SCREENSAVER"), ss_omx, selectItem == 4);
+	addWithLabel(std::string("USE OMX PLAYER FOR SCREENSAVER"), ss_omx, selectItem == 4);
 	addSaveFunc([ss_omx, this] { Settings::getInstance()->setBool("ScreenSaverOmxPlayer", ss_omx->getState()); });
 	ss_omx->setOnChangedCallback([this, ss_omx]()
 	{
@@ -112,14 +112,14 @@ void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 #endif
 
 	// Render Video Game Name as subtitles
-	auto ss_info = std::make_shared< OptionListComponent<std::string> >(mWindow, _("SHOW GAME INFO"), false);	
+	auto ss_info = std::make_shared< OptionListComponent<std::string> >(mWindow, std::string("SHOW GAME INFO"), false);	
 	ss_info->addRange({ "always", "start & end", "never" }, Settings::getInstance()->getString("ScreenSaverGameInfo"));
 
 	std::vector<std::string> info_type = { "always", "start & end", "never" };
 	for (auto it = info_type.cbegin(); it != info_type.cend(); it++)
-		ss_info->add(_(it->c_str()), *it, Settings::getInstance()->getString("ScreenSaverGameInfo") == *it);
+		ss_info->add(std::string(it->c_str()), *it, Settings::getInstance()->getString("ScreenSaverGameInfo") == *it);
 
-	addWithLabel(_("SHOW GAME INFO"), ss_info);
+	addWithLabel(std::string("SHOW GAME INFO"), ss_info);
 	addSaveFunc([ss_info, this] { Settings::getInstance()->setString("ScreenSaverGameInfo", ss_info->getSelected()); });
 
 	bool advancedOptions = true;
@@ -132,38 +132,38 @@ void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 	{
 		auto marquee_screensaver = std::make_shared<SwitchComponent>(mWindow);
 		marquee_screensaver->setState(Settings::getInstance()->getBool("ScreenSaverMarquee"));
-		addWithLabel(_("USE MARQUEE AS GAME INFO"), marquee_screensaver);
+		addWithLabel(std::string("USE MARQUEE AS GAME INFO"), marquee_screensaver);
 		addSaveFunc([marquee_screensaver] { Settings::getInstance()->setBool("ScreenSaverMarquee", marquee_screensaver->getState()); });
 
 		if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::DECORATIONS))
 		{
-			auto decoration_screensaver = std::make_shared<OptionListComponent<std::string>>(mWindow, _("DECORATION SET USED"), false);
+			auto decoration_screensaver = std::make_shared<OptionListComponent<std::string>>(mWindow, std::string("DECORATION SET USED"), false);
 			decoration_screensaver->addRange({ "none", "systems", "random" }, Settings::getInstance()->getString("ScreenSaverDecorations"));
-			addWithLabel(_("DECORATION SET USED"), decoration_screensaver);
+			addWithLabel(std::string("DECORATION SET USED"), decoration_screensaver);
 			addSaveFunc([decoration_screensaver] { Settings::getInstance()->setString("ScreenSaverDecorations", decoration_screensaver->getSelected()); });
 		}
 	}
 
 	auto stretch_screensaver = std::make_shared<SwitchComponent>(mWindow);
 	stretch_screensaver->setState(Settings::getInstance()->getBool("StretchVideoOnScreenSaver"));
-	addWithLabel(_("STRETCH VIDEOS"), stretch_screensaver);
+	addWithLabel(std::string("STRETCH VIDEOS"), stretch_screensaver);
 	addSaveFunc([stretch_screensaver] { Settings::getInstance()->setBool("StretchVideoOnScreenSaver", stretch_screensaver->getState()); });
 
 	auto ss_video_mute = std::make_shared<SwitchComponent>(mWindow);
 	ss_video_mute->setState(Settings::getInstance()->getBool("ScreenSaverVideoMute"));
-	addWithLabel(_("MUTE VIDEO AUDIO"), ss_video_mute);
+	addWithLabel(std::string("MUTE VIDEO AUDIO"), ss_video_mute);
 	addSaveFunc([ss_video_mute] { Settings::getInstance()->setBool("ScreenSaverVideoMute", ss_video_mute->getState()); });
 
 	// Allow ScreenSaver Controls - ScreenSaverControls
 	auto controls = std::make_shared<SwitchComponent>(mWindow);
 	controls->setState(Settings::getInstance()->getBool("ScreenSaverControls"));
-	addWithLabel(_("SCREENSAVER CONTROLS"), controls);
+	addWithLabel(std::string("SCREENSAVER CONTROLS"), controls);
 	addSaveFunc([controls] { Settings::getInstance()->setBool("ScreenSaverControls", controls->getState()); });
 
 	// video source
 	auto sss_custom_source = std::make_shared<SwitchComponent>(mWindow);
 	sss_custom_source->setState(useCustomVideoSource);
-	addWithLabel(_("USE CUSTOM VIDEOS"), sss_custom_source, selectItem == 2);
+	addWithLabel(std::string("USE CUSTOM VIDEOS"), sss_custom_source, selectItem == 2);
 	sss_custom_source->setOnChangedCallback([this, sss_custom_source]()
 	{
 		if (Settings::getInstance()->setBool("SlideshowScreenSaverCustomVideoSource", sss_custom_source->getState()))
@@ -177,30 +177,30 @@ void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 	if (useCustomVideoSource)
 	{
 		// custom video directory
-		auto sss_image_dir = addBrowsablePath(_("CUSTOM VIDEO DIRECTORY"), Settings::getInstance()->getString("SlideshowScreenSaverVideoDir"));
+		auto sss_image_dir = addBrowsablePath(std::string("CUSTOM VIDEO DIRECTORY"), Settings::getInstance()->getString("SlideshowScreenSaverVideoDir"));
 		addSaveFunc([sss_image_dir] { Settings::getInstance()->setString("SlideshowScreenSaverVideoDir", sss_image_dir->getValue()); });
 
 		// recurse custom video directory
 		auto sss_recurse = std::make_shared<SwitchComponent>(mWindow, Settings::getInstance()->getBool("SlideshowScreenSaverVideoRecurse"));
-		addWithLabel(_("USE VIDEOS IN SUBFOLDERS OF CUSTOM DIRECTORY"), sss_recurse);
+		addWithLabel(std::string("USE VIDEOS IN SUBFOLDERS OF CUSTOM DIRECTORY"), sss_recurse);
 		addSaveFunc([sss_recurse] { Settings::getInstance()->setBool("SlideshowScreenSaverVideoRecurse", sss_recurse->getState()); });
 
 		// custom video filter
-		auto sss_image_filter = addEditableTextComponent(_("CUSTOM VIDEO FILE EXTENSIONS"), Settings::getInstance()->getString("SlideshowScreenSaverVideoFilter"));
+		auto sss_image_filter = addEditableTextComponent(std::string("CUSTOM VIDEO FILE EXTENSIONS"), Settings::getInstance()->getString("SlideshowScreenSaverVideoFilter"));
 		addSaveFunc([sss_image_filter] { Settings::getInstance()->setString("SlideshowScreenSaverVideoFilter", sss_image_filter->getValue()); });
 	}
 }
 
 void GuiGeneralScreensaverOptions::addSlideShowScreensaverOptions(int selectItem)
 {
-	mMenu.addGroup(_("SLIDESHOW SCREENSAVER SETTINGS"));
+	mMenu.addGroup(std::string("SLIDESHOW SCREENSAVER SETTINGS"));
 
 	auto theme = ThemeData::getMenuTheme();
 
 	// image duration (seconds)
 	auto sss_image_sec = std::make_shared<SliderComponent>(mWindow, 1.f, 60.f, 1.f, "s");
 	sss_image_sec->setValue((float)(Settings::getInstance()->getInt("ScreenSaverSwapImageTimeout") / (1000)));
-	addWithLabel(_("IMAGE DURATION (SECS)"), sss_image_sec);
+	addWithLabel(std::string("IMAGE DURATION (SECS)"), sss_image_sec);
 	addSaveFunc([sss_image_sec] {
 		int playNextTimeout = (int)Math::round(sss_image_sec->getValue()) * (1000);
 		Settings::getInstance()->setInt("ScreenSaverSwapImageTimeout", playNextTimeout);
@@ -210,26 +210,26 @@ void GuiGeneralScreensaverOptions::addSlideShowScreensaverOptions(int selectItem
 	// SHOW GAME NAME
 	auto ss_controls = std::make_shared<SwitchComponent>(mWindow);
 	ss_controls->setState(Settings::getInstance()->getBool("SlideshowScreenSaverGameName"));
-	addWithLabel(_("SHOW GAME INFO"), ss_controls);
+	addWithLabel(std::string("SHOW GAME INFO"), ss_controls);
 	addSaveFunc([ss_controls] { Settings::getInstance()->setBool("SlideshowScreenSaverGameName", ss_controls->getState()); });
 
 	auto marquee_screensaver = std::make_shared<SwitchComponent>(mWindow);
 	marquee_screensaver->setState(Settings::getInstance()->getBool("ScreenSaverMarquee"));
-	addWithLabel(_("USE MARQUEE AS GAME INFO"), marquee_screensaver);
+	addWithLabel(std::string("USE MARQUEE AS GAME INFO"), marquee_screensaver);
 	addSaveFunc([marquee_screensaver] { Settings::getInstance()->setBool("ScreenSaverMarquee", marquee_screensaver->getState()); });
 
 	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::DECORATIONS))
 	{
-		auto decoration_screensaver = std::make_shared<OptionListComponent<std::string>>(mWindow, _("DECORATION SET USED"), false);
+		auto decoration_screensaver = std::make_shared<OptionListComponent<std::string>>(mWindow, std::string("DECORATION SET USED"), false);
 		decoration_screensaver->addRange({ "none", "systems", "random" }, Settings::getInstance()->getString("ScreenSaverDecorations"));
-		addWithLabel(_("DECORATION SET USED"), decoration_screensaver);
+		addWithLabel(std::string("DECORATION SET USED"), decoration_screensaver);
 		addSaveFunc([decoration_screensaver] { Settings::getInstance()->setString("ScreenSaverDecorations", decoration_screensaver->getSelected()); });
 	}
 
 	// stretch
 	auto sss_stretch = std::make_shared<SwitchComponent>(mWindow);
 	sss_stretch->setState(Settings::getInstance()->getBool("SlideshowScreenSaverStretch"));
-	addWithLabel(_("STRETCH IMAGES"), sss_stretch);
+	addWithLabel(std::string("STRETCH IMAGES"), sss_stretch);
 	addSaveFunc([sss_stretch] {
 		Settings::getInstance()->setBool("SlideshowScreenSaverStretch", sss_stretch->getState());
 	});
@@ -238,13 +238,13 @@ void GuiGeneralScreensaverOptions::addSlideShowScreensaverOptions(int selectItem
 	// Allow ScreenSaver Controls - ScreenSaverControls
 	auto controls = std::make_shared<SwitchComponent>(mWindow);
 	controls->setState(Settings::getInstance()->getBool("ScreenSaverControls"));
-	addWithLabel(_("SCREENSAVER CONTROLS"), controls);
+	addWithLabel(std::string("SCREENSAVER CONTROLS"), controls);
 	addSaveFunc([controls] { Settings::getInstance()->setBool("ScreenSaverControls", controls->getState()); });
 
 	/*
 	// background audio file
 	auto sss_bg_audio_file = std::make_shared<TextComponent>(mWindow, "", theme->TextSmall.font, theme->Text.color);
-	addEditableTextComponent(row, _("BACKGROUND AUDIO"), sss_bg_audio_file, Settings::getInstance()->getString("SlideshowScreenSaverBackgroundAudioFile"));
+	addEditableTextComponent(row, std::string("BACKGROUND AUDIO"), sss_bg_audio_file, Settings::getInstance()->getString("SlideshowScreenSaverBackgroundAudioFile"));
 	addSaveFunc([sss_bg_audio_file] {
 	Settings::getInstance()->setString("SlideshowScreenSaverBackgroundAudioFile", sss_bg_audio_file->getValue());
 	});
@@ -255,7 +255,7 @@ void GuiGeneralScreensaverOptions::addSlideShowScreensaverOptions(int selectItem
 	// image source
 	auto sss_custom_source = std::make_shared<SwitchComponent>(mWindow);
 	sss_custom_source->setState(customSource);
-	addWithLabel(_("USE CUSTOM IMAGES"), sss_custom_source, selectItem == 3);
+	addWithLabel(std::string("USE CUSTOM IMAGES"), sss_custom_source, selectItem == 3);
 
 	sss_custom_source->setOnChangedCallback([this, sss_custom_source]()
 	{
@@ -270,16 +270,16 @@ void GuiGeneralScreensaverOptions::addSlideShowScreensaverOptions(int selectItem
 	if (customSource)
 	{
 		// custom image directory
-		auto sss_image_dir = addBrowsablePath(_("CUSTOM IMAGE DIRECTORY"), Settings::getInstance()->getString("SlideshowScreenSaverImageDir"));
+		auto sss_image_dir = addBrowsablePath(std::string("CUSTOM IMAGE DIRECTORY"), Settings::getInstance()->getString("SlideshowScreenSaverImageDir"));
 		addSaveFunc([sss_image_dir] { Settings::getInstance()->setString("SlideshowScreenSaverImageDir", sss_image_dir->getValue()); });
 
 		// recurse custom image directory
 		auto sss_recurse = std::make_shared<SwitchComponent>(mWindow, Settings::getInstance()->getBool("SlideshowScreenSaverRecurse"));
-		addWithLabel(_("USE IMAGES IN SUBFOLDERS OF CUSTOM DIRECTORY"), sss_recurse);
+		addWithLabel(std::string("USE IMAGES IN SUBFOLDERS OF CUSTOM DIRECTORY"), sss_recurse);
 		addSaveFunc([sss_recurse] { Settings::getInstance()->setBool("SlideshowScreenSaverRecurse", sss_recurse->getState()); });
 
 		// custom image filter
-		auto sss_image_filter = addEditableTextComponent(_("CUSTOM IMAGE FILE EXTENSIONS"), Settings::getInstance()->getString("SlideshowScreenSaverImageFilter"));
+		auto sss_image_filter = addEditableTextComponent(std::string("CUSTOM IMAGE FILE EXTENSIONS"), Settings::getInstance()->getString("SlideshowScreenSaverImageFilter"));
 		addSaveFunc([sss_image_filter] { Settings::getInstance()->setString("SlideshowScreenSaverImageFilter", sss_image_filter->getValue()); });
 	}
 }

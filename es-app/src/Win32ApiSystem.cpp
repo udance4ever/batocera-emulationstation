@@ -514,7 +514,9 @@ std::pair<std::string, int> Win32ApiSystem::installBatoceraBezel(std::string bez
 				Utils::FileSystem::createDirectory(tmp);
 
 				if (func != nullptr)
-					func(_("Extracting") + " " + bezelsystem+ " bezels");
+// $$
+//					func(_("Extracting") + " " + bezelsystem+ " bezels");
+					func(std::string("Extracting") + " " + bezelsystem+ " bezels");
 				
 				auto shouldProcessFile = [subFolder](const std::string name)
 				{

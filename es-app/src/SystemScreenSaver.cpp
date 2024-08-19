@@ -662,6 +662,7 @@ void GameScreenSaverBase::setGame(FileData* game)
 				if (fp)
 				{
 					char readBuffer[65536];
+ 
 					rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 					rapidjson::Document doc;
 					doc.ParseStream(is);

@@ -1,296 +1,602 @@
-//  SPDX-License-Identifier: MIT
-//
-//  ES-DE Frontend
-//  AudioManager.cpp
-//
-//  Low-level audio functions (using SDL2).
-//
-
 #include "AudioManager.h"
 
 #include "Log.h"
 #include "Settings.h"
 #include "Sound.h"
+#include <SDL.h>
+#include "utils/FileSystemUtil.h"
+#include "utils/StringUtil.h"
+#include "utils/Randomizer.h"
+#include "SystemConf.h"
+#include "id3v2lib/include/id3v2lib.h"
+#include "ThemeData.h"
+#include "Paths.h"
 
-#include <SDL2/SDL.h>
+#ifdef WIN32
+#include <time.h>
+#else
+#include <unistd.h>
+#endif
 
-AudioManager::AudioManager() noexcept
+// batocera
+// Size of last played music history as a percentage of file total
+#define LAST_PLAYED_SIZE 0.4
+
+AudioManager* AudioManager::sInstance = NULL;
+std::vector<std::shared_ptr<Sound>> AudioManager::sSoundVector;
+
+AudioManager::AudioManager() : mInitialized(false), mCurrentMusic(nullptr), mMusicVolume(MIX_MAX_VOLUME), mVideoPlaying(false)
 {
-    // Init on construction.
-    init();
+	init();
 }
 
 AudioManager::~AudioManager()
 {
-    // Deinit on destruction.
-    deinit();
+	deinit();
 }
 
-AudioManager& AudioManager::getInstance()
+AudioManager* AudioManager::getInstance()
 {
-    static AudioManager instance;
-    return instance;
+	//check if an AudioManager instance is already created, if not create one
+	if (sInstance == nullptr)
+		sInstance = new AudioManager();
+
+	return sInstance;
+}
+
+bool AudioManager::isInitialized()
+{
+	if (sInstance == nullptr)
+		return false;
+
+	return sInstance->mInitialized;
 }
 
 void AudioManager::init()
 {
-    LOG(LogInfo) << "Setting up AudioManager...";
+	if (mInitialized)
+		return;
+	
+	mSongNameChanged = false;
+	mPlayingSystemThemeSong = "none";
+	std::deque<std::string> mLastPlayed;
 
-    if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
-        LOG(LogError) << "Error initializing SDL audio!\n" << SDL_GetError();
-        return;
-    }
+	if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0)
+	{
+		LOG(LogError) << "Error initializing SDL audio!\n" << SDL_GetError();
+		return;
+	}
 
-    LOG(LogInfo) << "Audio driver: " << SDL_GetCurrentAudioDriver();
+	// Open the audio device and pause
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
+	{
+		mMusicVolume = 0;
+		LOG(LogError) << "MUSIC Error - Unable to open SDLMixer audio: " << SDL_GetError() << std::endl;
+	}
+	else
+	{
+		LOG(LogInfo) << "SDL AUDIO Initialized";
+		mInitialized = true;
 
-    SDL_AudioSpec sRequestedAudioFormat;
+		// Reload known sounds
+		for (unsigned int i = 0; i < sSoundVector.size(); i++)
+			sSoundVector[i]->init();
 
-    SDL_memset(&sRequestedAudioFormat, 0, sizeof(sRequestedAudioFormat));
-    SDL_memset(&sAudioFormat, 0, sizeof(sAudioFormat));
-
-    // Set up format and callback. SDL will negotiate these settings with the audio driver, so
-    // if for instance the driver/hardware does not support 32-bit floating point output, 16-bit
-    // integer may be selected instead. ES-DE will handle this automatically as there are no
-    // hardcoded audio settings elsewhere in the code.
-    sRequestedAudioFormat.freq = 44100;
-    sRequestedAudioFormat.format = AUDIO_F32;
-    sRequestedAudioFormat.channels = 2;
-    sRequestedAudioFormat.samples = 1024;
-    sRequestedAudioFormat.callback = mixAudio;
-    sRequestedAudioFormat.userdata = nullptr;
-
-    for (int i {0}; i < SDL_GetNumAudioDevices(0); ++i) {
-        LOG(LogInfo) << "Detected playback device: " << SDL_GetAudioDeviceName(i, 0);
-    }
-
-    sAudioDevice = SDL_OpenAudioDevice(0, 0, &sRequestedAudioFormat, &sAudioFormat,
-                                       SDL_AUDIO_ALLOW_ANY_CHANGE);
-
-    if (sAudioDevice == 0) {
-        LOG(LogError) << "Unable to open audio device: " << SDL_GetError();
-        sHasAudioDevice = false;
-    }
-
-    if (sAudioFormat.freq != sRequestedAudioFormat.freq) {
-        LOG(LogDebug) << "AudioManager::init(): Requested sample rate "
-                      << std::to_string(sRequestedAudioFormat.freq)
-                      << " could not be set, obtained " << std::to_string(sAudioFormat.freq);
-    }
-    if (sAudioFormat.format != sRequestedAudioFormat.format) {
-        LOG(LogDebug) << "AudioManager::init(): Requested format "
-                      << std::to_string(sRequestedAudioFormat.format)
-                      << " could not be set, obtained " << std::to_string(sAudioFormat.format);
-    }
-    if (sAudioFormat.channels != sRequestedAudioFormat.channels) {
-        LOG(LogDebug) << "AudioManager::init(): Requested channel count "
-                      << std::to_string(sRequestedAudioFormat.channels)
-                      << " could not be set, obtained " << std::to_string(sAudioFormat.channels);
-    }
-#if defined(_WIN64) || defined(__APPLE__)
-    // Beats me why the buffer size is not divided by the channel count on some operating systems.
-    if (sAudioFormat.samples != sRequestedAudioFormat.samples) {
-#else
-    if (sAudioFormat.samples != sRequestedAudioFormat.samples / sRequestedAudioFormat.channels) {
-#endif
-        LOG(LogDebug) << "AudioManager::init(): Requested sample buffer size "
-                      << std::to_string(sRequestedAudioFormat.samples /
-                                        sRequestedAudioFormat.channels)
-                      << " could not be set, obtained " << std::to_string(sAudioFormat.samples);
-    }
-
-    // Just in case someone changed the es_settings.xml file manually to invalid values.
-    if (Settings::getInstance()->getInt("SoundVolumeNavigation") > 100)
-        Settings::getInstance()->setInt("SoundVolumeNavigation", 100);
-    if (Settings::getInstance()->getInt("SoundVolumeNavigation") < 0)
-        Settings::getInstance()->setInt("SoundVolumeNavigation", 0);
-    if (Settings::getInstance()->getInt("SoundVolumeVideos") > 100)
-        Settings::getInstance()->setInt("SoundVolumeVideos", 100);
-    if (Settings::getInstance()->getInt("SoundVolumeVideos") < 0)
-        Settings::getInstance()->setInt("SoundVolumeVideos", 0);
-
-    setupAudioStream(sRequestedAudioFormat.freq);
+		mMusicVolume = getMaxMusicVolume();
+		Mix_VolumeMusic(mMusicVolume);
+	}
 }
+
 
 void AudioManager::deinit()
 {
-    if (sAudioDevice == 0)
-        return;
+	if (!mInitialized)
+		return;
 
-    SDL_LockAudioDevice(sAudioDevice);
-    SDL_FreeAudioStream(sConversionStream);
-    SDL_UnlockAudioDevice(sAudioDevice);
+	LOG(LogDebug) << "AudioManager::deinit";
 
-    SDL_CloseAudio();
-    SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	mInitialized = false;
 
-    sConversionStream = nullptr;
-    sAudioDevice = 0;
+	//stop all playback
+	stop();
+	stopMusic();
+
+	// Free known sounds from memory
+	for (unsigned int i = 0; i < sSoundVector.size(); i++)
+		sSoundVector[i]->deinit();
+
+	Mix_HookMusicFinished(nullptr);
+	Mix_HaltMusic();
+
+	//completely tear down SDL audio. else SDL hogs audio resources and emulators might fail to start...
+	Mix_CloseAudio();
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
+	LOG(LogInfo) << "SDL AUDIO Deinitialized";
 }
 
-void AudioManager::mixAudio(void* /*unused*/, Uint8* stream, int len)
+void AudioManager::registerSound(std::shared_ptr<Sound> & sound)
 {
-    // Process navigation sounds.
-    bool stillPlaying {false};
-
-    // Initialize the buffer to "silence".
-    SDL_memset(stream, 0, len);
-
-    // Iterate through all our samples.
-    std::vector<std::shared_ptr<Sound>>::const_iterator soundIt {sSoundVector.cbegin()};
-    while (soundIt != sSoundVector.cend()) {
-        std::shared_ptr<Sound> sound {*soundIt};
-        if (sound->isPlaying()) {
-            // Calculate rest length of current sample.
-            Uint32 restLength {sound->getLength() - sound->getPosition()};
-            if (restLength > static_cast<Uint32>(len)) {
-                // If stream length is smaller than sample length, clip it.
-                restLength = len;
-            }
-            // Mix sample into stream.
-            SDL_MixAudioFormat(
-                stream, &(sound->getData()[sound->getPosition()]), sAudioFormat.format, restLength,
-                static_cast<int>(Settings::getInstance()->getInt("SoundVolumeNavigation") * 1.28f));
-            if (sound->getPosition() + restLength < sound->getLength()) {
-                // Sample hasn't ended yet.
-                stillPlaying = true;
-            }
-            // Set new sound position. if this is at or beyond the end of the sample,
-            // it will stop automatically.
-            sound->setPosition(sound->getPosition() + restLength);
-        }
-        // Advance to next sound.
-        ++soundIt;
-    }
-
-    // Process video stream audio generated by VideoFFmpegComponent.
-    int streamLength {SDL_AudioStreamAvailable(sConversionStream)};
-
-    if (streamLength <= 0) {
-        // If nothing is playing, pause the device until there is more audio to output.
-        if (!stillPlaying)
-            SDL_PauseAudioDevice(sAudioDevice, 1);
-        return;
-    }
-
-    int chunkLength {0};
-
-    // Cap the chunk length to the buffer size.
-    if (streamLength > len)
-        chunkLength = len;
-    else
-        chunkLength = streamLength;
-
-    std::vector<Uint8> converted(chunkLength);
-
-    int processedLength {
-        SDL_AudioStreamGet(sConversionStream, static_cast<void*>(&converted.at(0)), chunkLength)};
-
-    if (processedLength < 0) {
-        LOG(LogError) << "AudioManager::mixAudio(): Couldn't convert sound chunk:";
-        LOG(LogError) << SDL_GetError();
-        return;
-    }
-
-    // Enable only when needed, as this generates a lot of debug output.
-    //    LOG(LogDebug) << "AudioManager::mixAudio(): chunkLength "
-    //            "/ processedLength / streamLength: " << chunkLength << " / " <<
-    //            " / " << processedLength << " / " << streamLength;
-
-    // This mute flag is used to make sure that the audio buffer already sent to the
-    // stream is not played when the video player has been stopped. Otherwise there would
-    // be a short time period when the audio would keep playing after the video was stopped
-    // and before the stream was cleared in clearStream().
-    bool muteStream {sMuteStream};
-    if (muteStream) {
-        SDL_MixAudioFormat(stream, &converted.at(0), sAudioFormat.format, processedLength, 0);
-    }
-    else {
-        SDL_MixAudioFormat(
-            stream, &converted.at(0), sAudioFormat.format, processedLength,
-            static_cast<int>(Settings::getInstance()->getInt("SoundVolumeVideos") * 1.28f));
-    }
-
-    // If nothing is playing, pause the device until there is more audio to output.
-    if (!stillPlaying && SDL_AudioStreamAvailable(sConversionStream) == 0)
-        SDL_PauseAudioDevice(sAudioDevice, 1);
+	getInstance();
+	sSoundVector.push_back(sound);
 }
 
-void AudioManager::registerSound(std::shared_ptr<Sound> sound)
+void AudioManager::unregisterSound(std::shared_ptr<Sound> & sound)
 {
-    // Add sound to sound vector.
-    sSoundVector.push_back(sound);
-}
-
-void AudioManager::unregisterSound(std::shared_ptr<Sound> sound)
-{
-    for (unsigned int i {0}; i < sSoundVector.size(); ++i) {
-        if (sSoundVector.at(i) == sound) {
-            sSoundVector[i]->stop();
-            sSoundVector.erase(sSoundVector.cbegin() + i);
-            return;
-        }
-    }
+	getInstance();
+	for (unsigned int i = 0; i < sSoundVector.size(); i++)
+	{
+		if (sSoundVector.at(i) == sound)
+		{
+			sSoundVector[i]->stop();
+			sSoundVector.erase(sSoundVector.cbegin() + i);
+			return;
+		}
+	}
+	LOG(LogWarning) << "AudioManager Error - tried to unregister a sound that wasn't registered!";
 }
 
 void AudioManager::play()
 {
-    // Unpause audio, the mixer will figure out if samples need to be played...
-    SDL_PauseAudioDevice(sAudioDevice, 0);
+	getInstance();
 }
 
 void AudioManager::stop()
 {
-    // Stop playing all Sounds.
-    for (unsigned int i {0}; i < sSoundVector.size(); ++i) {
-        if (sSoundVector.at(i)->isPlaying())
-            sSoundVector[i]->stop();
-    }
-    // Pause audio.
-    SDL_PauseAudioDevice(sAudioDevice, 1);
+	// Stop playing all Sounds
+	for (unsigned int i = 0; i < sSoundVector.size(); i++)
+		if (sSoundVector.at(i)->isPlaying())
+			sSoundVector[i]->stop();
 }
 
-void AudioManager::setupAudioStream(int sampleRate)
+void AudioManager::getMusicIn(const std::string &path, std::vector<std::string>& all_matching_files)
 {
-    SDL_AudioStatus audioStatus {SDL_GetAudioDeviceStatus(sAudioDevice)};
+	if (!Utils::FileSystem::isDirectory(path))
+		return;
 
-    // It's very important to pause the audio device before setting up the stream,
-    // or we may get random crashes if attempting to play samples at the same time.
-    SDL_PauseAudioDevice(sAudioDevice, 1);
-    SDL_FreeAudioStream(sConversionStream);
+	bool anySystem = !Settings::getInstance()->getBool("audio.persystem");
 
-    // Used for streaming audio from videos.
-    sConversionStream = SDL_NewAudioStream(AUDIO_F32, 2, sampleRate, sAudioFormat.format,
-                                           sAudioFormat.channels, sAudioFormat.freq);
-    if (sConversionStream == nullptr) {
-        LOG(LogError) << "Failed to create audio conversion stream:";
-        LOG(LogError) << SDL_GetError();
-    }
+	auto dirContent = Utils::FileSystem::getDirContent(path);
+	for (auto it = dirContent.cbegin(); it != dirContent.cend(); ++it)
+	{
+		if (Utils::FileSystem::isDirectory(*it))
+		{
+			if (*it == "." || *it == "..")
+				continue;
 
-    // If the device was previously in a playing state, then restore it.
-    if (audioStatus == SDL_AUDIO_PLAYING)
-        SDL_PauseAudioDevice(sAudioDevice, 0);
+			if (anySystem || mSystemName == Utils::FileSystem::getFileName(*it))
+				getMusicIn(*it, all_matching_files);
+		}
+		else if (Utils::FileSystem::isAudio(*it))
+			all_matching_files.push_back(*it);
+	}
 }
 
-void AudioManager::processStream(const void* samples, unsigned count)
+// batocera
+// Add the current song to the last played history, truncating as needed
+void AudioManager::addLastPlayed(const std::string& newSong, int totalMusic)
 {
-    SDL_LockAudioDevice(sAudioDevice);
-
-    if (SDL_AudioStreamPut(sConversionStream, samples, count * sizeof(Uint8)) == -1) {
-        LOG(LogError) << "Failed to put samples in the conversion stream:";
-        LOG(LogError) << SDL_GetError();
-        SDL_UnlockAudioDevice(sAudioDevice);
-        return;
-    }
-
-    if (count > 0)
-        SDL_PauseAudioDevice(sAudioDevice, 0);
-
-    SDL_UnlockAudioDevice(sAudioDevice);
+	int historySize = std::floor(totalMusic * LAST_PLAYED_SIZE);
+	if (historySize < 1)
+	{
+		// Number of songs is too small to bother with
+		return;
+	}
+	
+	while (mLastPlayed.size() > historySize) {
+		mLastPlayed.pop_back();
+	}
+	mLastPlayed.push_front(newSong);
+	
+	LOG(LogDebug) << "Adding " << newSong << " to last played, " << mLastPlayed.size() << " in history";
 }
 
-void AudioManager::clearStream()
+// batocera
+// Check if current song exists in last played history
+bool AudioManager::songWasPlayedRecently(const std::string& song)
 {
-    SDL_LockAudioDevice(sAudioDevice);
-    SDL_AudioStreamClear(sConversionStream);
-    SDL_UnlockAudioDevice(sAudioDevice);
+	for (std::string i : mLastPlayed)
+	{
+		if (song == i)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void AudioManager::playRandomMusic(bool continueIfPlaying) 
+{
+	if (!Settings::BackgroundMusic())
+		return;
+		
+	std::vector<std::string> musics;
+
+	// check in Theme music directory
+	if (!mCurrentThemeMusicDirectory.empty())
+		getMusicIn(mCurrentThemeMusicDirectory, musics);
+
+	// check in User music directory
+	if (musics.empty())
+		getMusicIn(Paths::getUserMusicPath(), musics);
+
+	// check in system sound directory
+	if (musics.empty())
+		getMusicIn(Paths::getMusicPath(), musics);
+
+	// check in .emulationstation/music directory
+	if (musics.empty())
+		getMusicIn(Paths::getUserEmulationStationPath() + "/music", musics);
+
+	if (musics.empty())
+		return;
+
+	int randomIndex = Randomizer::random(musics.size());
+	while (songWasPlayedRecently(musics.at(randomIndex)))
+	{
+		LOG(LogDebug) << "Music \"" << musics.at(randomIndex) << "\" was played recently, trying again";
+		randomIndex = Randomizer::random(musics.size());
+	}
+
+	// continue playing ?
+	if (mCurrentMusic != nullptr && continueIfPlaying)
+		return;
+
+	playMusic(musics.at(randomIndex));
+	playSong(musics.at(randomIndex));
+	addLastPlayed(musics.at(randomIndex), musics.size());
+	mPlayingSystemThemeSong = "";
+}
+
+void AudioManager::playMusic(std::string path)
+{
+	if (!mInitialized)
+		return;
+
+	// free the previous music
+	stopMusic(false);
+
+	if (!Settings::BackgroundMusic())
+		return;
+
+	// load a new music
+	mCurrentMusic = Mix_LoadMUS(path.c_str());
+	if (mCurrentMusic == NULL)
+	{
+		LOG(LogError) << Mix_GetError() << " for " << path;
+		return;
+	}
+
+	if (Mix_FadeInMusic(mCurrentMusic, 1, 1000) == -1)
+	{
+		stopMusic();
+		return;
+	}
+
+	mCurrentMusicPath = path;
+	Mix_HookMusicFinished(AudioManager::musicEnd_callback);
+}
+
+void AudioManager::musicEnd_callback()
+{
+	if (!AudioManager::getInstance()->mPlayingSystemThemeSong.empty())
+	{
+		AudioManager::getInstance()->playMusic(AudioManager::getInstance()->mPlayingSystemThemeSong);
+		return;
+	}
+
+	AudioManager::getInstance()->playRandomMusic(false);
+}
+
+void AudioManager::stopMusic(bool fadeOut)
+{
+	if (mCurrentMusic == NULL)
+		return;
+
+	Mix_HookMusicFinished(nullptr);
+
+	if (fadeOut)
+	{
+		// Fade-out is nicer !
+		while (!Mix_FadeOutMusic(500) && Mix_PlayingMusic())
+			SDL_Delay(100);
+	}
+
+	Mix_HaltMusic();
+	Mix_FreeMusic(mCurrentMusic);
+	mCurrentMusicPath = "";
+	mCurrentMusic = NULL;
+}
+
+// Fast string hash in order to use strings in switch/case
+// How does this work? Look for Dan Bernstein hash on the internet
+constexpr unsigned int sthash(const char *s, int off = 0)
+{
+	return !s[off] ? 5381 : (sthash(s, off+1)*33) ^ s[off];
+}
+
+void AudioManager::setSongName(const std::string& song)
+{
+	if (song == mCurrentSong)
+		return;
+
+	mCurrentSong = song;
+	mSongNameChanged = true;
+}
+
+void AudioManager::playSong(const std::string& song)
+{
+	if (song == mCurrentSong)
+		return;
+
+	if (song.empty())
+	{
+		mSongNameChanged = true;
+		mCurrentSong = "";
+		return;
+	}
+
+	std::string ext = Utils::String::toLower(Utils::FileSystem::getExtension(song));
+	// chiptunes mod song titles parsing
+	if (ext == ".mod" || ext == ".s3m" || ext == ".stm" || ext == ".669" || ext == ".mtm" || ext == ".far" || ext == ".xm" || ext == ".it" )
+	{
+		int title_offset;
+		int title_break;
+		struct {
+			char title[108] = "";
+		} info;
+		switch (sthash(ext.c_str())) {
+			case sthash(".mod"):
+			case sthash(".stm"):
+				title_offset = 0;
+				title_break = 20;
+				break;
+			case sthash(".s3m"):
+				title_offset = 0;
+				title_break = 28;
+				break;
+			case sthash(".669"):
+				title_offset = 0;
+				title_break = 108;
+				break;
+			case sthash(".mtm"):
+			case sthash(".it"):
+				title_offset = 4;
+				title_break = 20;
+				break;
+			case sthash(".far"):
+				title_offset = 4;
+				title_break = 40;
+				break;
+			case sthash(".xm"):
+				title_offset = 17;
+				title_break = 20;
+				break;
+			default:
+				LOG(LogError) << "Error AudioManager unexpected case while loading mofile " << song;
+				setSongName(Utils::FileSystem::getStem(song.c_str()));				
+				return;
+		}
+
+		FILE* file = fopen(song.c_str(), "r");
+		if (file != NULL)
+		{
+			if (fseek(file, title_offset, SEEK_SET) < 0)
+				LOG(LogError) << "Error AudioManager seeking " << song;
+			else if (fread(&info, sizeof(info), 1, file) != 1)
+				LOG(LogError) << "Error AudioManager reading " << song;
+			else  
+			{
+				info.title[title_break] = '\0';
+
+				std::string name = info.title;
+				if (!name.empty())
+				{
+					setSongName(name);
+					fclose(file);
+					return;
+				}
+			}
+
+			fclose(file);
+		}
+		else
+			LOG(LogError) << "Error AudioManager opening modfile " << song;
+	}
+
+	// now only mp3 will be parsed for ID3: .ogg, .wav and .flac will display file name
+	if (ext != ".mp3")
+	{
+		setSongName(Utils::FileSystem::getStem(song.c_str()));
+		return;
+	}
+
+	LOG(LogDebug) << "AudioManager::setSongName";
+
+	// First let's try with an ID3 v2 tag
+#define MAX_STR_SIZE 255 // Empiric max size of a MP3 title
+
+	ID3v2_tag* tag = load_tag(song.c_str());
+	if (tag != NULL)
+	{
+		ID3v2_frame* title_frame = tag_get_title(tag);
+		if (title_frame != NULL)
+		{
+			ID3v2_frame_text_content* title_content = parse_text_frame_content(title_frame);
+			if (title_content != NULL && title_content->size > 0)
+			{
+				std::string song_name(title_content->data, title_content->size);
+				ID3v2_frame* artist_frame = tag_get_artist(tag);
+				if (artist_frame != NULL)
+				{
+					ID3v2_frame_text_content* artist_content = parse_text_frame_content(artist_frame);
+					if (artist_content != NULL && artist_content->size > 0)
+					{
+						std::string artist(artist_content->data, artist_content->size);
+						song_name += " - " + artist;
+						free(artist_content->data);
+						free(artist_content);
+					}
+				}
+				song_name.erase(std::remove_if(song_name.begin(), song_name.end(), [](unsigned char c) { return !Utils::String::isPrintableChar(c); }), song_name.end());
+				setSongName(song_name);
+				free(title_content->data);
+				free(title_content);
+				free_tag(tag);
+				return;
+			}
+		}
+		free_tag(tag);
+	}
+
+	// Then, if no v2, let's try with an ID3 v1 tag	
+	struct {
+		char tag[3];	// i.e. "TAG"
+		char title[30];
+		char artist[30];
+		char album[30];
+		char year[4];
+		char comment[30];
+		unsigned char genre;
+	} info;
+
+	FILE* file = fopen(song.c_str(), "r");
+	if (file != NULL)
+	{
+		if (fseek(file, -128, SEEK_END) < 0)
+			LOG(LogError) << "Error AudioManager seeking " << song;
+		else if (fread(&info, sizeof(info), 1, file) != 1)
+			LOG(LogError) << "Error AudioManager reading " << song;
+		else if (strncmp(info.tag, "TAG", 3) == 0) 
+		{
+			std::string songTitle(info.title, 30);
+			songTitle = " - " + songTitle.substr(0, 30);
+			if (info.artist != NULL) 
+			{
+				std::string songArtist(info.artist, 30);
+				songTitle += " - " + songArtist.substr(0, 30);
+			}
+			setSongName(songTitle);
+			fclose(file);
+			return;
+		}
+
+		fclose(file);
+	}
+	else
+		LOG(LogError) << "Error AudioManager opening mp3 file " << song;
+
+	setSongName(Utils::FileSystem::getStem(song.c_str()));
+}
+
+void AudioManager::changePlaylist(const std::shared_ptr<ThemeData>& theme, bool force)
+{
+	if (theme == nullptr)
+		return;
+
+	if (!force && mSystemName == theme->getSystemThemeFolder())
+		return;
+
+	mSystemName = theme->getSystemThemeFolder();
+	mCurrentThemeMusicDirectory = "";
+
+	if (!Settings::BackgroundMusic())
+		return;
+
+	const ThemeData::ThemeElement* elem = theme->getElement("system", "directory", "sound");
+
+	if (Settings::getInstance()->getBool("audio.thememusics"))
+	{
+		if (elem && elem->has("path") && !Settings::getInstance()->getBool("audio.persystem"))
+			mCurrentThemeMusicDirectory = elem->get<std::string>("path");
+
+		std::string bgSound;
+
+		elem = theme->getElement("system", "bgsound", "sound");
+		if (elem && elem->has("path") && Utils::FileSystem::exists(elem->get<std::string>("path")))
+		{
+			bgSound = Utils::FileSystem::getCanonicalPath(elem->get<std::string>("path"));
+			if (bgSound == mCurrentMusicPath)
+				return;
+		}
+
+		// Found a music for the system
+		if (!bgSound.empty())
+		{
+			mPlayingSystemThemeSong = bgSound;
+			playMusic(bgSound);			
+			return;
+		}
+	}
+	
+	if (force || !mPlayingSystemThemeSong.empty() || Settings::getInstance()->getBool("audio.persystem"))
+		playRandomMusic(false);
+}
+
+void AudioManager::setVideoPlaying(bool state)
+{
+	if (sInstance == nullptr || !sInstance->mInitialized || !Settings::BackgroundMusic())
+		return;
+	
+	if (state && (!Settings::getInstance()->getBool("VideoLowersMusic") || !Settings::getInstance()->getBool("VideoAudio")))
+	{
+		sInstance->mVideoPlaying = false;
+		return;
+	}
+
+	sInstance->mVideoPlaying = state;
+}
+
+int AudioManager::getMaxMusicVolume()
+{
+	int linearVolume = Settings::getInstance()->getInt("MusicVolume");
+	double logarithmicVolume = (linearVolume == 0) ? 0 : std::pow(10.0, (linearVolume - 100) / 40.0) * MIX_MAX_VOLUME;
+	int ret = static_cast<int>(logarithmicVolume);
+	if (ret > MIX_MAX_VOLUME)
+		return MIX_MAX_VOLUME;
+
+	if (ret < 0)
+		return 0;
+
+	return ret;
+}
+
+void AudioManager::update(int deltaTime)
+{
+	if (sInstance == nullptr || !sInstance->mInitialized || !Settings::BackgroundMusic())
+		return;
+
+	float deltaVol = deltaTime / 8.0f;
+
+//	#define MINVOL 5
+
+	int maxVol = getMaxMusicVolume();
+	int minVol = maxVol / 20;
+	if (maxVol > 0 && minVol == 0)
+		minVol = 1;
+
+	if (sInstance->mVideoPlaying && sInstance->mMusicVolume != minVol)
+	{		
+		if (sInstance->mMusicVolume > minVol)
+		{
+			sInstance->mMusicVolume -= deltaVol;
+			if (sInstance->mMusicVolume < minVol)
+				sInstance->mMusicVolume = minVol;
+		}
+
+		Mix_VolumeMusic((int)sInstance->mMusicVolume);
+	}
+	else if (!sInstance->mVideoPlaying && sInstance->mMusicVolume != maxVol)
+	{
+		if (sInstance->mMusicVolume < maxVol)
+		{
+			sInstance->mMusicVolume += deltaVol;
+			if (sInstance->mMusicVolume > maxVol)
+				sInstance->mMusicVolume = maxVol;
+		}
+		else
+			sInstance->mMusicVolume = maxVol;
+
+		Mix_VolumeMusic((int)sInstance->mMusicVolume);
+	}
 }

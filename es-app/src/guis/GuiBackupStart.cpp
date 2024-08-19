@@ -7,13 +7,13 @@
 #include "utils/StringUtil.h"
 #include "LocaleES.h"
 
-GuiBackupStart::GuiBackupStart(Window* window) : GuiComponent(window), mMenu(window, _("BACKUP USER DATA").c_str())
+GuiBackupStart::GuiBackupStart(Window* window) : GuiComponent(window), mMenu(window, std::string("BACKUP USER DATA").c_str())
 {
 	addChild(&mMenu);
 
 	// available backup storage
 	std::vector<std::string> availableStorage = ApiSystem::getInstance()->getAvailableBackupDevices();
-	moptionsStorage = std::make_shared<OptionListComponent<std::string> >(window, _("TARGET DEVICE"), false);
+	moptionsStorage = std::make_shared<OptionListComponent<std::string> >(window, std::string("TARGET DEVICE"), false);
 
 	for (auto it = availableStorage.begin(); it != availableStorage.end(); it++) {
 		if (Utils::String::startsWith((*it), "DEV")) {
@@ -34,14 +34,14 @@ GuiBackupStart::GuiBackupStart(Window* window) : GuiComponent(window), mMenu(win
 	}	
 
 	if (availableStorage.size() == 0)
-		moptionsStorage->add(_("NO DEVICE FOUND"), "", true);
+		moptionsStorage->add(std::string("NO DEVICE FOUND"), "", true);
 	else
 		moptionsStorage->selectFirstItem();
 	
-	mMenu.addWithLabel(_("TARGET DEVICE"), moptionsStorage);
+	mMenu.addWithLabel(std::string("TARGET DEVICE"), moptionsStorage);
 
-	mMenu.addButton(_("START"), "start", std::bind(&GuiBackupStart::start, this));
-	mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+	mMenu.addButton(std::string("START"), "start", std::bind(&GuiBackupStart::start, this));
+	mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 		mMenu.setPosition((Renderer::getScreenWidth() - mMenu.getSize().x()) / 2, (Renderer::getScreenHeight() - mMenu.getSize().y()) / 2);
@@ -84,7 +84,7 @@ bool GuiBackupStart::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiBackupStart::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("CLOSE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("CLOSE")));
 	return prompts;
 }

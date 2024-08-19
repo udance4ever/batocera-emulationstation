@@ -16,11 +16,11 @@
 GuiBluetoothPair* GuiBluetoothPair::Instance = nullptr;
 
 GuiBluetoothPair::GuiBluetoothPair(Window* window)
-	: MenuComponent(window, _("PAIR A BLUETOOTH DEVICE")), mBusyAnim(window)
+	: MenuComponent(window, std::string("PAIR A BLUETOOTH DEVICE")), mBusyAnim(window)
 {
 	auto theme = ThemeData::getMenuTheme();
 		
-	addButton(_("CANCEL"), "back", [&] { delete this; });
+	addButton(std::string("CANCEL"), "back", [&] { delete this; });
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 	{
@@ -33,7 +33,7 @@ GuiBluetoothPair::GuiBluetoothPair(Window* window)
 		setSize(getSize().x(), Renderer::getScreenHeight() * 0.60f);
 	}
 
-	mBusyAnim.setText(_("PLEASE WAIT"));
+	mBusyAnim.setText(std::string("PLEASE WAIT"));
 	mBusyAnim.setSize(getSize());
 
 	Instance = this;
@@ -118,8 +118,8 @@ bool GuiBluetoothPair::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiBluetoothPair::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = MenuComponent::getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("CANCEL")));
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("PAIR")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("CANCEL")));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("PAIR")));
 	return prompts;
 }
 
@@ -127,7 +127,7 @@ void GuiBluetoothPair::onPairDevice(const std::string& macAddress)
 {
 	Window* window = mWindow;
 
-	window->pushGui(new GuiLoading<bool>(window, _("PLEASE WAIT"),
+	window->pushGui(new GuiLoading<bool>(window, std::string("PLEASE WAIT"),
 		[this, window, macAddress](auto gui)
 	{
 		return ApiSystem::getInstance()->pairBluetoothDevice(macAddress);

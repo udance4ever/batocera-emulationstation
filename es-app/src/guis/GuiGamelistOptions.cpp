@@ -36,7 +36,7 @@ std::vector<std::string> GuiGamelistOptions::gridSizes {
 };
 
 GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, SystemData* system, bool showGridFeatures) : GuiComponent(window),
-	mSystem(system), mMenu(window, _("VIEW OPTIONS")), fromPlaceholder(false), mFiltersChanged(false), mReloadAll(false), mGamelist(nullptr)
+	mSystem(system), mMenu(window, std::string("VIEW OPTIONS")), fromPlaceholder(false), mFiltersChanged(false), mReloadAll(false), mGamelist(nullptr)
 {
 	auto idx = system->getIndex(false);
 
@@ -48,7 +48,7 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 
 	addChild(&mMenu);
 
-	mMenu.addButton(_("BACK"), _("go back"), [this] { delete this; });
+	mMenu.addButton(std::string("BACK"), std::string("go back"), [this] { delete this; });
 
 	// check it's not a placeholder folder - if it is, only show "Filter Options"
 	FileData* file = getGamelist()->getCursor();
@@ -61,7 +61,7 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 
 	if (!isInRelevancyMode)
 	{
-		mMenu.addGroup(_("NAVIGATION"));
+		mMenu.addGroup(std::string("NAVIGATION"));
 
 		if (!Settings::getInstance()->getBool("ForceDisableFilters"))
 		{
@@ -74,15 +74,15 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 				filterInfo = idx->getDisplayLabel(false);
 
 			if (!filterInfo.empty())
-				mMenu.addWithDescription(_("OTHER FILTERS"), filterInfo, nullptr, std::bind(&GuiGamelistOptions::openGamelistFilter, this));
+				mMenu.addWithDescription(std::string("OTHER FILTERS"), filterInfo, nullptr, std::bind(&GuiGamelistOptions::openGamelistFilter, this));
 			else
-				mMenu.addEntry(_("OTHER FILTERS"), true, std::bind(&GuiGamelistOptions::openGamelistFilter, this));			
+				mMenu.addEntry(std::string("OTHER FILTERS"), true, std::bind(&GuiGamelistOptions::openGamelistFilter, this));			
 		}
 
 		ISimpleGameListView* simpleView = dynamic_cast<ISimpleGameListView*>(getGamelist());
 		if (simpleView != nullptr)
 		{
-			mMenu.addEntry(_("SELECT RANDOM GAME"), false, [this, simpleView]
+			mMenu.addEntry(std::string("SELECT RANDOM GAME"), false, [this, simpleView]
 			{
 				simpleView->moveToRandomGame();
 				delete this;
@@ -98,7 +98,7 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 			std::vector<std::string> letters = getGamelist()->getEntriesLetters();
 			if (!letters.empty())
 			{
-				mJumpToLetterList = std::make_shared<LetterList>(mWindow, _("JUMP TO GAME BEGINNING WITH THE LETTER"), false);
+				mJumpToLetterList = std::make_shared<LetterList>(mWindow, std::string("JUMP TO GAME BEGINNING WITH THE LETTER"), false);
 
 				char curChar = (char)toupper(getGamelist()->getCursor()->getName()[0]);
 
@@ -108,7 +108,7 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 				for (auto letter : letters)
 					mJumpToLetterList->add(letter, letter[0], letter[0] == curChar);
 
-				row.addElement(std::make_shared<TextComponent>(mWindow, _("JUMP TO GAME BEGINNING WITH THE LETTER"), theme->Text.font, theme->Text.color), true);
+				row.addElement(std::make_shared<TextComponent>(mWindow, std::string("JUMP TO GAME BEGINNING WITH THE LETTER"), theme->Text.font, theme->Text.color), true);
 				row.addElement(mJumpToLetterList, false);
 				row.input_handler = [&](InputConfig* config, Input input)
 				{
@@ -132,14 +132,14 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 		if (currentSortId > FileSorts::getSortTypes().size())
 			currentSortId = 0;
 
-		mListSort = std::make_shared<SortList>(mWindow, _("SORT GAMES BY"), false);
+		mListSort = std::make_shared<SortList>(mWindow, std::string("SORT GAMES BY"), false);
 		for (unsigned int i = 0; i < FileSorts::getSortTypes().size(); i++)
 		{
 			const FileSorts::SortType& sort = FileSorts::getSortTypes().at(i);
 			mListSort->add(sort.icon + sort.description, sort.id, sort.id == currentSortId); // TODO - actually make the sort type persistent
 		}
 
-		mMenu.addWithLabel(_("SORT GAMES BY"), mListSort);	
+		mMenu.addWithLabel(std::string("SORT GAMES BY"), mListSort);	
 	}
 
 	if (!isInRelevancyMode)
@@ -148,26 +148,26 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 		{
 			if (customCollection->second.filteredIndex != nullptr)
 			{
-				mMenu.addGroup(_("DYNAMIC COLLECTION"));
+				mMenu.addGroup(std::string("DYNAMIC COLLECTION"));
 
 				std::string filterInfo;
 				if (customCollection->second.filteredIndex->isFiltered())
 					filterInfo = customCollection->second.filteredIndex->getDisplayLabel(true);
 
 				if (!filterInfo.empty())
-					mMenu.addWithDescription(_("EDIT DYNAMIC COLLECTION FILTERS"), filterInfo, nullptr, std::bind(&GuiGamelistOptions::editCollectionFilters, this));
+					mMenu.addWithDescription(std::string("EDIT DYNAMIC COLLECTION FILTERS"), filterInfo, nullptr, std::bind(&GuiGamelistOptions::editCollectionFilters, this));
 				else
-					mMenu.addEntry(_("EDIT DYNAMIC COLLECTION FILTERS"), false, std::bind(&GuiGamelistOptions::editCollectionFilters, this));
+					mMenu.addEntry(std::string("EDIT DYNAMIC COLLECTION FILTERS"), false, std::bind(&GuiGamelistOptions::editCollectionFilters, this));
 			}
 			else 
-				mMenu.addGroup(_("CUSTOM COLLECTION"));
+				mMenu.addGroup(std::string("CUSTOM COLLECTION"));
 
-			mMenu.addEntry(_("DELETE COLLECTION"), false, std::bind(&GuiGamelistOptions::deleteCollection, this));
+			mMenu.addEntry(std::string("DELETE COLLECTION"), false, std::bind(&GuiGamelistOptions::deleteCollection, this));
 		}
 		else if ((!mSystem->isCollection() || mSystem->getName() == "all") && mSystem->getIndex(false) != nullptr)
 		{
-			mMenu.addGroup(_("COLLECTION"));
-			mMenu.addEntry(_("CREATE NEW DYNAMIC COLLECTION"), false, std::bind(&GuiGamelistOptions::createNewCollectionFilter, this));
+			mMenu.addGroup(std::string("COLLECTION"));
+			mMenu.addEntry(std::string("CREATE NEW DYNAMIC COLLECTION"), false, std::bind(&GuiGamelistOptions::createNewCollectionFilter, this));
 		}
 	}
 
@@ -175,9 +175,9 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 	std::string viewName = glv->getName();
 
 	// GameList view style
-	mViewMode = std::make_shared< OptionListComponent<std::string> >(mWindow, _("GAMELIST VIEW STYLE"), false);
+	mViewMode = std::make_shared< OptionListComponent<std::string> >(mWindow, std::string("GAMELIST VIEW STYLE"), false);
 	std::vector<std::pair<std::string, std::string>> styles;
-	styles.push_back(std::pair<std::string, std::string>("automatic", _("automatic")));
+	styles.push_back(std::pair<std::string, std::string>("automatic", std::string("automatic")));
 
 	auto mViews = system->getTheme()->getViewsOfTheme();
 
@@ -186,7 +186,7 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 	for (auto it = mViews.cbegin(); it != mViews.cend(); ++it)
 	{
 		if (it->first == "basic" || it->first == "detailed" || it->first == "grid")
-			styles.push_back(std::pair<std::string, std::string>(it->first, _(it->first.c_str())));
+			styles.push_back(std::pair<std::string, std::string>(it->first, std::string(it->first.c_str())));
 		else
 			styles.push_back(*it);
 	}
@@ -210,12 +210,12 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 	{
 		if (!isInRelevancyMode)
 		{
-			mMenu.addGroup(_("VIEW OPTIONS"));
+			mMenu.addGroup(std::string("VIEW OPTIONS"));
 
 			if (showViewStyle)
-				mMenu.addWithLabel(_("GAMELIST VIEW STYLE"), mViewMode);
+				mMenu.addWithLabel(std::string("GAMELIST VIEW STYLE"), mViewMode);
 
-			mMenu.addEntry(_("VIEW CUSTOMIZATION"), true, [this, system]()
+			mMenu.addEntry(std::string("VIEW CUSTOMIZATION"), true, [this, system]()
 			{
 				GuiMenu::openThemeConfiguration(mWindow, this, nullptr, system->getThemeFolder());
 			});
@@ -234,24 +234,24 @@ GuiGamelistOptions::GuiGamelistOptions(Window* window, IGameListView* gamelist, 
 			bool showSystemOptions = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::GAMESETTINGS) && (sysOptions->hasFeatures() || sysOptions->hasEmulatorSelection());
 			if (showSystemOptions)
 			{
-				mMenu.addGroup(_("OPTIONS"));
+				mMenu.addGroup(std::string("OPTIONS"));
 
 				if (file && file->hasKeyboardMapping())
 				{
-					mMenu.addEntry(_("VIEW PAD TO KEYBOARD INFORMATION"), true, [this, file]
+					mMenu.addEntry(std::string("VIEW PAD TO KEYBOARD INFORMATION"), true, [this, file]
 					{
 						GuiMenu::editKeyboardMappings(mWindow, file, false);
 					});
 				}
 				else if (srcSystem->getKeyboardMapping().isValid())
 				{
-					mMenu.addEntry(_("VIEW PAD TO KEYBOARD INFORMATION"), true, [this, srcSystem]
+					mMenu.addEntry(std::string("VIEW PAD TO KEYBOARD INFORMATION"), true, [this, srcSystem]
 					{
 						GuiMenu::editKeyboardMappings(mWindow, srcSystem, false);
 					});
 				}
 					
-				mMenu.addEntry(_("ADVANCED SYSTEM OPTIONS"), true, [this, sysOptions] { GuiMenu::popSystemConfigurationGui(mWindow, sysOptions); });
+				mMenu.addEntry(std::string("ADVANCED SYSTEM OPTIONS"), true, [this, sysOptions] { GuiMenu::popSystemConfigurationGui(mWindow, sysOptions); });
 			}
 		}
 	}
@@ -273,7 +273,7 @@ void GuiGamelistOptions::addTextFilterToMenu()
 
 	if (idx != nullptr && idx->isFiltered())
 	{
-		mMenu.addEntry(_("RESET FILTERS"), false, [this]
+		mMenu.addEntry(std::string("RESET FILTERS"), false, [this]
 		{
 			mSystem->deleteIndex();
 			mFiltersChanged = true;
@@ -283,7 +283,7 @@ void GuiGamelistOptions::addTextFilterToMenu()
 
 	ComponentListRow row;
 	
-	auto lbl = std::make_shared<TextComponent>(mWindow, _("FILTER GAMES BY TEXT"), font, color);
+	auto lbl = std::make_shared<TextComponent>(mWindow, std::string("FILTER GAMES BY TEXT"), font, color);
 	row.addElement(lbl, true); // label
 
 	std::string searchText;
@@ -326,9 +326,9 @@ void GuiGamelistOptions::addTextFilterToMenu()
 	row.makeAcceptInputHandler([this, updateVal]
 	{
 		if (Settings::getInstance()->getBool("UseOSK"))
-			mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _("FILTER GAMES BY TEXT"), mTextFilter->getValue(), updateVal, false));
+			mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, std::string("FILTER GAMES BY TEXT"), mTextFilter->getValue(), updateVal, false));
 		else
-			mWindow->pushGui(new GuiTextEditPopup(mWindow, _("FILTER GAMES BY TEXT"), mTextFilter->getValue(), updateVal, false));
+			mWindow->pushGui(new GuiTextEditPopup(mWindow, std::string("FILTER GAMES BY TEXT"), mTextFilter->getValue(), updateVal, false));
 	});
 
 	mMenu.addRow(row);
@@ -393,7 +393,7 @@ GuiGamelistOptions::~GuiGamelistOptions()
 
 	if (mReloadAll)
 	{
-		mWindow->renderSplashScreen(_("Loading..."));
+		mWindow->renderSplashScreen(std::string("Loading..."));
 		ViewController::get()->reloadAll(mWindow);
 		mWindow->closeSplashScreen();
 	}
@@ -442,7 +442,7 @@ void GuiGamelistOptions::openMetaDataEd()
 {
 	if (ThreadedScraper::isRunning() || ThreadedHasher::isRunning())
 	{
-		mWindow->pushGui(new GuiMsgBox(mWindow, _("THIS FUNCTION IS DISABLED WHILE THE SCRAPER IS RUNNING")));
+		mWindow->pushGui(new GuiMsgBox(mWindow, std::string("THIS FUNCTION IS DISABLED WHILE THE SCRAPER IS RUNNING")));
 		return;
 	}
 
@@ -544,7 +544,7 @@ HelpStyle GuiGamelistOptions::getHelpStyle()
 std::vector<HelpPrompt> GuiGamelistOptions::getHelpPrompts()
 {
 	auto prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("CLOSE"), [&] { delete this; }));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("CLOSE"), [&] { delete this; }));
 	return prompts;
 }
 
@@ -577,9 +577,9 @@ void GuiGamelistOptions::createNewCollectionFilter()
 	std::string defName = Utils::String::toLower(mSystem->getIndex(false)->getTextFilter());
 
 	if (Settings::getInstance()->getBool("UseOSK"))
-		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _("New Collection Name"), defName, [this](std::string val) { createCollection(val); }, false));
+		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, std::string("New Collection Name"), defName, [this](std::string val) { createCollection(val); }, false));
 	else
-		mWindow->pushGui(new GuiTextEditPopup(mWindow, _("New Collection Name"), defName, [this](std::string val) { createCollection(val); }, false));
+		mWindow->pushGui(new GuiTextEditPopup(mWindow, std::string("New Collection Name"), defName, [this](std::string val) { createCollection(val); }, false));
 
 }
 
@@ -625,7 +625,7 @@ void GuiGamelistOptions::deleteCollection()
 	if (getCustomCollectionName() == CollectionSystemManager::get()->getCustomCollectionsBundle()->getName())
 		return;
 
-	mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), _("YES"),
+	mWindow->pushGui(new GuiMsgBox(mWindow, std::string("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), std::string("YES"),
 		[this]
 		{
 			std::map<std::string, CollectionSystemData> customCollections = CollectionSystemManager::get()->getCustomCollectionSystems();
@@ -645,7 +645,7 @@ void GuiGamelistOptions::deleteCollection()
 				mWindow->closeSplashScreen();
 				delete this;
 			}
-		}, _("NO"), nullptr));
+		}, std::string("NO"), nullptr));
 }
 
 bool GuiGamelistOptions::onMouseClick(int button, bool pressed, int x, int y)

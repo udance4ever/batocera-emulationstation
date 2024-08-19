@@ -28,7 +28,7 @@ GuiSaveState::GuiSaveState(Window* window, FileData* game, const std::function<v
 	mBackground.setCornerSize(theme->Background.cornerSize);
 	mBackground.setPostProcessShader(theme->Background.menuShader);
 
-	mTitle = std::make_shared<TextComponent>(mWindow, _("SAVESTATE MANAGER"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
+	mTitle = std::make_shared<TextComponent>(mWindow, std::string("SAVESTATE MANAGER"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
 	mLayout.setEntry(mTitle, Vector2i(1, 1), false, true);
 
 	mGrid = std::make_shared<ImageGridComponent<SaveStateItem>>(mWindow);
@@ -122,13 +122,13 @@ void GuiSaveState::loadGrid()
 		});
 
 
-	mGrid->add(_("START NEW GAME"), ":/freeslot.svg", SaveStateItem(mRepository->getDefaultNewGameSaveState()));
+	mGrid->add(std::string("START NEW GAME"), ":/freeslot.svg", SaveStateItem(mRepository->getDefaultNewGameSaveState()));
 
 	if (mRepository->supportsAutoSave() && mGame->getCurrentGameSetting("autosave") == "1")
 	{
 		auto autoSave = std::find_if(states.cbegin(), states.cend(), [](SaveState* x) { return x->slot == -1; });
 		if (autoSave == states.cend())
-			mGrid->add(_("START NEW AUTO SAVE"), ":/freeslot.svg", SaveStateItem(mRepository->getDefaultAutoSaveSaveState()));
+			mGrid->add(std::string("START NEW AUTO SAVE"), ":/freeslot.svg", SaveStateItem(mRepository->getDefaultAutoSaveSaveState()));
 	}
 
 	for (auto item : states)
@@ -144,11 +144,11 @@ void GuiSaveState::loadGrid()
 		}
 
 		if (item->slot == -1)
-			mGrid->add(_("AUTO SAVE") + std::string("\r\n") + item->creationDate.toLocalTimeString() + coreinfo, item->getScreenShot(), SaveStateItem(item));
+			mGrid->add(std::string("AUTO SAVE") + std::string("\r\n") + item->creationDate.toLocalTimeString() + coreinfo, item->getScreenShot(), SaveStateItem(item));
 		else if (supportsIncrementalSaveStates && item->config != nullptr ? item->config->incremental : incrementalSaveStates)
 			mGrid->add(item->creationDate.toLocalTimeString() + coreinfo, item->getScreenShot(), SaveStateItem(item));
 		else 
-			mGrid->add(_("SLOT") + std::string(" ") + std::to_string(item->slot) + std::string("\r\n") + item->creationDate.toLocalTimeString() + coreinfo, item->getScreenShot(), SaveStateItem(item));
+			mGrid->add(std::string("SLOT") + std::string(" ") + std::to_string(item->slot) + std::string("\r\n") + item->creationDate.toLocalTimeString() + coreinfo, item->getScreenShot(), SaveStateItem(item));
 	}
 }
 
@@ -224,7 +224,7 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 	{
 		if (mGrid->size())
 		{
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), _("YES"), 
+			mWindow->pushGui(new GuiMsgBox(mWindow, std::string("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), std::string("YES"), 
 				[this]
 				{
 					
@@ -238,7 +238,7 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 
 					loadGrid();
 				}, 
-				_("NO"), nullptr));
+				std::string("NO"), nullptr));
 		}
 
 		return true;
@@ -270,16 +270,16 @@ bool GuiSaveState::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiSaveState::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK"), [&] { delete this; }));
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("LAUNCH")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK"), [&] { delete this; }));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("LAUNCH")));
 
 	if (mGrid->size())
 	{
 		const SaveStateItem& item = mGrid->getSelected();
 		if (!item.saveState->fileName.empty())
 		{
-			prompts.push_back(HelpPrompt("y", _("DELETE")));
-			prompts.push_back(HelpPrompt("x", _("COPY TO FREE SLOT")));
+			prompts.push_back(HelpPrompt("y", std::string("DELETE")));
+			prompts.push_back(HelpPrompt("x", std::string("COPY TO FREE SLOT")));
 		}
 	}	
 

@@ -287,10 +287,10 @@ bool GuiKeyboardLayout::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiKeyboardLayout::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("OK")));
-	prompts.push_back(HelpPrompt("y", _("RESET")));
-	prompts.push_back(HelpPrompt("x", _("ADD COMBINATION KEY")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("OK")));
+	prompts.push_back(HelpPrompt("y", std::string("RESET")));
+	prompts.push_back(HelpPrompt("x", std::string("ADD COMBINATION KEY")));
 	return prompts;
 }
 

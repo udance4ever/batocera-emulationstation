@@ -495,9 +495,11 @@ void SystemData::createGroupedSystems()
 
 					games_counter = childSystem->getGameCountInfo()->totalGames;
 
-					snprintf(trstring, 1024, ngettext(
-						"This collection contains %i game:%s",
-						"This collection contains %i games, including:%s", games_counter), games_counter, games_list.c_str());
+// $$
+//					snprintf(trstring, 1024, ngettext(
+//						"This collection contains %i game:%s",
+//						"This collection contains %i games, including:%s", games_counter), games_counter, games_list.c_str());
+					snprintf(trstring, 1024, "This collection contains %i games, including:%s", games_counter, games_list.c_str());
 
 					folder->setMetadata(MetaDataId::Desc, std::string(trstring));
 				}
@@ -902,12 +904,15 @@ bool SystemData::loadConfig(Window* window)
 		delete pThreadPool;
 
 		if (window != NULL)
-			window->renderSplashScreen(_("Collections"), systemCount == 0 ? 0 : currentSystem / systemCount);
+// $$
+//			window->renderSplashScreen(_("Collections"), systemCount == 0 ? 0 : currentSystem / systemCount);
+			window->renderSplashScreen(std::string("Collections"), systemCount == 0 ? 0 : currentSystem / systemCount);
 	}
 	else
 	{
 		if (window != NULL)
-			window->renderSplashScreen(_("Collections"), systemCount == 0 ? 0 : currentSystem / systemCount);
+//			window->renderSplashScreen(_("Collections"), systemCount == 0 ? 0 : currentSystem / systemCount);
+			window->renderSplashScreen(std::string("Collections"), systemCount == 0 ? 0 : currentSystem / systemCount);
 
 		CollectionSystemManager::get()->loadCollectionSystems();
 	}
@@ -1512,7 +1517,8 @@ void SystemData::loadTheme()
 			sysData["system.releaseYear"] = std::to_string(getSystemMetadata().releaseYear);
 		}
 		else
-			sysData["system.releaseYear"] = _("Unknown");
+//			sysData["system.releaseYear"] = _("Unknown");
+			sysData["system.releaseYear"] = std::string("Unknown");
 		
 		for (auto property : properties)
 		{

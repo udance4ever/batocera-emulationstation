@@ -26,7 +26,7 @@ GuiSettings::GuiSettings(Window* window,
 		mMenu.addButton(customButton, customButton, [this, func] { func(this); });
 
 	if (customButton != "-----")
-		mMenu.addButton(_("BACK"), _("go back"), [this] { close(); });
+		mMenu.addButton(std::string("BACK"), std::string("go back"), [this] { close(); });
 
 	setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
 	
@@ -112,8 +112,8 @@ std::vector<HelpPrompt> GuiSettings::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
 
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK"), [&] { close(); }));
-	prompts.push_back(HelpPrompt(mCloseButton, _("CLOSE"), [&] 
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK"), [&] { close(); }));
+	prompts.push_back(HelpPrompt(mCloseButton, std::string("CLOSE"), [&] 
 	{ 
 		// close everything
 		Window* window = mWindow;
@@ -132,14 +132,16 @@ void GuiSettings::addSubMenu(const std::string& label, const std::function<void(
 	auto theme = ThemeData::getMenuTheme();
 
 	auto entryMenu = std::make_shared<TextComponent>(mWindow, label, theme->Text.font, theme->Text.color);
-	if (EsLocale::isRTL())
+//	if (EsLocale::isRTL())
+	if (0)
 		entryMenu->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 
 	row.addElement(entryMenu, true);
 
 	auto arrow = makeArrow(mWindow);
 
-	if (EsLocale::isRTL())
+//	if (EsLocale::isRTL())
+	if (0)
 		arrow->setFlipX(true);
 
 	row.addElement(arrow, false);
@@ -159,7 +161,8 @@ void GuiSettings::addInputTextRow(const std::string& title, const std::string& s
 	ComponentListRow row;
 
 	auto lbl = std::make_shared<TextComponent>(window, title, font, color);
-	if (EsLocale::isRTL())
+//	if (EsLocale::isRTL())
+	if (0)
 		lbl->setHorizontalAlignment(Alignment::ALIGN_RIGHT);
 
 	row.addElement(lbl, true); // label
@@ -168,7 +171,8 @@ void GuiSettings::addInputTextRow(const std::string& title, const std::string& s
 
 	std::string text = ((password && value != "") ? "*********" : value);
 	std::shared_ptr<TextComponent> ed = std::make_shared<TextComponent>(window, text, font, color, ALIGN_RIGHT);
-	if (EsLocale::isRTL())
+//	if (EsLocale::isRTL())
+	if (0)
 		ed->setHorizontalAlignment(Alignment::ALIGN_LEFT);
 		
 	// ed->setRenderBackground(true); ed->setBackgroundColor(0xFFFF00FF); // Debug only
@@ -184,7 +188,8 @@ void GuiSettings::addInputTextRow(const std::string& title, const std::string& s
 	bracket->setImage(theme->Icons.arrow);
 	bracket->setResize(Vector2f(0, lbl->getFont()->getLetterHeight()));
 
-	if (EsLocale::isRTL())
+//	if (EsLocale::isRTL())
+	if (0)
 		bracket->setFlipX(true);
 
 	row.addElement(bracket, false);
@@ -340,7 +345,7 @@ bool GuiSettings::checkNetwork()
 {
 	if (ApiSystem::getInstance()->getIpAdress() == "NOT CONNECTED")
 	{
-		mWindow->pushGui(new GuiMsgBox(mWindow, _("YOU ARE NOT CONNECTED TO A NETWORK"), _("OK"), nullptr));
+		mWindow->pushGui(new GuiMsgBox(mWindow, std::string("YOU ARE NOT CONNECTED TO A NETWORK"), std::string("OK"), nullptr));
 		return false;
 	}
 

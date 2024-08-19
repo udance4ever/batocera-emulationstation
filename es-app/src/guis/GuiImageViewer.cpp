@@ -70,10 +70,10 @@ public:
 	std::vector<HelpPrompt> getHelpPrompts()
 	{
 		std::vector<HelpPrompt> prompts;
-		prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK"), [&] { delete this; }));
-		prompts.push_back(HelpPrompt("l", _("ZOOM OUT"), [&] { onMouseWheel(-1); }));
-		prompts.push_back(HelpPrompt("r", _("ZOOM IN"), [&] { onMouseWheel(1); }));
-		prompts.push_back(HelpPrompt("up/down/left/right", _("MOVE")));
+		prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK"), [&] { delete this; }));
+		prompts.push_back(HelpPrompt("l", std::string("ZOOM OUT"), [&] { onMouseWheel(-1); }));
+		prompts.push_back(HelpPrompt("r", std::string("ZOOM IN"), [&] { onMouseWheel(1); }));
+		prompts.push_back(HelpPrompt("up/down/left/right", std::string("MOVE")));
 
 		return prompts;
 	}
@@ -275,6 +275,8 @@ GuiImageViewer::GuiImageViewer(Window* window, bool linearSmooth) :
 {
 	g_isGuiImageViewerRunning = true;
 
+	// $$$  error: no matching member function for call to 'setPosition'
+	//      this is odd given GuiImageViewer should inherit setPosition from subclass of GuiComponent
 	setPosition(0, 0);
 	setSize(Renderer::getScreenWidth(), Renderer::getScreenHeight());
 		
@@ -376,7 +378,7 @@ void GuiImageViewer::loadPdf(const std::string& imagePath)
 		mPdfThreads->start();
 	}
 	
-	window->pushGui(new GuiLoading<std::vector<std::string>>(window, _("Loading..."),
+	window->pushGui(new GuiLoading<std::vector<std::string>>(window, std::string("Loading..."),
 		[window, imagePath](auto gui)
 		{		
 			return ApiSystem::getInstance()->extractPdfImages(imagePath, 1, INITIALPAGES);
@@ -515,7 +517,7 @@ void GuiImageViewer::loadCbz(const std::string& imagePath)
 		mPdfThreads->start();
 	}
 
-	window->pushGui(new GuiLoading<std::vector<std::string>>(window, _("Loading..."),
+	window->pushGui(new GuiLoading<std::vector<std::string>>(window, std::string("Loading..."),
 		[window, imagePath, files](auto gui)
 		{
 			std::vector<std::string> ret;
@@ -582,7 +584,7 @@ bool GuiImageViewer::input(InputConfig* config, Input input)
 					int page = mGrid.getCursorIndex() + 1;
 
 					Window* window = mWindow;
-					window->pushGui(new GuiLoading<std::string>(window, _("Loading..."),
+					window->pushGui(new GuiLoading<std::string>(window, std::string("Loading..."),
 						[this, window, path, page](auto gui)
 						{
 							auto files = ApiSystem::getInstance()->extractPdfImages(mPdf, page, 1, 300);
@@ -617,10 +619,10 @@ bool GuiImageViewer::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiImageViewer::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("CLOSE"), [&] { delete this; }));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("CLOSE"), [&] { delete this; }));
 	
 	if (!mPdf.empty())
-		prompts.push_back(HelpPrompt(BUTTON_OK, _("ZOOM")));
+		prompts.push_back(HelpPrompt(BUTTON_OK, std::string("ZOOM")));
 
 	return prompts;
 }

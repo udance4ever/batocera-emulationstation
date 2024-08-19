@@ -73,6 +73,7 @@ protected:
 	using IList<ImageGridData, T>::mCursor;
 	using IList<ImageGridData, T>::mShowing;
 	using IList<ImageGridData, T>::mVisible;
+// $$$ error: dependent using declaration resolved to type without 'typename'
 	using IList<ImageGridData, T>::Entry;
 	using IList<ImageGridData, T>::mWindow;
 

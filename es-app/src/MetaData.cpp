@@ -25,76 +25,77 @@ static std::map<std::string, int> KnowScrapersIds =
 	{ "ArcadeDB", 3 }
 };
 
+// $$ _(
 void MetaDataList::initMetadata()
 {
 	MetaDataDecl gameDecls[] = 
 	{
 		// key,             type,                   default,            statistic,  name in GuiMetaDataEd,  prompt in GuiMetaDataEd
-		{ Name,             "name",        MD_STRING,              "",                 false,      _("Name"),                 _("this game's name"),			true },
-	//	{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("sortname"),             _("enter game sort name"),	true },
-		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      _("Description"),          _("this game's description"),		true },
+		{ Name,             "name",        MD_STRING,              "",                 false,      std::string("Name"),                 std::string("this game's name"),			true },
+	//	{ SortName,         "sortname",    MD_STRING,              "",                 false,      std::string("sortname"),             std::string("enter game sort name"),	true },
+		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      std::string("Description"),          std::string("this game's description"),		true },
 
 #if WIN32 && !_DEBUG
-		{ Emulator,         "emulator",    MD_LIST,				 "",                 false,       _("Emulator"),			 _("emulator"),					false },
-		{ Core,             "core",	      MD_LIST,				 "",                 false,       _("Core"),				 _("core"),						false },
+		{ Emulator,         "emulator",    MD_LIST,				 "",                 false,       std::string("Emulator"),			 std::string("emulator"),					false },
+		{ Core,             "core",	      MD_LIST,				 "",                 false,       std::string("Core"),				 std::string("core"),						false },
 #else
 		// Windows & recalbox gamelist.xml compatiblity -> Set as statistic to hide it from metadata editor
-		{ Emulator,         "emulator",    MD_LIST,				 "",                 true,        _("Emulator"),			 _("emulator"),					false },
-		{ Core,             "core",	     MD_LIST,				 "",                 true,        _("Core"),				 _("core"),						false },
+		{ Emulator,         "emulator",    MD_LIST,				 "",                 true,        std::string("Emulator"),			 std::string("emulator"),					false },
+		{ Core,             "core",	     MD_LIST,				 "",                 true,        std::string("Core"),				 std::string("core"),						false },
 #endif
 
-		{ Image,            "image",       MD_PATH,                "",                 false,      _("Image"),                _("enter path to image"),		 true },
-		{ Video,            "video",       MD_PATH,                "",                 false,      _("Video"),                _("enter path to video"),		 false },
-		{ Marquee,          "marquee",     MD_PATH,                "",                 false,      _("Logo"),                 _("enter path to logo"),	     true },
-		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      _("Box"),				  _("enter path to box"),		 false },
+		{ Image,            "image",       MD_PATH,                "",                 false,      std::string("Image"),                std::string("enter path to image"),		 true },
+		{ Video,            "video",       MD_PATH,                "",                 false,      std::string("Video"),                std::string("enter path to video"),		 false },
+		{ Marquee,          "marquee",     MD_PATH,                "",                 false,      std::string("Logo"),                 std::string("enter path to logo"),	     true },
+		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      std::string("Box"),				  std::string("enter path to box"),		 false },
 
-		{ FanArt,           "fanart",      MD_PATH,                "",                 false,      _("Fan art"),              _("enter path to fanart"),	 true },
-		{ TitleShot,        "titleshot",   MD_PATH,                "",                 false,      _("Title shot"),           _("enter path to title shot"), true },
-		{ Manual,			"manual",	   MD_PATH,                "",                 false,      _("Manual"),               _("enter path to manual"),     true },
-		{ Magazine,			"magazine",	   MD_PATH,                "",                 false,      _("Magazine"),             _("enter path to magazine"),     true },
-		{ Map,			    "map",	       MD_PATH,                "",                 false,      _("Map"),                  _("enter path to map"),		 true },
-		{ Bezel,            "bezel",       MD_PATH,                "",                 false,      _("Bezel (16:9)"),         _("enter path to bezel (16:9)"),	 true },
+		{ FanArt,           "fanart",      MD_PATH,                "",                 false,      std::string("Fan art"),              std::string("enter path to fanart"),	 true },
+		{ TitleShot,        "titleshot",   MD_PATH,                "",                 false,      std::string("Title shot"),           std::string("enter path to title shot"), true },
+		{ Manual,			"manual",	   MD_PATH,                "",                 false,      std::string("Manual"),               std::string("enter path to manual"),     true },
+		{ Magazine,			"magazine",	   MD_PATH,                "",                 false,      std::string("Magazine"),             std::string("enter path to magazine"),     true },
+		{ Map,			    "map",	       MD_PATH,                "",                 false,      std::string("Map"),                  std::string("enter path to map"),		 true },
+		{ Bezel,            "bezel",       MD_PATH,                "",                 false,      std::string("Bezel (16:9)"),         std::string("enter path to bezel (16:9)"),	 true },
 
 		// Non scrappable /editable medias
-		{ Cartridge,        "cartridge",   MD_PATH,                "",                 true,       _("Cartridge"),            _("enter path to cartridge"),  true },
-		{ BoxArt,			"boxart",	   MD_PATH,                "",                 true,       _("Alt BoxArt"),		      _("enter path to alt boxart"), true },
-		{ BoxBack,			"boxback",	   MD_PATH,                "",                 false,      _("Box backside"),		  _("enter path to box background"), true },
-		{ Wheel,			"wheel",	   MD_PATH,                "",                 true,       _("Wheel"),		          _("enter path to wheel"),      true },
-		{ Mix,			    "mix",	       MD_PATH,                "",                 true,       _("Mix"),                  _("enter path to mix"),		 true },
+		{ Cartridge,        "cartridge",   MD_PATH,                "",                 true,       std::string("Cartridge"),            std::string("enter path to cartridge"),  true },
+		{ BoxArt,			"boxart",	   MD_PATH,                "",                 true,       std::string("Alt BoxArt"),		      std::string("enter path to alt boxart"), true },
+		{ BoxBack,			"boxback",	   MD_PATH,                "",                 false,      std::string("Box backside"),		  std::string("enter path to box background"), true },
+		{ Wheel,			"wheel",	   MD_PATH,                "",                 true,       std::string("Wheel"),		          std::string("enter path to wheel"),      true },
+		{ Mix,			    "mix",	       MD_PATH,                "",                 true,       std::string("Mix"),                  std::string("enter path to mix"),		 true },
 		
-		{ Rating,           "rating",      MD_RATING,              "0.000000",         false,      _("Rating"),               _("enter rating"),			false },
-		{ ReleaseDate,      "releasedate", MD_DATE,                "not-a-date-time",  false,      _("Release date"),         _("enter release date"),		false },
-		{ Developer,        "developer",   MD_STRING,              "",                 false,      _("Developer"),            _("this game's developer"),	false },
-		{ Publisher,        "publisher",   MD_STRING,              "",                 false,      _("Publisher"),            _("this game's publisher"),	false },
+		{ Rating,           "rating",      MD_RATING,              "0.000000",         false,      std::string("Rating"),               std::string("enter rating"),			false },
+		{ ReleaseDate,      "releasedate", MD_DATE,                "not-a-date-time",  false,      std::string("Release date"),         std::string("enter release date"),		false },
+		{ Developer,        "developer",   MD_STRING,              "",                 false,      std::string("Developer"),            std::string("this game's developer"),	false },
+		{ Publisher,        "publisher",   MD_STRING,              "",                 false,      std::string("Publisher"),            std::string("this game's publisher"),	false },
 
 
-		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
-		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game family"),		  _("this game's game family"),		false },
+		{ Genre,            "genre",       MD_STRING,              "",                 false,      std::string("Genre"),                std::string("enter game genre"),		false }, 
+		{ Family,           "family",      MD_STRING,              "",                 false,      std::string("Game family"),		  std::string("this game's game family"),		false },
 
 		// GenreIds is not serialized
-		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genres"),				  _("enter game genres"),		false },
+		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      std::string("Genres"),				  std::string("enter game genres"),		false },
 
-		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
+		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      std::string("Arcade system"),        std::string("this game's arcade system"), false },
 
-		{ Players,          "players",     MD_STRING,              "",                false,       _("Players"),              _("this game's number of players"),	false },
-		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      _("Favorite"),             _("enter favorite"),			false },
-		{ Hidden,           "hidden",      MD_BOOL,                "false",            false,      _("Hidden"),               _("enter hidden"),			true },
-		{ KidGame,          "kidgame",     MD_BOOL,                "false",            false,      _("Kidgame"),              _("enter kidgame"),			false },
-		{ PlayCount,        "playcount",   MD_INT,                 "0",                true,       _("Play count"),           _("enter number of times played"), false },
-		{ LastPlayed,       "lastplayed",  MD_TIME,                "0",                true,       _("Last played"),          _("enter last played date"), false },
+		{ Players,          "players",     MD_STRING,              "",                false,       std::string("Players"),              std::string("this game's number of players"),	false },
+		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      std::string("Favorite"),             std::string("enter favorite"),			false },
+		{ Hidden,           "hidden",      MD_BOOL,                "false",            false,      std::string("Hidden"),               std::string("enter hidden"),			true },
+		{ KidGame,          "kidgame",     MD_BOOL,                "false",            false,      std::string("Kidgame"),              std::string("enter kidgame"),			false },
+		{ PlayCount,        "playcount",   MD_INT,                 "0",                true,       std::string("Play count"),           std::string("enter number of times played"), false },
+		{ LastPlayed,       "lastplayed",  MD_TIME,                "0",                true,       std::string("Last played"),          std::string("enter last played date"), false },
 
-		{ Crc32,            "crc32",       MD_STRING,              "",                 true,       _("Crc32"),                _("Crc32 checksum"),			false },
-		{ Md5,              "md5",		   MD_STRING,              "",                 true,       _("Md5"),                  _("Md5 checksum"),			false },
+		{ Crc32,            "crc32",       MD_STRING,              "",                 true,       std::string("Crc32"),                std::string("Crc32 checksum"),			false },
+		{ Md5,              "md5",		   MD_STRING,              "",                 true,       std::string("Md5"),                  std::string("Md5 checksum"),			false },
 
-		{ GameTime,         "gametime",    MD_INT,                 "0",                true,       _("Game time"),            _("how long the game has been played in total (seconds)"), false },
+		{ GameTime,         "gametime",    MD_INT,                 "0",                true,       std::string("Game time"),            std::string("how long the game has been played in total (seconds)"), false },
 
-		{ Language,         "lang",        MD_STRING,              "",                 false,      _("Languages"),            _("this game's languages"),				false },
-		{ Region,           "region",      MD_STRING,              "",                 false,      _("Region"),               _("this game's region"),					false },
+		{ Language,         "lang",        MD_STRING,              "",                 false,      std::string("Languages"),            std::string("this game's languages"),				false },
+		{ Region,           "region",      MD_STRING,              "",                 false,      std::string("Region"),               std::string("this game's region"),					false },
 
-		{ CheevosHash,      "cheevosHash", MD_STRING,              "",                 true,       _("Cheevos Hash"),          _("Cheevos checksum"),	    false },
-		{ CheevosId,        "cheevosId",   MD_INT,                 "",				   true,       _("Cheevos Game ID"),       _("Cheevos Game ID"),		false },
+		{ CheevosHash,      "cheevosHash", MD_STRING,              "",                 true,       std::string("Cheevos Hash"),          std::string("Cheevos checksum"),	    false },
+		{ CheevosId,        "cheevosId",   MD_INT,                 "",				   true,       std::string("Cheevos Game ID"),       std::string("Cheevos Game ID"),		false },
 
-		{ ScraperId,        "id",		   MD_INT,                 "",				   true,       _("Screenscraper Game ID"), _("Screenscraper Game ID"),	false, true }
+		{ ScraperId,        "id",		   MD_INT,                 "",				   true,       std::string("Screenscraper Game ID"), std::string("Screenscraper Game ID"),	false, true }
 	};
 	
 	mMetaDataDecls = std::vector<MetaDataDecl>(gameDecls, gameDecls + sizeof(gameDecls) / sizeof(gameDecls[0]));

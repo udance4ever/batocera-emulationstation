@@ -57,11 +57,11 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 	if (hasManual || hasMap || hasCheevos || hasMagazine || hasVideo || hasAlternateMedias)
 	{
-		mMenu.addGroup(_("GAME MEDIA"));
+		mMenu.addGroup(std::string("GAME MEDIA"));
 
 		if (hasManual)
 		{
-			mMenu.addEntry(_("VIEW GAME MANUAL"), false, [window, game, this]
+			mMenu.addEntry(std::string("VIEW GAME MANUAL"), false, [window, game, this]
 			{
 				GuiImageViewer::showPdf(window, game->getMetadata(MetaDataId::Manual));
 				close();
@@ -70,7 +70,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 		if (hasMagazine)
 		{
-			mMenu.addEntry(_("VIEW GAME MAGAZINE"), false, [window, game, this]
+			mMenu.addEntry(std::string("VIEW GAME MAGAZINE"), false, [window, game, this]
 			{
 				GuiImageViewer::showPdf(window, game->getMetadata(MetaDataId::Magazine));
 				close();
@@ -79,7 +79,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 		if (hasMap)
 		{
-			mMenu.addEntry(_("VIEW GAME MAP"), false, [window, game, this]
+			mMenu.addEntry(std::string("VIEW GAME MAP"), false, [window, game, this]
 			{
 				auto imagePath = game->getMetadata(MetaDataId::Map);
 				GuiImageViewer::showImage(window, imagePath, Utils::String::toLower(Utils::FileSystem::getExtension(imagePath)) != ".pdf");
@@ -89,7 +89,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 		if (hasVideo)
 		{
-			mMenu.addEntry(_("VIEW FULLSCREEN VIDEO"), false, [window, game, this]
+			mMenu.addEntry(std::string("VIEW FULLSCREEN VIDEO"), false, [window, game, this]
 			{
 				auto imagePath = game->getMetadata(MetaDataId::Video);
 				GuiVideoViewer::playVideo(mWindow, imagePath);
@@ -99,7 +99,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		
 		if (hasAlternateMedias)
 		{
-			mMenu.addEntry(_("VIEW GAME MEDIA"), false, [window, game, this]
+			mMenu.addEntry(std::string("VIEW GAME MEDIA"), false, [window, game, this]
 			{
 				auto imageList = game->getSourceFileData()->getFileMedias();
 				GuiImageViewer::showImages(mWindow, imageList);
@@ -113,14 +113,14 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 			{
 				std::string coreList = game->getSourceFileData()->getSystem()->getCompatibleCoreNames(EmulatorFeatures::cheevos);
 				std::string msg = _U("\uF06A  ");
-				msg += _("CURRENT CORE IS NOT COMPATIBLE") + ": " + Utils::String::toUpper(game->getCore(true).empty()? game->getEmulator(true): game->getCore(true));
+				msg += std::string("CURRENT CORE IS NOT COMPATIBLE") + ": " + Utils::String::toUpper(game->getCore(true).empty()? game->getEmulator(true): game->getCore(true));
 				if (!coreList.empty())
 				{
 					msg += _U("\r\n\uF05A  ");
-					msg += _("COMPATIBLE CORE(S)") + ": " + Utils::String::toUpper(coreList);
+					msg += std::string("COMPATIBLE CORE(S)") + ": " + Utils::String::toUpper(coreList);
 				}
 
-				mMenu.addWithDescription(_("VIEW THIS GAME'S ACHIEVEMENTS"), msg, nullptr, [window, game, this]
+				mMenu.addWithDescription(std::string("VIEW THIS GAME'S ACHIEVEMENTS"), msg, nullptr, [window, game, this]
 				{
 					GuiGameAchievements::show(window, Utils::String::toInteger(game->getMetadata(MetaDataId::CheevosId)));
 					close();
@@ -128,7 +128,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 			}
 			else
 			{
-				mMenu.addEntry(_("VIEW THIS GAME'S ACHIEVEMENTS"), false, [window, game, this]
+				mMenu.addEntry(std::string("VIEW THIS GAME'S ACHIEVEMENTS"), false, [window, game, this]
 				{
 					GuiGameAchievements::show(window, Utils::String::toInteger(game->getMetadata(MetaDataId::CheevosId)));
 					close();
@@ -140,11 +140,11 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 	if (game->getType() == GAME)
 	{
-		mMenu.addGroup(_("GAME"));
+		mMenu.addGroup(std::string("GAME"));
 
 		if (SaveStateRepository::isEnabled(game))
 		{
-			mMenu.addEntry(_("SAVE STATES"), false, [window, game, this]
+			mMenu.addEntry(std::string("SAVE STATES"), false, [window, game, this]
 			{
 				mWindow->pushGui(new GuiSaveState(mWindow, game, [this, game](SaveState* state)
 				{
@@ -158,7 +158,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		}
 		else
 		{
-			mMenu.addEntry(isImageViewer ? _("OPEN") : _("LAUNCH"), false, [window, game, this]
+			mMenu.addEntry(isImageViewer ? std::string("OPEN") : std::string("LAUNCH"), false, [window, game, this]
 			{
 				ViewController::get()->launch(game);
 				this->close();
@@ -167,17 +167,17 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 		if (game->isNetplaySupported())
 		{
-			mMenu.addEntry(_("START A NETPLAY GAME"), false, [window, game, this]
+			mMenu.addEntry(std::string("START A NETPLAY GAME"), false, [window, game, this]
 			{
-				GuiSettings* msgBox = new GuiSettings(mWindow, _("NETPLAY"));
+				GuiSettings* msgBox = new GuiSettings(mWindow, std::string("NETPLAY"));
 				msgBox->setSubTitle(game->getName());
-				msgBox->addGroup(_("START GAME"));
+				msgBox->addGroup(std::string("START GAME"));
 
-				msgBox->addEntry(_U("\uF144 ") + _("HOST A NETPLAY GAME"), false, [window, msgBox, game]
+				msgBox->addEntry(_U("\uF144 ") + std::string("HOST A NETPLAY GAME"), false, [window, msgBox, game]
 				{
 					if (ApiSystem::getInstance()->getIpAdress() == "NOT CONNECTED")
 					{
-						window->pushGui(new GuiMsgBox(window, _("YOU ARE NOT CONNECTED TO A NETWORK"), _("OK"), nullptr));
+						window->pushGui(new GuiMsgBox(window, std::string("YOU ARE NOT CONNECTED TO A NETWORK"), std::string("OK"), nullptr));
 						return;
 					}
 
@@ -187,17 +187,17 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 					msgBox->close();
 				});
 
-				msgBox->addGroup(_("OPTIONS"));
+				msgBox->addGroup(std::string("OPTIONS"));
 
 				// pubic announce
 				auto public_announce = std::make_shared<SwitchComponent>(mWindow);
 				public_announce->setState(SystemConf::getInstance()->getBool("global.netplay_public_announce"));
-				msgBox->addWithLabel(_("PUBLICLY ANNOUNCE GAME"), public_announce);
+				msgBox->addWithLabel(std::string("PUBLICLY ANNOUNCE GAME"), public_announce);
 				msgBox->addSaveFunc([public_announce] { SystemConf::getInstance()->setBool("global.netplay_public_announce", public_announce->getState()); });
 						
 				// passwords
-				msgBox->addInputTextRow(_("PLAYER PASSWORD"), "global.netplay.password", false);
-				msgBox->addInputTextRow(_("VIEWER PASSWORD"), "global.netplay.spectatepassword", false);
+				msgBox->addInputTextRow(std::string("PLAYER PASSWORD"), "global.netplay.password", false);
+				msgBox->addInputTextRow(std::string("VIEWER PASSWORD"), "global.netplay.spectatepassword", false);
 
 				mWindow->pushGui(msgBox);
 				close();
@@ -207,7 +207,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		SystemData* all = SystemData::getSystem("all");
 		if (all != nullptr && game != nullptr && game->getType() != FOLDER && !isImageViewer)
 		{
-			mMenu.addEntry(_("FIND SIMILAR GAMES..."), false, [this, game, all]
+			mMenu.addEntry(std::string("FIND SIMILAR GAMES..."), false, [this, game, all]
 			{
 				auto index = all->getIndex(true);
 
@@ -231,15 +231,15 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 		if (UIModeController::getInstance()->isUIModeFull())
 		{
-			mMenu.addEntry(isImageViewer ? _("DELETE ITEM") : _("DELETE GAME"), false, [this, game]
+			mMenu.addEntry(isImageViewer ? std::string("DELETE ITEM") : std::string("DELETE GAME"), false, [this, game]
 			{
-				mWindow->pushGui(new GuiMsgBox(mWindow, _("THIS WILL DELETE THE ACTUAL GAME FILE(S)!\nARE YOU SURE?"), _("YES"),
+				mWindow->pushGui(new GuiMsgBox(mWindow, std::string("THIS WILL DELETE THE ACTUAL GAME FILE(S)!\nARE YOU SURE?"), std::string("YES"),
 					[this, game]
 				{
 					deleteGame(game);
 					close();
 				},
-					_("NO"), nullptr));
+					std::string("NO"), nullptr));
 
 
 			});
@@ -252,13 +252,13 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 	if (UIModeController::getInstance()->isUIModeFull())
 	{
 		if (isCustomCollection || isAppendableToCollection)
-			mMenu.addGroup(_("COLLECTIONS"));
+			mMenu.addGroup(std::string("COLLECTIONS"));
 
 		if (isAppendableToCollection)
 		{
 			char trstring[1024];
 
-			snprintf(trstring, 1024, std::string(game->getFavorite() ? _("REMOVE FROM %s") : _("ADD TO %s")).c_str(), _("FAVORITES").c_str());
+			snprintf(trstring, 1024, std::string(game->getFavorite() ? std::string("REMOVE FROM %s") : std::string("ADD TO %s")).c_str(), std::string("FAVORITES").c_str());
 			mMenu.addEntry(trstring, false, [this, game]
 			{
 				CollectionSystemManager::get()->toggleGameInCollection(game, "Favorites");
@@ -272,12 +272,12 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 			if (addToCollectionCount > 1)
 			{
-				mMenu.addEntry(_("ADD TO CUSTOM COLLECTION..."), false, [this, game]
+				mMenu.addEntry(std::string("ADD TO CUSTOM COLLECTION..."), false, [this, game]
 				{
 					auto pThis = this;
 					Window* window = mWindow;
 
-					GuiSettings* msgBox = new GuiSettings(mWindow, _("ADD TO CUSTOM COLLECTION..."));
+					GuiSettings* msgBox = new GuiSettings(mWindow, std::string("ADD TO CUSTOM COLLECTION..."));
 					msgBox->setTag("popup");
 					
 					for (auto customCollection : CollectionSystemManager::get()->getCustomCollectionSystems())
@@ -313,7 +313,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 				if (!exists && addToCollectionCount > 1)
 					continue;
 
-				snprintf(trstring, 1024, std::string(exists ? _("REMOVE FROM %s") : _("ADD TO %s")).c_str(), Utils::String::toUpper(collectionName).c_str());
+				snprintf(trstring, 1024, std::string(exists ? std::string("REMOVE FROM %s") : std::string("ADD TO %s")).c_str(), Utils::String::toUpper(collectionName).c_str());
 				mMenu.addEntry(trstring, false, [this, game, collectionName]
 				{
 					CollectionSystemManager::get()->toggleGameInCollection(game, collectionName);
@@ -325,7 +325,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		}
 
 		if (isCustomCollection)
-			mMenu.addEntry(_("DELETE COLLECTION"), false, std::bind(&GuiGameOptions::deleteCollection, this));
+			mMenu.addEntry(std::string("DELETE COLLECTION"), false, std::bind(&GuiGameOptions::deleteCollection, this));
 	}
 
 	bool fromPlaceholder = game->isPlaceHolder();
@@ -338,9 +338,9 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 	if (!fromPlaceholder && !isCustomCollection && UIModeController::getInstance()->isUIModeFull())
 	{
-		mMenu.addGroup(_("OPTIONS"));
+		mMenu.addGroup(std::string("OPTIONS"));
 		
-		mMenu.addEntry(_("SCRAPE"), false, [this, game]
+		mMenu.addEntry(std::string("SCRAPE"), false, [this, game]
 		{
 			ScraperSearchParams scraperParams;
 			scraperParams.game = game;
@@ -365,7 +365,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			if (game->hasKeyboardMapping())
 			{
-				mMenu.addEntry(_("EDIT PADTOKEY PROFILE"), false, [this, game]
+				mMenu.addEntry(std::string("EDIT PADTOKEY PROFILE"), false, [this, game]
 				{ 
 					GuiMenu::editKeyboardMappings(mWindow, game, true); 
 					close();
@@ -373,7 +373,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 			}
 			else if (game->isFeatureSupported(EmulatorFeatures::Features::padTokeyboard))
 			{
-				mMenu.addEntry(_("CREATE PADTOKEY PROFILE"), false, [this, game]
+				mMenu.addEntry(std::string("CREATE PADTOKEY PROFILE"), false, [this, game]
 				{ 
 					GuiMenu::editKeyboardMappings(mWindow, game, true);
 					close();
@@ -391,7 +391,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 				if (srcSystem->hasFeatures() || srcSystem->hasEmulatorSelection())
 				{
 					mHasAdvancedGameOptions = true;
-					mMenu.addEntry(_("ADVANCED GAME OPTIONS"), false, [this, game]
+					mMenu.addEntry(std::string("ADVANCED GAME OPTIONS"), false, [this, game]
 					{
 						GuiMenu::popGameConfigurationGui(mWindow, game);
 						close();
@@ -401,13 +401,13 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		}
 
 		if (game->getType() == FOLDER)
-			mMenu.addEntry(_("EDIT FOLDER METADATA"), false, std::bind(&GuiGameOptions::openMetaDataEd, this));
+			mMenu.addEntry(std::string("EDIT FOLDER METADATA"), false, std::bind(&GuiGameOptions::openMetaDataEd, this));
 		else
-			mMenu.addEntry(_("EDIT THIS GAME'S METADATA"), false, std::bind(&GuiGameOptions::openMetaDataEd, this));
+			mMenu.addEntry(std::string("EDIT THIS GAME'S METADATA"), false, std::bind(&GuiGameOptions::openMetaDataEd, this));
 	}
 	else if (game->hasKeyboardMapping())
 	{
-		mMenu.addEntry(_("VIEW PAD TO KEYBOARD INFORMATION"), false, [this, game]
+		mMenu.addEntry(std::string("VIEW PAD TO KEYBOARD INFORMATION"), false, [this, game]
 		{ 
 			GuiMenu::editKeyboardMappings(mWindow, game, false);
 			close();
@@ -416,7 +416,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 	{	
-		mMenu.addButton(_("BACK"), _("go back"), [this] { close(); });
+		mMenu.addButton(std::string("BACK"), std::string("go back"), [this] { close(); });
 
 		mMenu.setMaxHeight(Renderer::getScreenHeight() * 0.85f);
 		setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
@@ -493,7 +493,7 @@ void GuiGameOptions::openMetaDataEd()
 {
 	if (ThreadedScraper::isRunning() || ThreadedHasher::isRunning())
 	{
-		mWindow->pushGui(new GuiMsgBox(mWindow, _("THIS FUNCTION IS DISABLED WHILE THE SCRAPER IS RUNNING")));
+		mWindow->pushGui(new GuiMsgBox(mWindow, std::string("THIS FUNCTION IS DISABLED WHILE THE SCRAPER IS RUNNING")));
 		return;
 	}
 
@@ -550,11 +550,11 @@ HelpStyle GuiGameOptions::getHelpStyle()
 std::vector<HelpPrompt> GuiGameOptions::getHelpPrompts()
 {
 	auto prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("CLOSE"), [&] { close(); }));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("CLOSE"), [&] { close(); }));
 
 	if (mHasAdvancedGameOptions)
 	{
-		prompts.push_back(HelpPrompt("x", _("ADVANCED GAME OPTIONS"), [&] 
+		prompts.push_back(HelpPrompt("x", std::string("ADVANCED GAME OPTIONS"), [&] 
 		{
 			GuiMenu::popGameConfigurationGui(mWindow, mGame);
 			close();
@@ -574,7 +574,7 @@ void GuiGameOptions::deleteCollection()
 	if (getCustomCollectionName() == CollectionSystemManager::get()->getCustomCollectionsBundle()->getName())
 		return;
 
-	mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), _("YES"),
+	mWindow->pushGui(new GuiMsgBox(mWindow, std::string("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), std::string("YES"),
 		[this]
 		{
 			std::map<std::string, CollectionSystemData> customCollections = CollectionSystemManager::get()->getCustomCollectionSystems();
@@ -595,7 +595,7 @@ void GuiGameOptions::deleteCollection()
 			}
 			delete this;
 		}, 
-		_("NO"), [this] 
+		std::string("NO"), [this] 
 		{
 			delete this;
 		}));

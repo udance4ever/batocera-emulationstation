@@ -52,7 +52,7 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 
 	mHeaderGrid = std::make_shared<ComponentGrid>(mWindow, Vector2i(1, 5));
 
-	mTitle = std::make_shared<TextComponent>(mWindow, _("EDIT METADATA"), theme->Title.font, theme->Title.color, ALIGN_CENTER); 
+	mTitle = std::make_shared<TextComponent>(mWindow, std::string("EDIT METADATA"), theme->Title.font, theme->Title.color, ALIGN_CENTER); 
 	
 	auto subTitle = Utils::FileSystem::createRelativePath(scraperParams.game->getPath(), scraperParams.game->getSourceFileData()->getSystem()->getRootFolder()->getPath(), true);
 	if (Utils::String::startsWith(subTitle, "./"))
@@ -72,8 +72,8 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 
 	SystemData* system = file->getSystem();
 
-	auto emul_choice = std::make_shared<OptionListComponent<std::string>>(mWindow, _("Emulator"), false);
-	auto core_choice = std::make_shared<OptionListComponent<std::string>>(mWindow, _("Core"), false);
+	auto emul_choice = std::make_shared<OptionListComponent<std::string>>(mWindow, std::string("Emulator"), false);
+	auto core_choice = std::make_shared<OptionListComponent<std::string>>(mWindow, std::string("Core"), false);
 	std::string relativePath = mMetaData->getRelativeRootPath();
 
 	// populate list
@@ -101,14 +101,14 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 			std::string currentEmul = file->getEmulator(false);
 
 			if (defaultEmul.length() == 0)
-				emul_choice->add(_("AUTO"), "", true);
+				emul_choice->add(std::string("AUTO"), "", true);
 			else
-				emul_choice->add(_("AUTO") + " (" + defaultEmul + ")", "", currentEmul.length() == 0);
+				emul_choice->add(std::string("AUTO") + " (" + defaultEmul + ")", "", currentEmul.length() == 0);
 
 			for (auto core : file->getSystem()->getEmulators())
 				emul_choice->add(core.name, core.name, core.name == currentEmul);
 
-			row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Emulator")), theme->Text.font, theme->Text.color), true);
+			row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Emulator")), theme->Text.font, theme->Text.color), true);
 			row.addElement(emul_choice, false);
 
 			mList->addRow(row);
@@ -125,9 +125,9 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 
 				core_choice->clear();
 				if (defaultCore.length() == 0)
-					core_choice->add(_("AUTO"), "", false);
+					core_choice->add(std::string("AUTO"), "", false);
 				else
-					core_choice->add(_("AUTO") + " (" + defaultCore + ")", "", false);
+					core_choice->add(std::string("AUTO") + " (" + defaultCore + ")", "", false);
 
 				std::vector<std::string> cores = system->getCoreNames(emulatorName);
 
@@ -157,7 +157,7 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 
 			core_choice->setTag(iter->key);
 
-			row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Core")), theme->Text.font, theme->Text.color), true);
+			row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Core")), theme->Text.font, theme->Text.color), true);
 			row.addElement(core_choice, false);
 
 			mList->addRow(row);
@@ -177,7 +177,7 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 		{
 			auto selectedGenres = Utils::String::split(mMetaData->get(MetaDataId::GenreIds), ',');
 
-			auto genres = std::make_shared<OptionListComponent<std::string>>(mWindow, _("GENRES"), true, true);
+			auto genres = std::make_shared<OptionListComponent<std::string>>(mWindow, std::string("GENRES"), true, true);
 			genres->setTag("genres");
 			ed = genres;
 
@@ -187,7 +187,7 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				genres->add(genre->getLocalizedName(), std::to_string(genre->id), selected, false, genre->parentId > 0);
 			}
 
-			row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("GENRES")), theme->Text.font, theme->Text.color), true);
+			row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("GENRES")), theme->Text.font, theme->Text.color), true);
 			row.addElement(genres, false);
 
 			mList->addRow(row);
@@ -329,19 +329,19 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 
 	std::vector< std::shared_ptr<ButtonComponent> > buttons;
 
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("SAVE"), _("SAVE"), [&] { if (save()) { delete this; } }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("SAVE"), std::string("SAVE"), [&] { if (save()) { delete this; } }));
 
 	if (!scraperParams.system->hasPlatformId(PlatformIds::PLATFORM_IGNORE))
-		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("SCRAPE"), _("SCRAPE"), std::bind(&GuiMetaDataEd::fetch, this)));
+		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("SCRAPE"), std::string("SCRAPE"), std::bind(&GuiMetaDataEd::fetch, this)));
 
 	if(mDeleteFunc)
 	{
 		auto deleteFileAndSelf = [&] { mDeleteFunc(); delete this; };
-		auto deleteBtnFunc = [this, deleteFileAndSelf] { mWindow->pushGui(new GuiMsgBox(mWindow, _("THIS WILL DELETE THE ACTUAL GAME FILE(S)!\nARE YOU SURE?"), _("YES"), deleteFileAndSelf, _("NO"), nullptr)); };
-		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("DELETE"), _("DELETE"), deleteBtnFunc));
+		auto deleteBtnFunc = [this, deleteFileAndSelf] { mWindow->pushGui(new GuiMsgBox(mWindow, std::string("THIS WILL DELETE THE ACTUAL GAME FILE(S)!\nARE YOU SURE?"), std::string("YES"), deleteFileAndSelf, std::string("NO"), nullptr)); };
+		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("DELETE"), std::string("DELETE"), deleteBtnFunc));
 	}
 
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("CANCEL"), _("CANCEL"), [&] { delete this; }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("CANCEL"), std::string("CANCEL"), [&] { delete this; }));
 
 	mButtons = makeButtonGrid(mWindow, buttons);
 	mGrid.setEntry(mButtons, Vector2i(0, 2), true, false);
@@ -491,10 +491,10 @@ bool GuiMetaDataEd::save()
 	if (externalFilesToCopy.size())
 	{
 		mWindow->pushGui(new GuiMsgBox(mWindow,
-			_("SOME FILES YOU LINKED ARE LOCATED OUTSIDE THE GAMELIST PATH.\nDO YOU WANT TO USE A COPY OF THESE FILES RELATIVE TO THE GAMELIST ?"),
-			_("YES"), [this, performSave, externalFilesToCopy] { performSave(externalFilesToCopy); delete this; },
-			_("NO"), [this, performSave] { performSave(std::set<std::string>()); delete this; },
-			_("CANCEL"), nullptr, ICON_QUESTION
+			std::string("SOME FILES YOU LINKED ARE LOCATED OUTSIDE THE GAMELIST PATH.\nDO YOU WANT TO USE A COPY OF THESE FILES RELATIVE TO THE GAMELIST ?"),
+			std::string("YES"), [this, performSave, externalFilesToCopy] { performSave(externalFilesToCopy); delete this; },
+			std::string("NO"), [this, performSave] { performSave(std::set<std::string>()); delete this; },
+			std::string("CANCEL"), nullptr, ICON_QUESTION
 		));
 		
 		return false;
@@ -596,9 +596,9 @@ void GuiMetaDataEd::close(bool closeAllWindows)
 	{
 		// changes were made, ask if the user wants to save them
 		mWindow->pushGui(new GuiMsgBox(mWindow,
-			_("SAVE CHANGES?"), 
-			_("YES"), [this, closeFunc] { if (save()) closeFunc(); }, 
-			_("NO"), closeFunc 
+			std::string("SAVE CHANGES?"), 
+			std::string("YES"), [this, closeFunc] { if (save()) closeFunc(); }, 
+			std::string("NO"), closeFunc 
 		));
 	}else{
 		closeFunc();
@@ -623,8 +623,8 @@ bool GuiMetaDataEd::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiMetaDataEd::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mGrid.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("CLOSE"))); 
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("CLOSE"))); 
 	return prompts;
 }
 

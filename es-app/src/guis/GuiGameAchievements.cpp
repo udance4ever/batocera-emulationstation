@@ -20,7 +20,7 @@
 
 void GuiGameAchievements::show(Window* window, int gameId)
 {
-	window->pushGui(new GuiLoading<GameInfoAndUserProgress>(window, _("PLEASE WAIT"),
+	window->pushGui(new GuiLoading<GameInfoAndUserProgress>(window, std::string("PLEASE WAIT"),
 		[window, gameId](auto gui)
 	{
 		return RetroAchievements::getGameInfoAndUserProgress(gameId);
@@ -28,9 +28,9 @@ void GuiGameAchievements::show(Window* window, int gameId)
 		[window](GameInfoAndUserProgress ra)
 	{
 		if (ra.ID == 0 && !ra.Title.empty())
-			window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + "\r\n" + ra.Title, _("OK")));
+			window->pushGui(new GuiMsgBox(window, std::string("AN ERROR OCCURRED") + "\r\n" + ra.Title, std::string("OK")));
 		else if (ra.ID == 0)
-			window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED"), _("OK")));
+			window->pushGui(new GuiMsgBox(window, std::string("AN ERROR OCCURRED"), std::string("OK")));
 		else
 			window->pushGui(new GuiGameAchievements(window, ra));
 	}));
@@ -52,12 +52,16 @@ public:
 		setEntry(mImage, Vector2i(0, 0), false, false, Vector2i(1, 4));
 				
 		std::string desc = mGameInfo.Description;
-		desc += _U(" - ") + _("Points") + ": " + mGameInfo.Points;
+// $$
+//		desc += _U(" - ") + std::string("Points") + ": " + mGameInfo.Points;
+		desc += " - " + std::string("Points") + ": " + mGameInfo.Points;
 
 		if (!mGameInfo.DateEarnedHardcore.empty())
-			desc += _U("  \uf091  ") + _("Unlocked on") + ": " + mGameInfo.DateEarnedHardcore + _U(" - ") + _("HARDCORE MODE");
+//			desc += _U("  \uf091  ") + std::string("Unlocked on") + ": " + mGameInfo.DateEarnedHardcore + _U(" - ") + std::string("HARDCORE MODE");
+			desc += "  \uf091  " + std::string("Unlocked on") + ": " + mGameInfo.DateEarnedHardcore + " - " + std::string("HARDCORE MODE");
 		else if (!mGameInfo.DateEarned.empty())
-			desc += _U("  \uf091  ") + _("Unlocked on") + ": " + mGameInfo.DateEarned;			
+//			desc += _U("  \uf091  ") + std::string("Unlocked on") + ": " + mGameInfo.DateEarned;			
+			desc += "  \uf091  " + std::string("Unlocked on") + ": " + mGameInfo.DateEarned;			
 
 		mText = std::make_shared<TextComponent>(mWindow, mGameInfo.Title, theme->Text.font, theme->Text.color);
 		mText->setVerticalAlignment(ALIGN_TOP);
@@ -121,7 +125,7 @@ GuiGameAchievements::GuiGameAchievements(Window* window, GameInfoAndUserProgress
 	if (mFile != nullptr)
 	{
 		auto file = mFile;
-		mMenu.addButton(_("LAUNCH"), _("LAUNCH"), [this, file]
+		mMenu.addButton(std::string("LAUNCH"), std::string("LAUNCH"), [this, file]
 		{ 			
 			Window* window = mWindow;
 			while (window->peekGui() && window->peekGui() != ViewController::get())
@@ -131,7 +135,7 @@ GuiGameAchievements::GuiGameAchievements(Window* window, GameInfoAndUserProgress
 		});
 	}
 
-	mMenu.addButton(_("BACK"), _("go back"), [this] { close(); });
+	mMenu.addButton(std::string("BACK"), std::string("go back"), [this] { close(); });
 
 	int totalPoints = 0;
 	int userPoints = 0;
@@ -145,12 +149,12 @@ GuiGameAchievements::GuiGameAchievements(Window* window, GameInfoAndUserProgress
 	}
 
 	if (ra.Achievements.size() == 0)
-		setSubTitle(_("THIS GAME HAS NO ACHIEVEMENTS YET"));
+		setSubTitle(std::string("THIS GAME HAS NO ACHIEVEMENTS YET"));
 	else
 	{
-		auto txt = _("Achievements (softcore)") + ": \t" + std::to_string(ra.NumAwardedToUser) + "/" + std::to_string(ra.NumAchievements);
-		txt += "\r\n" + _("Achievements (hardcore)") + ": \t" + std::to_string(ra.NumAwardedToUserHardcore) + "/" + std::to_string(ra.NumAchievements);
-		txt += "\r\n" + _("Points") + ": \t" + std::to_string(userPoints) + "/" + std::to_string(totalPoints);
+		auto txt = std::string("Achievements (softcore)") + ": \t" + std::to_string(ra.NumAwardedToUser) + "/" + std::to_string(ra.NumAchievements);
+		txt += "\r\n" + std::string("Achievements (hardcore)") + ": \t" + std::to_string(ra.NumAwardedToUserHardcore) + "/" + std::to_string(ra.NumAchievements);
+		txt += "\r\n" + std::string("Points") + ": \t" + std::to_string(userPoints) + "/" + std::to_string(totalPoints);
 
 		setSubTitle(txt);
 	}
@@ -164,7 +168,7 @@ GuiGameAchievements::GuiGameAchievements(Window* window, GameInfoAndUserProgress
 		int percent = Math::round(ra.NumAwardedToUser * 100.0f / ra.Achievements.size());
 
 		char trstring[256];
-		snprintf(trstring, 256, _("%d%% complete").c_str(), percent);
+		snprintf(trstring, 256, std::string("%d%% complete").c_str(), percent);
 		mProgress = std::make_shared<RetroAchievementProgress>(mWindow, ra.NumAwardedToUser, ra.NumAwardedToUserHardcore, ra.Achievements.size(), Utils::String::trim(trstring));
 	}
 
@@ -242,10 +246,10 @@ bool GuiGameAchievements::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiGameAchievements::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
 
 	if (mFile != nullptr)
-		prompts.push_back(HelpPrompt("x", _("LAUNCH")));
+		prompts.push_back(HelpPrompt("x", std::string("LAUNCH")));
 
 	return prompts;
 }

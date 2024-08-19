@@ -23,7 +23,7 @@
 
 void GuiRetroAchievements::show(Window* window)
 {
-	window->pushGui(new GuiLoading<RetroAchievementInfo>(window, _("PLEASE WAIT"), 
+	window->pushGui(new GuiLoading<RetroAchievementInfo>(window, std::string("PLEASE WAIT"), 
 		[window](auto gui)
 		{
 			auto summary = RetroAchievements::getUserSummary();
@@ -32,9 +32,9 @@ void GuiRetroAchievements::show(Window* window)
 		[window](RetroAchievementInfo ra)
 		{
 			if (ra.username.empty() && !ra.error.empty())
-				window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + "\r\n" + ra.error, _("OK")));
+				window->pushGui(new GuiMsgBox(window, std::string("AN ERROR OCCURRED") + "\r\n" + ra.error, std::string("OK")));
 			else if (ra.username.empty())
-				window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED"), _("OK")));
+				window->pushGui(new GuiMsgBox(window, std::string("AN ERROR OCCURRED"), std::string("OK")));
 			else
 				window->pushGui(new GuiRetroAchievements(window, ra));
 		}));
@@ -176,14 +176,14 @@ public:
 		std::string desc; // = mGameInfo.points + " points";
 		
 		if (mGameInfo.scoreHardcore != mGameInfo.scoreSoftcore || mGameInfo.scoreHardcore == 0)
-			desc = Utils::String::format(_("%d of %d softcore points").c_str(), mGameInfo.scoreSoftcore, mGameInfo.possibleScore);
+			desc = Utils::String::format(std::string("%d of %d softcore points").c_str(), mGameInfo.scoreSoftcore, mGameInfo.possibleScore);
 
 		if (mGameInfo.scoreHardcore != 0)
 		{
 			if (!desc.empty())
 				desc = desc + " - ";
 
-			desc = desc + Utils::String::format(_("%d of %d hardcore points").c_str(), mGameInfo.scoreHardcore, mGameInfo.possibleScore);
+			desc = desc + Utils::String::format(std::string("%d of %d hardcore points").c_str(), mGameInfo.scoreHardcore, mGameInfo.possibleScore);
 		}
 
 		// "42 of 75 softcore points"
@@ -199,7 +199,7 @@ public:
 		int percent = mGameInfo.totalAchievements == 0 ? 0 : Math::round(mGameInfo.wonAchievementsSoftcore * 100.0f / mGameInfo.totalAchievements);
 		
 		char trstring[256];
-		snprintf(trstring, 256, _("%d%% (%d of %d)").c_str(), percent, mGameInfo.wonAchievementsSoftcore, mGameInfo.totalAchievements);
+		snprintf(trstring, 256, std::string("%d%% (%d of %d)").c_str(), percent, mGameInfo.wonAchievementsSoftcore, mGameInfo.totalAchievements);
 		mProgress = std::make_shared<RetroAchievementProgress>(mWindow, mGameInfo.wonAchievementsSoftcore, mGameInfo.wonAchievementsHardcore, mGameInfo.totalAchievements, Utils::String::trim(trstring));
 
 		setEntry(mProgress, Vector2i(3, 0), false, true, Vector2i(1, 4));
@@ -280,7 +280,7 @@ private:
 };
 
 GuiRetroAchievements::GuiRetroAchievements(Window* window, RetroAchievementInfo ra) : 
-	GuiSettings(window, _("RETROACHIEVEMENTS") + " - " + ra.username, "", nullptr)
+	GuiSettings(window, std::string("RETROACHIEVEMENTS") + " - " + ra.username, "", nullptr)
 {
 	// Required for WebImageComponent
 	setUpdateType(ComponentListFlags::UPDATE_ALWAYS);
@@ -291,10 +291,10 @@ GuiRetroAchievements::GuiRetroAchievements(Window* window, RetroAchievementInfo 
 		return;
 	}
 
-	auto txt = _("Softcore points") + ":\t" + ra.softpoints; 
-	txt += "\r\n" + _("Points (hardcore)") + ":\t" + ra.points;
+	auto txt = std::string("Softcore points") + ":\t" + ra.softpoints; 
+	txt += "\r\n" + std::string("Points (hardcore)") + ":\t" + ra.points;
 	if (!ra.rank.empty())
-		txt += "\r\n" + _("Rank") + ":\t" + ra.rank;
+		txt += "\r\n" + std::string("Rank") + ":\t" + ra.rank;
 
 	setSubTitle(txt);
 
@@ -367,11 +367,11 @@ bool GuiRetroAchievements::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiRetroAchievements::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("VIEW DETAILS")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("VIEW DETAILS")));
 
 	if (mMenu.getList()->size() > 0 && !mMenu.getList()->getSelected().empty())
-		prompts.push_back(HelpPrompt("x", _("LAUNCH")));
+		prompts.push_back(HelpPrompt("x", std::string("LAUNCH")));
 
 	return prompts;
 }

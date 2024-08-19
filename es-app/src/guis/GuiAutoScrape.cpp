@@ -65,7 +65,7 @@ void GuiAutoScrape::update(int deltaTime) {
 	
         if(mState == 4){
             window->pushGui(
-			    new GuiMsgBox(window, _("FINISHED"), _("OK"),
+			    new GuiMsgBox(window, std::string("FINISHED"), std::string("OK"),
                 [this] {
 					    mState = -1;
                 })
@@ -75,7 +75,7 @@ void GuiAutoScrape::update(int deltaTime) {
 	
         if(mState == 5){
             window->pushGui(
-                    new GuiMsgBox(window, mResult.first, _("OK"),
+                    new GuiMsgBox(window, mResult.first, std::string("OK"),
                                   [this] {
                                       mState = -1;
                                   }
@@ -103,7 +103,7 @@ void GuiAutoScrape::onAutoScrapeError(std::pair<std::string, int> result)
     mLoading = false;
     mState = 5;
     mResult = result;
-    mResult.first = _("AN ERROR OCCURRED") + std::string(": ") + mResult.first;
+    mResult.first = std::string("AN ERROR OCCURRED") + std::string(": ") + mResult.first;
 }
 
 void GuiAutoScrape::onAutoScrapeOk()

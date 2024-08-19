@@ -35,23 +35,24 @@ std::vector<CollectionSystemDecl> CollectionSystemManager::getSystemDecls()
 {
 	CollectionSystemDecl systemDecls[] = 
 	{
+		// $$ _(
 		//type						name            long name                 default sort					  theme folder               isCustom     displayIfEmpty
-		{ AUTO_ALL_GAMES,			"all",				_("all games"),         FileSorts::FILENAME_ASCENDING,    "auto-allgames",           false,       true },
-		{ AUTO_LAST_PLAYED,			"recent",			_("last played"),       FileSorts::LASTPLAYED_ASCENDING,  "auto-lastplayed",         false,       true },
-		{ AUTO_FAVORITES,			"favorites",		_("favorites"),         FileSorts::FILENAME_ASCENDING,    "auto-favorites",          false,       true },
-		{ AUTO_AT2PLAYERS,			"2players",			_("2 players"),         FileSorts::FILENAME_ASCENDING,    "auto-at2players",         false,       true }, 
-		{ AUTO_AT4PLAYERS,			"4players",			_("4 players"),         FileSorts::FILENAME_ASCENDING,    "auto-at4players",         false,       true }, 
-		{ AUTO_NEVER_PLAYED,		"neverplayed",		_("never played"),      FileSorts::FILENAME_ASCENDING,    "auto-neverplayed",        false,       true }, 
-		{ AUTO_RETROACHIEVEMENTS,	"retroachievements",_("retroachievements"),  FileSorts::FILENAME_ASCENDING,    "auto-retroachievements",        false,       true }, 
+		{ AUTO_ALL_GAMES,			"all",				std::string("all games"),         FileSorts::FILENAME_ASCENDING,    "auto-allgames",           false,       true },
+		{ AUTO_LAST_PLAYED,			"recent",			std::string("last played"),       FileSorts::LASTPLAYED_ASCENDING,  "auto-lastplayed",         false,       true },
+		{ AUTO_FAVORITES,			"favorites",		std::string("favorites"),         FileSorts::FILENAME_ASCENDING,    "auto-favorites",          false,       true },
+		{ AUTO_AT2PLAYERS,			"2players",			std::string("2 players"),         FileSorts::FILENAME_ASCENDING,    "auto-at2players",         false,       true }, 
+		{ AUTO_AT4PLAYERS,			"4players",			std::string("4 players"),         FileSorts::FILENAME_ASCENDING,    "auto-at4players",         false,       true }, 
+		{ AUTO_NEVER_PLAYED,		"neverplayed",		std::string("never played"),      FileSorts::FILENAME_ASCENDING,    "auto-neverplayed",        false,       true }, 
+		{ AUTO_RETROACHIEVEMENTS,	"retroachievements",std::string("retroachievements"),  FileSorts::FILENAME_ASCENDING,    "auto-retroachievements",        false,       true }, 
 
 		// Arcade meta 
-		{ AUTO_ARCADE,				 "arcade",			_("arcade"),            FileSorts::FILENAME_ASCENDING,    "arcade",				     false,       true }, 
-		{ AUTO_VERTICALARCADE,		 "vertical",		_("vertical arcade"),   FileSorts::FILENAME_ASCENDING,    "auto-verticalarcade",     false,       true }, 
-		{ AUTO_LIGHTGUN,			 "lightgun",		_("lightgun games"),    FileSorts::FILENAME_ASCENDING,    "auto-lightgun",           false,       true },
-		{ AUTO_WHEEL,				 "wheel",			_("wheel games"),    FileSorts::FILENAME_ASCENDING,    "auto-wheel",           false,       true }, 
+		{ AUTO_ARCADE,				 "arcade",			std::string("arcade"),            FileSorts::FILENAME_ASCENDING,    "arcade",				     false,       true }, 
+		{ AUTO_VERTICALARCADE,		 "vertical",		std::string("vertical arcade"),   FileSorts::FILENAME_ASCENDING,    "auto-verticalarcade",     false,       true }, 
+		{ AUTO_LIGHTGUN,			 "lightgun",		std::string("lightgun games"),    FileSorts::FILENAME_ASCENDING,    "auto-lightgun",           false,       true },
+		{ AUTO_WHEEL,				 "wheel",			std::string("wheel games"),    FileSorts::FILENAME_ASCENDING,    "auto-wheel",           false,       true }, 
 
 		// Custom collection
-		{ CUSTOM_COLLECTION,		myCollectionsName,  _("collections"),   FileSorts::FILENAME_ASCENDING,    "custom-collections",      true,        true }
+		{ CUSTOM_COLLECTION,		myCollectionsName,  std::string("collections"),   FileSorts::FILENAME_ASCENDING,    "custom-collections",      true,        true }
 	};
 
 	auto ret = std::vector<CollectionSystemDecl>(systemDecls, systemDecls + sizeof(systemDecls) / sizeof(systemDecls[0]));
@@ -726,9 +727,9 @@ bool CollectionSystemManager::toggleGameInCollection(FileData* file, const std::
 	std::string trstring;
 
 	if (adding)
-		trstring = Utils::String::format(_("Added '%s' to '%s'").c_str(), Utils::String::removeParenthesis(name).c_str(), Utils::String::toUpper(collectionName).c_str()); 
+		trstring = Utils::String::format(std::string("Added '%s' to '%s'").c_str(), Utils::String::removeParenthesis(name).c_str(), Utils::String::toUpper(collectionName).c_str()); 
 	else
-		trstring = Utils::String::format(_("Removed '%s' from '%s'").c_str(), Utils::String::removeParenthesis(name).c_str(), Utils::String::toUpper(collectionName).c_str()); 		  
+		trstring = Utils::String::format(std::string("Removed '%s' from '%s'").c_str(), Utils::String::removeParenthesis(name).c_str(), Utils::String::toUpper(collectionName).c_str()); 		  
 
 	mWindow->displayNotificationMessage(trstring, 4000);
 	return true;
@@ -765,12 +766,12 @@ void CollectionSystemManager::updateCollectionFolderMetadata(SystemData* sys)
 {
 	FolderData* rootFolder = sys->getRootFolder();
 
-	std::string desc = _("This collection is empty.");
+	std::string desc = std::string("This collection is empty.");
 	std::string rating = "0";
 	std::string players = "1";
 	std::string releasedate = "N/A";
-	std::string developer = _("None");
-	std::string genre = _("None");
+	std::string developer = std::string("None");
+	std::string genre = std::string("None");
 	std::string video;
 	std::string thumbnail;
 	std::string image;
@@ -801,8 +802,8 @@ void CollectionSystemManager::updateCollectionFolderMetadata(SystemData* sys)
 			players = (new_players > players ? (new_players != "" ? new_players : players) : players);
 			releasedate = (new_releasedate < releasedate ? (new_releasedate != "" ? new_releasedate : releasedate) : releasedate);
 			// TRANSLATION: number of developpers / various developpers
-			developer = (developer == _("None") ? new_developer : (new_developer != developer ? _("Various") : new_developer));
-			genre = (genre == _("None") ? new_genre : (new_genre != genre ? _("Various") : new_genre));
+			developer = (developer == std::string("None") ? new_developer : (new_developer != developer ? std::string("Various") : new_developer));
+			genre = (genre == std::string("None") ? new_genre : (new_genre != genre ? std::string("Various") : new_genre));
 
 			switch (games_counter)
 			{
@@ -819,9 +820,12 @@ void CollectionSystemManager::updateCollectionFolderMetadata(SystemData* sys)
 		games_list = "\n" + games_list;
 		games_counter = games.size();
 
-		snprintf(trstring, 1024, ngettext(
-			"This collection contains %i game:%s",
-			"This collection contains %i games, including:%s", games_counter), games_counter, games_list.c_str());
+// $$
+//		snprintf(trstring, 1024, ngettext(
+//			"This collection contains %i game:%s",
+//			"This collection contains %i games, including:%s", games_counter), games_counter, games_list.c_str());
+		snprintf(trstring, 1024, 
+			"This collection contains %i games, including:%s", games_counter, games_list.c_str());
 
 		desc = trstring;
 

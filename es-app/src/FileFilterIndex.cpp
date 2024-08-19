@@ -26,23 +26,25 @@ FileFilterIndex::FileFilterIndex()
 	FilterDataDecl filterDecls[] = 
 	{
 		//type 				//allKeys 				//filteredBy 		//filteredKeys 				//primaryKey 	//hasSecondaryKey 	//secondaryKey 	//menuLabel
-		{ FAVORITES_FILTER, &favoritesIndexAllKeys, &filterByFavorites,	&favoritesIndexFilteredKeys,"favorite",		false,				"",				_("FAVORITES")	},
-		{ GENRE_FILTER, 	&genreIndexAllKeys, 	&filterByGenre,		&genreIndexFilteredKeys, 	"genre",		true,				"genre",		_("GENRE")	},
-		{ FAMILY_FILTER, 	&familyIndexAllKeys, 	&filterByFamily,	&familyIndexFilteredKeys, 	"family",		false,				"",				_("FAMILY") },
-		{ PLAYER_FILTER, 	&playersIndexAllKeys, 	&filterByPlayers,	&playersIndexFilteredKeys, 	"players",		false,				"",				_("PLAYERS")	},
-		{ PUBDEV_FILTER, 	&pubDevIndexAllKeys, 	&filterByPubDev,	&pubDevIndexFilteredKeys, 	"developer",	true,				"publisher",	_("PUBLISHER/DEVELOPER")	},
-		{ RATINGS_FILTER, 	&ratingsIndexAllKeys, 	&filterByRatings,	&ratingsIndexFilteredKeys, 	"rating",		false,				"",				_("RATING")	},
-		{ YEAR_FILTER, 		&yearIndexAllKeys, 		&filterByYear,		&yearIndexFilteredKeys, 	"year",			false,				"",				_("YEAR") },
-		{ LANG_FILTER, 	    &langIndexAllKeys,      &filterByLang,	    &langIndexFilteredKeys, 	"lang",		    false,				"",				_("LANGUAGE") },
-		{ REGION_FILTER, 	&regionIndexAllKeys,    &filterByRegion,	&regionIndexFilteredKeys, 	"region",		false,				"",				_("REGION") },
-		{ KIDGAME_FILTER, 	&kidGameIndexAllKeys, 	&filterByKidGame,	&kidGameIndexFilteredKeys, 	"kidgame",		false,				"",				_("KIDGAME") },
-		{ PLAYED_FILTER, 	&playedIndexAllKeys,    &filterByPlayed,	&playedIndexFilteredKeys, 	"played",		false,				"",				_("ALREADY PLAYED") },
-		{ CHEEVOS_FILTER, 	&cheevosIndexAllKeys,   &filterByCheevos,	&cheevosIndexFilteredKeys, 	"cheevos",		false,				"",				_("HAS ACHIEVEMENTS") },
-		{ VERTICAL_FILTER, 	&verticalIndexAllKeys,  &filterByVertical,	&verticalIndexFilteredKeys, "vertical",		false,				"",				_("VERTICAL") },
-		{ LIGHTGUN_FILTER, 	&lightGunIndexAllKeys,  &filterByLightGun,	&lightGunIndexFilteredKeys, "lightgun",		false,				"",				_("LIGHTGUN") },
-		{ WHEEL_FILTER, 	&wheelIndexAllKeys,     &filterByWheel,	    &wheelIndexFilteredKeys,    "wheel",		false,				"",				_("STEERING WHEEL") },
-		{ HASMEDIA_FILTER, 	&hasMediasIndexAllKeys, &filterByHasMedia,	&hasMediaIndexFilteredKeys, "hasMedia",		false,				"",				_("HAVING MEDIAS") },
-		{ MISSING_MEDIA_FILTER, &missingMediasIndexAllKeys, &filterByMissingMedia, &missingMediaIndexFilteredKeys, "missingMedia",		false,				"",				_("MISSING MEDIAS") }
+// $$
+//		{ FAVORITES_FILTER, &favoritesIndexAllKeys, &filterByFavorites,	&favoritesIndexFilteredKeys,"favorite",		false,				"",				_("FAVORITES")	},
+		{ FAVORITES_FILTER, &favoritesIndexAllKeys, &filterByFavorites,	&favoritesIndexFilteredKeys,"favorite",		false,				"",				std::string("FAVORITES")	},
+		{ GENRE_FILTER, 	&genreIndexAllKeys, 	&filterByGenre,		&genreIndexFilteredKeys, 	"genre",		true,				"genre",		std::string("GENRE")	},
+		{ FAMILY_FILTER, 	&familyIndexAllKeys, 	&filterByFamily,	&familyIndexFilteredKeys, 	"family",		false,				"",				std::string("FAMILY") },
+		{ PLAYER_FILTER, 	&playersIndexAllKeys, 	&filterByPlayers,	&playersIndexFilteredKeys, 	"players",		false,				"",				std::string("PLAYERS")	},
+		{ PUBDEV_FILTER, 	&pubDevIndexAllKeys, 	&filterByPubDev,	&pubDevIndexFilteredKeys, 	"developer",	true,				"publisher",	std::string("PUBLISHER/DEVELOPER")	},
+		{ RATINGS_FILTER, 	&ratingsIndexAllKeys, 	&filterByRatings,	&ratingsIndexFilteredKeys, 	"rating",		false,				"",				std::string("RATING")	},
+		{ YEAR_FILTER, 		&yearIndexAllKeys, 		&filterByYear,		&yearIndexFilteredKeys, 	"year",			false,				"",				std::string("YEAR") },
+		{ LANG_FILTER, 	    &langIndexAllKeys,      &filterByLang,	    &langIndexFilteredKeys, 	"lang",		    false,				"",				std::string("LANGUAGE") },
+		{ REGION_FILTER, 	&regionIndexAllKeys,    &filterByRegion,	&regionIndexFilteredKeys, 	"region",		false,				"",				std::string("REGION") },
+		{ KIDGAME_FILTER, 	&kidGameIndexAllKeys, 	&filterByKidGame,	&kidGameIndexFilteredKeys, 	"kidgame",		false,				"",				std::string("KIDGAME") },
+		{ PLAYED_FILTER, 	&playedIndexAllKeys,    &filterByPlayed,	&playedIndexFilteredKeys, 	"played",		false,				"",				std::string("ALREADY PLAYED") },
+		{ CHEEVOS_FILTER, 	&cheevosIndexAllKeys,   &filterByCheevos,	&cheevosIndexFilteredKeys, 	"cheevos",		false,				"",				std::string("HAS ACHIEVEMENTS") },
+		{ VERTICAL_FILTER, 	&verticalIndexAllKeys,  &filterByVertical,	&verticalIndexFilteredKeys, "vertical",		false,				"",				std::string("VERTICAL") },
+		{ LIGHTGUN_FILTER, 	&lightGunIndexAllKeys,  &filterByLightGun,	&lightGunIndexFilteredKeys, "lightgun",		false,				"",				std::string("LIGHTGUN") },
+		{ WHEEL_FILTER, 	&wheelIndexAllKeys,     &filterByWheel,	    &wheelIndexFilteredKeys,    "wheel",		false,				"",				std::string("STEERING WHEEL") },
+		{ HASMEDIA_FILTER, 	&hasMediasIndexAllKeys, &filterByHasMedia,	&hasMediaIndexFilteredKeys, "hasMedia",		false,				"",				std::string("HAVING MEDIAS") },
+		{ MISSING_MEDIA_FILTER, &missingMediasIndexAllKeys, &filterByMissingMedia, &missingMediaIndexFilteredKeys, "missingMedia",		false,				"",				std::string("MISSING MEDIAS") }
 	};
 
 	std::vector<FilterDataDecl> filterDataDecl = std::vector<FilterDataDecl>(filterDecls, filterDecls + sizeof(filterDecls) / sizeof(filterDecls[0]));
@@ -1303,7 +1305,9 @@ std::string FileFilterIndex::getDisplayLabel(bool includeText)
 	std::string filterInfo;
 
 	if (includeText && !mTextFilter.empty())
-		filterInfo = _("SEARCH") + " : " + mTextFilter;
+// $$
+//		filterInfo = _("Search") + " : " + mTextFilter;
+		filterInfo = std::string("Search") + " : " + mTextFilter;
 
 	for (auto decl : getFilterDataDecls())
 	{

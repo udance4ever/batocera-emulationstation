@@ -104,7 +104,9 @@ void NetworkThread::OnWatcherChanged(IWatcher* component)
 {
 	if (component == &mCheckUpdatesComponent)
 	{
-		mWindow->displayNotificationMessage(_U("\uF019  ") + _("UPDATE AVAILABLE") + std::string(": ") + mCheckUpdatesComponent.getLastUpdateMessage());
+// $$
+//		mWindow->displayNotificationMessage(_U("\uF019  ") + _("UPDATE AVAILABLE") + std::string(": ") + mCheckUpdatesComponent.getLastUpdateMessage());
+		mWindow->displayNotificationMessage("\uF019  " + std::string("UPDATE AVAILABLE") + std::string(": ") + mCheckUpdatesComponent.getLastUpdateMessage());
 		return;
 	}
 

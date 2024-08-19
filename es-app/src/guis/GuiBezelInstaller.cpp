@@ -16,11 +16,11 @@
 #define WINDOW_WIDTH (float)Math::min(Renderer::getScreenHeight() * 1.125f, Renderer::getScreenWidth() * 0.90f)
 
 GuiBezelInstaller::GuiBezelInstaller(Window* window)
-	: GuiComponent(window), mMenu(window, _("THE BEZEL PROJECT").c_str()), mReloadList(1)
+	: GuiComponent(window), mMenu(window, std::string("THE BEZEL PROJECT").c_str()), mReloadList(1)
 {
 	addChild(&mMenu);
-	mMenu.setSubTitle(_("SELECT BEZELS TO INSTALL/REMOVE"));
-    mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+	mMenu.setSubTitle(std::string("SELECT BEZELS TO INSTALL/REMOVE"));
+    mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 
 	centerWindow();
 
@@ -103,7 +103,7 @@ void GuiBezelInstaller::loadBezelsAsync()
 {
 	Window* window = mWindow;
 
-	mWindow->pushGui(new GuiLoading<std::vector<BatoceraBezel>>(mWindow, _("PLEASE WAIT"),
+	mWindow->pushGui(new GuiLoading<std::vector<BatoceraBezel>>(mWindow, std::string("PLEASE WAIT"),
 		[this](auto gui)
 		{
 			return ApiSystem::getInstance()->getBatoceraBezelsList();
@@ -137,11 +137,13 @@ void GuiBezelInstaller::processBezel(BatoceraBezel bezel)
 
 	if (bezel.isInstalled)
 	{
-		msgBox->addEntry(_U("\uF019 ") + _("UPDATE"), false, [this, msgBox, bezel]
+//		msgBox->addEntry(_U("\uF019 ") + std::string("UPDATE"), false, [this, msgBox, bezel]
+		msgBox->addEntry("\uF019 " + std::string("UPDATE"), false, [this, msgBox, bezel]
 		{
 			char trstring[1024];
-			snprintf(trstring, 1024, _("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), bezel.name.c_str());
-			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			snprintf(trstring, 1024, std::string("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), bezel.name.c_str());
+//			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			mWindow->displayNotificationMessage("\uF019 " + std::string(trstring));
 
 			ContentInstaller::Enqueue(mWindow, ContentInstaller::CONTENT_BEZEL_INSTALL, bezel.name);
 			mReloadList = 2;
@@ -149,16 +151,19 @@ void GuiBezelInstaller::processBezel(BatoceraBezel bezel)
 			msgBox->close();
 		});
 
-		msgBox->addEntry(_U("\uF014 ") + _("REMOVE"), false, [this, msgBox, bezel]
+//		msgBox->addEntry(_U("\uF014 ") + std::string("REMOVE"), false, [this, msgBox, bezel]
+		msgBox->addEntry("\uF014 " + std::string("REMOVE"), false, [this, msgBox, bezel]
 		{
 			auto updateStatus = ApiSystem::getInstance()->uninstallBatoceraBezel(bezel.name);
 
 			if (updateStatus.second == 0)
-				mWindow->displayNotificationMessage(_U("\uF019 ") + bezel.name + " : " + _("BEZELS UNINSTALLED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(_U("\uF019 ") + bezel.name + " : " + std::string("BEZELS UNINSTALLED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage("\uF019 " + bezel.name + " : " + std::string("BEZELS UNINSTALLED SUCCESSFULLY"));
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
-				mWindow->displayNotificationMessage(_U("\uF019 ") + error);
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				mWindow->displayNotificationMessage(_U("\uF019 ") + error);
+				mWindow->displayNotificationMessage("\uF019 " + error);
 			}
 
 			mReloadList = 2;
@@ -167,11 +172,13 @@ void GuiBezelInstaller::processBezel(BatoceraBezel bezel)
 	}
 	else
 	{
-		msgBox->addEntry(_U("\uF019 ") + _("INSTALL"), false, [this, msgBox, bezel]
+//		msgBox->addEntry(_U("\uF019 ") + std::string("INSTALL"), false, [this, msgBox, bezel]
+		msgBox->addEntry("\uF019 " + std::string("INSTALL"), false, [this, msgBox, bezel]
 		{			
 			char trstring[1024];
-			snprintf(trstring, 1024, _("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), bezel.name.c_str());
-			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			snprintf(trstring, 1024, std::string("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), bezel.name.c_str());
+//			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			mWindow->displayNotificationMessage("\uF019 " + std::string(trstring));
 
 			ContentInstaller::Enqueue(mWindow, ContentInstaller::CONTENT_BEZEL_INSTALL, bezel.name);
 			mReloadList = 2;
@@ -207,8 +214,8 @@ bool GuiBezelInstaller::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiBezelInstaller::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("CLOSE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("CLOSE")));
 	return prompts;
 }
 
@@ -234,7 +241,8 @@ GuiBatoceraBezelEntry::GuiBatoceraBezelEntry(Window* window, BatoceraBezel& entr
 	mImage->setHorizontalAlignment(Alignment::ALIGN_CENTER);
 	mImage->setVerticalAlignment(Alignment::ALIGN_TOP);
 	mImage->setFont(theme->Text.font);
-	mImage->setText(isInstalled ? _U("\uF058") : _U("\uF019"));
+//	mImage->setText(isInstalled ? _U("\uF058") : _U("\uF019"));
+	mImage->setText(isInstalled ? "\uF058" : "\uF019");
 	mImage->setSize(theme->Text.font->getLetterHeight() * 1.5f, 0);
 
 	std::string name = entry.name;
@@ -247,12 +255,13 @@ GuiBatoceraBezelEntry::GuiBatoceraBezelEntry(Window* window, BatoceraBezel& entr
 	mText->setLineSpacing(1.5);
 	mText->setVerticalAlignment(ALIGN_TOP);
 
-	std::string details = _U("\uf0AC  ") + entry.url;
+//	std::string details = _U("\uf0AC  ") + entry.url;
+	std::string details = "\uf0AC  " + entry.url;
 
 	if (mIsPending)
 	{
 		char trstring[1024];
-		snprintf(trstring, 1024, _("CURRENTLY IN DOWNLOAD QUEUE").c_str(), entry.name.c_str());
+		snprintf(trstring, 1024, std::string("CURRENTLY IN DOWNLOAD QUEUE").c_str(), entry.name.c_str());
 		details = trstring;
 	}
 
@@ -275,7 +284,8 @@ GuiBatoceraBezelEntry::GuiBatoceraBezelEntry(Window* window, BatoceraBezel& entr
 
 	if (mIsPending)
 	{
-		mImage->setText(_U("\uF04B"));
+//		mImage->setText(_U("\uF04B"));
+		mImage->setText("\uF04B");
 		mImage->setOpacity(120);
 		mText->setOpacity(150);
 		mSubstring->setOpacity(120);

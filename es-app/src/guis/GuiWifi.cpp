@@ -29,9 +29,9 @@ GuiWifi::GuiWifi(Window* window, const std::string title, std::string data, cons
 	else
 		load(ssids);
 
-	mMenu.addButton(_("REFRESH"), "refresh", [&] { onRefresh(); });
-	mMenu.addButton(_("INPUT MANUALLY"), "manual input", [&] { onManualInput(); });
-	mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+	mMenu.addButton(std::string("REFRESH"), "refresh", [&] { onRefresh(); });
+	mMenu.addButton(std::string("INPUT MANUALLY"), "manual input", [&] { onManualInput(); });
+	mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 		mMenu.setPosition((Renderer::getScreenWidth() - mMenu.getSize().x()) / 2, (Renderer::getScreenHeight() - mMenu.getSize().y()) / 2);
@@ -44,7 +44,7 @@ void GuiWifi::load(std::vector<std::string> ssids)
 	mMenu.clear();
 
 	if (ssids.size() == 0)
-		mMenu.addEntry(_("NO WI-FI NETWORKS FOUND"), false, std::bind(&GuiWifi::onRefresh, this));
+		mMenu.addEntry(std::string("NO WI-FI NETWORKS FOUND"), false, std::bind(&GuiWifi::onRefresh, this));
 	else
 	{
 		for (auto ssid : ssids)
@@ -95,7 +95,7 @@ bool GuiWifi::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiWifi::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
 	return prompts;
 }
 
@@ -103,7 +103,7 @@ void GuiWifi::onRefresh()
 {		
 	Window* window = mWindow;
 
-	mWindow->pushGui(new GuiLoading<std::vector<std::string>>(mWindow, _("SEARCHING WI-FI NETWORKS"), 
+	mWindow->pushGui(new GuiLoading<std::vector<std::string>>(mWindow, std::string("SEARCHING WI-FI NETWORKS"), 
 		[this, window](auto gui)
 		{
 			mWaitingLoad = true;

@@ -11,7 +11,7 @@
 #include "GuiLoading.h"
 
 GuiHashStart::GuiHashStart(Window* window, ThreadedHasher::HasherType type) : GuiComponent(window),
-  mMenu(window, _("INDEX GAMES").c_str())
+  mMenu(window, std::string("INDEX GAMES").c_str())
 {
 	mOverwriteMedias = true;
 	mType = type;
@@ -21,11 +21,11 @@ GuiHashStart::GuiHashStart(Window* window, ThreadedHasher::HasherType type) : Gu
 	auto scraper = Scraper::getScraper();
 
 	// add filters (with first one selected)
-	mFilters = std::make_shared< OptionListComponent<bool> >(mWindow, _("GAMES TO INDEX"), false);
-	mFilters->add(_("ALL"), true, false);
-	mFilters->add(_("ONLY MISSING"), false, true);
+	mFilters = std::make_shared< OptionListComponent<bool> >(mWindow, std::string("GAMES TO INDEX"), false);
+	mFilters->add(std::string("ALL"), true, false);
+	mFilters->add(std::string("ONLY MISSING"), false, true);
 
-	mMenu.addWithLabel(_("GAMES TO INDEX"), mFilters);
+	mMenu.addWithLabel(std::string("GAMES TO INDEX"), mFilters);
 	
 	std::unordered_set<std::string> checkedSystems;	
 
@@ -46,7 +46,7 @@ GuiHashStart::GuiHashStart(Window* window, ThreadedHasher::HasherType type) : Gu
 		}
 	}
 
-	mSystems = std::make_shared< OptionListComponent<SystemData*> >(mWindow, _("SYSTEMS INCLUDED"), true);
+	mSystems = std::make_shared< OptionListComponent<SystemData*> >(mWindow, std::string("SYSTEMS INCLUDED"), true);
 	for (auto sys : SystemData::sSystemVector)
 	{
 		if (!sys->isGameSystem())
@@ -60,10 +60,10 @@ GuiHashStart::GuiHashStart(Window* window, ThreadedHasher::HasherType type) : Gu
 		mSystems->add(sys->getFullName(), sys, checkedSystems.size() == 0 ? !sys->getPlatformIds().empty() : checkedSystems.find(sys->getName()) != checkedSystems.cend() && !sys->getPlatformIds().empty());
 	}
 
-	mMenu.addWithLabel(_("SYSTEMS INCLUDED"), mSystems);
+	mMenu.addWithLabel(std::string("SYSTEMS INCLUDED"), mSystems);
 
-	mMenu.addButton(_("START"), _("START"), std::bind(&GuiHashStart::start, this));
-	mMenu.addButton(_("BACK"), _("BACK"), [&] { delete this; });
+	mMenu.addButton(std::string("START"), std::string("START"), std::bind(&GuiHashStart::start, this));
+	mMenu.addButton(std::string("BACK"), std::string("BACK"), [&] { delete this; });
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 		mMenu.setPosition((Renderer::getScreenWidth() - mMenu.getSize().x()) / 2, (Renderer::getScreenHeight() - mMenu.getSize().y()) / 2);
@@ -112,7 +112,7 @@ bool GuiHashStart::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiHashStart::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("CLOSE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("CLOSE")));
 	return prompts;
 }

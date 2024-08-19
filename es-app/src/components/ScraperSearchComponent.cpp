@@ -28,7 +28,9 @@ ScraperSearchComponent::ScraperSearchComponent(Window* window, SearchType type) 
 	const unsigned int mdColor = theme->Text.color;
 	const unsigned int mdLblColor = theme->TextSmall.color;
 
-	mBusyAnim.setText(_("Searching"));
+// $$ _( 
+//	mBusyAnim.setText(_("Searching"));
+	mBusyAnim.setText(std::string("Searching"));
 
 	addChild(&mGrid);
 
@@ -60,12 +62,12 @@ ScraperSearchComponent::ScraperSearchComponent(Window* window, SearchType type) 
 	mMD_Genre = std::make_shared<TextComponent>(mWindow, "", font, mdColor);
 	mMD_Players = std::make_shared<TextComponent>(mWindow, "", font, mdColor);
 
-	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Publisher") + ":"), font, mdLblColor), mMD_Publisher));
-	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Developer") + ":"), font, mdLblColor), mMD_Developer));
-	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Genre") + ":"), font, mdLblColor), mMD_Genre));
-	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Players") + ":"), font, mdLblColor), mMD_Players));
-	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Released") + ":"), font, mdLblColor), mMD_ReleaseDate));
-	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(_("Rating") + ":"), font, mdLblColor), mMD_Rating, false));
+	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Publisher") + ":"), font, mdLblColor), mMD_Publisher));
+	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Developer") + ":"), font, mdLblColor), mMD_Developer));
+	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Genre") + ":"), font, mdLblColor), mMD_Genre));
+	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Players") + ":"), font, mdLblColor), mMD_Players));
+	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Released") + ":"), font, mdLblColor), mMD_ReleaseDate));
+	mMD_Pairs.push_back(MetaDataPair(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(std::string("Rating") + ":"), font, mdLblColor), mMD_Rating, false));
 
 	mMD_Grid = std::make_shared<ComponentGrid>(mWindow, Vector2i(2, (int)mMD_Pairs.size() * 2)); //  - 1
 
@@ -303,7 +305,7 @@ void ScraperSearchComponent::onSearchDone()
 		else
 		{
 			ComponentListRow row;
-			row.addElement(std::make_shared<TextComponent>(mWindow, _("NO GAMES FOUND - SKIP"), font, color), true);
+			row.addElement(std::make_shared<TextComponent>(mWindow, std::string("NO GAMES FOUND - SKIP"), font, color), true);
 
 			if (mSkipCallback)
 				row.makeAcceptInputHandler(mSkipCallback);
@@ -334,22 +336,28 @@ void ScraperSearchComponent::onSearchDone()
 				std::string icons;
 
 				if (result.urls.find(MetaDataId::Image) != result.urls.cend())
-					icons = _U(" \uF03E");
+//					icons = _U(" \uF03E");
+					icons = " \uF03E";
 
 				if (result.urls.find(MetaDataId::Video) != result.urls.cend())
-					icons += _U(" \uF03D");
+//					icons += _U(" \uF03D");
+					icons += " \uF03D";
 
 				if (result.urls.find(MetaDataId::Marquee) != result.urls.cend())
-					icons += _U(" \uF031"); // 09
+//					icons += _U(" \uF031"); // 09
+					icons += " \uF031"; // 09
 
 				if (result.urls.find(MetaDataId::Manual) != result.urls.cend())
-					icons += _U(" \uF02D");
+//					icons += _U(" \uF02D");
+					icons += " \uF02D";
 
 				if (result.urls.find(MetaDataId::Map) != result.urls.cend())
-					icons += _U(" \uF0AC");
+//					icons += _U(" \uF0AC");
+					icons += " \uF0AC";
 
 				if (result.urls.find(MetaDataId::Bezel) != result.urls.cend())
-					icons += _U(" \uF07E");
+//					icons += _U(" \uF07E");
+					icons += " \uF07E";
 
 				row.elements.clear();
 				row.addElement(std::make_shared<TextComponent>(mWindow, Utils::String::toUpper(result.mdl.get(MetaDataId::Name)) + " " + icons, font, color), true);					
@@ -393,10 +401,10 @@ void ScraperSearchComponent::onSearchError(const std::string& error)
 {
 	LOG(LogInfo) << "ScraperSearchComponent search error: " << error;
 
-	mWindow->pushGui(new GuiMsgBox(mWindow, _("AN ERROR OCCURRED") + ":\n" + Utils::String::toUpper(error),
-		_("RETRY"), std::bind(&ScraperSearchComponent::search, this, mInitialSearch),
-		_("SKIP"), mSkipCallback,
-		_("CANCEL"), mCancelCallback, ICON_ERROR)); 
+	mWindow->pushGui(new GuiMsgBox(mWindow, std::string("AN ERROR OCCURRED") + ":\n" + Utils::String::toUpper(error),
+		std::string("RETRY"), std::bind(&ScraperSearchComponent::search, this, mInitialSearch),
+		std::string("SKIP"), mSkipCallback,
+		std::string("CANCEL"), mCancelCallback, ICON_ERROR)); 
 }
 
 int ScraperSearchComponent::getSelectedIndex()
@@ -539,7 +547,7 @@ void ScraperSearchComponent::update(int deltaTime)
 					mResultThumbnail->setImage(result.mdl.get(MetaDataId::Image));
 			}
 
-			mBusyAnim.setText(_("Downloading") + " " + Utils::String::toUpper(mMDResolveHandle->getCurrentItem()));
+			mBusyAnim.setText(std::string("Downloading") + " " + Utils::String::toUpper(mMDResolveHandle->getCurrentItem()));
 		}
 		else
 		{
@@ -547,7 +555,7 @@ void ScraperSearchComponent::update(int deltaTime)
 			{
 				if (engine->searchHandle && engine->searchHandle->status() == ASYNC_IN_PROGRESS)
 				{
-					mBusyAnim.setText(_("Searching"));
+					mBusyAnim.setText(std::string("Searching"));
 					break;
 				}
 			}
@@ -627,14 +635,14 @@ void ScraperSearchComponent::openInputScreen(ScraperSearchParams& params)
 
 	if (Settings::getInstance()->getBool("UseOSK"))
 	{
-		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _("SEARCH FOR"),
+		mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, std::string("SEARCH FOR"),
 			// initial value is last search if there was one, otherwise the clean path name
 			params.nameOverride.empty() ? params.game->getCleanName() : params.nameOverride,
 			searchForFunc, false, "SEARCH"));
 	}
 	else
 	{
-		mWindow->pushGui(new GuiTextEditPopup(mWindow, _("SEARCH FOR"),
+		mWindow->pushGui(new GuiTextEditPopup(mWindow, std::string("SEARCH FOR"),
 			// initial value is last search if there was one, otherwise the clean path name
 			params.nameOverride.empty() ? params.game->getCleanName() : params.nameOverride,
 			searchForFunc, false, "SEARCH"));
@@ -645,7 +653,7 @@ std::vector<HelpPrompt> ScraperSearchComponent::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mGrid.getHelpPrompts();
 	if (getSelectedIndex() != -1)
-		prompts.push_back(HelpPrompt(BUTTON_OK, _("ACCEPT RESULT")));
+		prompts.push_back(HelpPrompt(BUTTON_OK, std::string("ACCEPT RESULT")));
 
 	return prompts;
 }

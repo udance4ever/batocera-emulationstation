@@ -16,7 +16,9 @@
 
 #include "LocaleES.h"
 
-#define ICONINDEX _U("\uF002 ")
+// $$
+//#define ICONINDEX _U("\uF002 ")
+#define ICONINDEX "\uF002 "
 
 ThreadedHasher* ThreadedHasher::mInstance = nullptr;
 bool ThreadedHasher::mPaused = false;
@@ -52,9 +54,12 @@ ThreadedHasher::ThreadedHasher(Window* window, HasherType type, std::queue<FileD
 	mWndNotification = mWindow->createAsyncNotificationComponent();
 
 	if (mType == HASH_CHEEVOS_MD5)
-		mWndNotification->updateTitle(ICONINDEX + _("SEARCHING RETROACHIEVEMENTS"));
+// $$
+//		mWndNotification->updateTitle(ICONINDEX + _("SEARCHING RETROACHIEVEMENTS"));
+		mWndNotification->updateTitle(ICONINDEX + std::string("SEARCHING RETROACHIEVEMENTS"));
 	else 
-		mWndNotification->updateTitle(ICONINDEX + _("SEARCHING NETPLAY GAMES"));
+//		mWndNotification->updateTitle(ICONINDEX + _("SEARCHING NETPLAY GAMES"));
+		mWndNotification->updateTitle(ICONINDEX + std::string("SEARCHING NETPLAY GAMES"));
 
 	int num_threads = std::thread::hardware_concurrency() / 2;
 	if (num_threads == 0)
@@ -68,7 +73,8 @@ ThreadedHasher::ThreadedHasher(Window* window, HasherType type, std::queue<FileD
 ThreadedHasher::~ThreadedHasher()
 {
 	if ((mType & HASH_CHEEVOS_MD5) == HASH_CHEEVOS_MD5)
-		mWindow->displayNotificationMessage(ICONINDEX + _("INDEXING COMPLETED") + std::string(". ") + _("UPDATE GAMELISTS TO APPLY CHANGES."));
+//		mWindow->displayNotificationMessage(ICONINDEX + _("INDEXING COMPLETED") + std::string(". ") + _("UPDATE GAMELISTS TO APPLY CHANGES."));
+		mWindow->displayNotificationMessage(ICONINDEX + std::string("INDEXING COMPLETED") + std::string(". ") + std::string("UPDATE GAMELISTS TO APPLY CHANGES."));
 
 	mWndNotification->close();
 	mWndNotification = nullptr;
@@ -161,10 +167,12 @@ bool ThreadedHasher::checkCloseIfRunning(Window* window)
 {
 	if (ThreadedHasher::mInstance != nullptr)
 	{
-		window->pushGui(new GuiMsgBox(window, _("GAME HASHING IS RUNNING. DO YOU WANT TO STOP IT?"), _("YES"), []
+//		window->pushGui(new GuiMsgBox(window, _("GAME HASHING IS RUNNING. DO YOU WANT TO STOP IT?"), _("YES"), []
+		window->pushGui(new GuiMsgBox(window, std::string("GAME HASHING IS RUNNING. DO YOU WANT TO STOP IT?"), std::string("YES"), []
 		{
 			ThreadedHasher::stop();
-		}, _("NO"), nullptr));
+//		}, _("NO"), nullptr));
+		}, std::string("NO"), nullptr));
 
 		return false;
 	}
@@ -226,7 +234,8 @@ void ThreadedHasher::start(Window* window, HasherType type, bool forceAllGames, 
 	if (searchQueue.size() == 0)
 	{
 		if (!silent)
-			window->pushGui(new GuiMsgBox(window, _("NO GAMES FIT THAT CRITERIA.")));
+//			window->pushGui(new GuiMsgBox(window, _("NO GAMES FIT THAT CRITERIA.")));
+			window->pushGui(new GuiMsgBox(window, std::string("NO GAMES FIT THAT CRITERIA.")));
 
 		return;
 	}

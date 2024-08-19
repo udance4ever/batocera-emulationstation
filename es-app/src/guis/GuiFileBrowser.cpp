@@ -16,14 +16,20 @@
 
 #define WINDOW_WIDTH (float)Math::max((int)Renderer::getScreenHeight(), (int)(Renderer::getScreenWidth() * 0.65f))
 
-#define DRIVE_ICON		_U("\uF0A0 ")
-#define FOLDER_ICON		_U("\uF07C ")
-#define IMAGE_ICON		_U("\uF03E ")
-#define VIDEO_ICON		_U("\uF03D ")
-#define DOCUMENT_ICON	_U("\uF02D ")
+// $$
+//#define DRIVE_ICON		_U("\uF0A0 ")
+//#define FOLDER_ICON		_U("\uF07C ")
+//#define IMAGE_ICON		_U("\uF03E ")
+//#define VIDEO_ICON		_U("\uF03D ")
+//#define DOCUMENT_ICON	_U("\uF02D ")
+#define DRIVE_ICON		"\uF0A0 "
+#define FOLDER_ICON		"\uF07C "
+#define IMAGE_ICON		"\uF03E "
+#define VIDEO_ICON		"\uF03D "
+#define DOCUMENT_ICON	"\uF02D "
 
 GuiFileBrowser::GuiFileBrowser(Window* window, const std::string startPath, const std::string selectedFile, FileTypes types, const std::function<void(const std::string&)>& okCallback, const std::string& title)
-	: GuiComponent(window), mMenu(window, title.empty() ? _("FILE BROWSER") : title)
+	: GuiComponent(window), mMenu(window, title.empty() ? std::string("FILE BROWSER") : title)
 {
 	setTag("popup");
 
@@ -35,13 +41,13 @@ GuiFileBrowser::GuiFileBrowser(Window* window, const std::string startPath, cons
 
 	if (mOkCallback != nullptr)
 	{
-		mMenu.addButton(_("RESET"), "back", [&]
+		mMenu.addButton(std::string("RESET"), "back", [&]
 		{
 			onOk("");			
 		});
 	}
 
-    mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+    mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 
 	if (startPath.empty() || !Utils::FileSystem::isDirectory(startPath))
 	{
@@ -206,12 +212,12 @@ std::vector<HelpPrompt> GuiFileBrowser::getHelpPrompts()
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
 	
 	if (mOkCallback != nullptr)
-		prompts.push_back(HelpPrompt("x", _("RESET")));
+		prompts.push_back(HelpPrompt("x", std::string("RESET")));
 
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("CLOSE")));
-	prompts.push_back(HelpPrompt("y", _("PARENT FOLDER")));
-	prompts.push_back(HelpPrompt("select", _("SCREENSHOTS FOLDER")));
-	prompts.push_back(HelpPrompt("start", _("SELECT")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("CLOSE")));
+	prompts.push_back(HelpPrompt("y", std::string("PARENT FOLDER")));
+	prompts.push_back(HelpPrompt("select", std::string("SCREENSHOTS FOLDER")));
+	prompts.push_back(HelpPrompt("start", std::string("SELECT")));
 
 	return prompts;
 }

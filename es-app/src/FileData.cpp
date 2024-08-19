@@ -628,17 +628,24 @@ std::string FileData::getMessageFromExitCode(int exitCode)
 	switch (exitCode)
 	{
 	case 200:
-		return _("THE EMULATOR EXITED UNEXPECTEDLY");
+// $$
+//		return _("THE EMULATOR EXITED UNEXPECTEDLY");
+		return std::string("THE EMULATOR EXITED UNEXPECTEDLY");
 	case 201:
-		return _("BAD COMMAND LINE ARGUMENTS");
+//		return _("BAD COMMAND LINE ARGUMENTS");
+		return std::string("BAD COMMAND LINE ARGUMENTS");
 	case 202:
-		return _("INVALID CONFIGURATION");
+//		return _("INVALID CONFIGURATION");
+		return std::string("INVALID CONFIGURATION");
 	case 203:
-		return _("UNKNOWN EMULATOR");
+//		return _("UNKNOWN EMULATOR");
+		return std::string("UNKNOWN EMULATOR");
 	case 204:
-		return _("EMULATOR IS MISSING");
+//		return _("EMULATOR IS MISSING");
+		return std::string("EMULATOR IS MISSING");
 	case 205:
-		return _("CORE IS MISSING");
+//		return _("CORE IS MISSING");
+		return std::string("CORE IS MISSING");
 	case 299:
 		{
 	#if WIN32
@@ -657,7 +664,9 @@ std::string FileData::getMessageFromExitCode(int exitCode)
 		}
 	}
 
-	return _("UKNOWN ERROR") + " : " + std::to_string(exitCode);
+// $$
+//	return _("UKNOWN ERROR") + " : " + std::to_string(exitCode);
+	return std::string("UKNOWN ERROR") + " : " + std::to_string(exitCode);
 }
 
 bool FileData::launchGame(Window* window, LaunchGameOptions options)
@@ -760,7 +769,9 @@ bool FileData::launchGame(Window* window, LaunchGameOptions options)
 		AudioManager::getInstance()->playRandomMusic();
 
 	if (exitCode >= 200 && exitCode <= 300)
-		window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + ":\r\n" + getMessageFromExitCode(exitCode), _("OK"), nullptr, GuiMsgBoxIcon::ICON_ERROR));
+// $$
+//		window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + ":\r\n" + getMessageFromExitCode(exitCode), _("OK"), nullptr, GuiMsgBoxIcon::ICON_ERROR));
+		window->pushGui(new GuiMsgBox(window, std::string("AN ERROR OCCURRED") + ":\r\n" + getMessageFromExitCode(exitCode), std::string("OK"), nullptr, GuiMsgBoxIcon::ICON_ERROR));
 
 	return exitCode == 0;
 }
@@ -1888,7 +1899,9 @@ BindableProperty FileData::getProperty(const std::string& name)
 
 	if (name == "stars")
 	{
-		#define RATINGSTAR _U("\uF005")
+// $$
+//		#define RATINGSTAR _U("\uF005")
+		#define RATINGSTAR "\uF005"
 
 		int stars = (int)Math::round(Math::clamp(0.0f, 1.0f, Utils::String::toFloat(getMetadata(MetaDataId::Rating))) * 5.0);
 
@@ -1925,9 +1938,12 @@ BindableProperty FileData::getProperty(const std::string& name)
 	if (name == "hasManual" || name == "hasmanual")
 	{
 		if (Settings::getInstance()->getBool("PreloadMedias"))
-			return !getMetadata(MetaDataId::Manual).empty() || !getMetadata(MetaDataId::Magazine).empty(); // ? _("YES") : _("NO");
+// $$
+//			return !getMetadata(MetaDataId::Manual).empty() || !getMetadata(MetaDataId::Magazine).empty(); // ? _("YES") : _("NO");
+			return !getMetadata(MetaDataId::Manual).empty() || !getMetadata(MetaDataId::Magazine).empty(); // ? std::string("YES") : std::string("NO");
 		
-		return Utils::FileSystem::exists(getMetadata(MetaDataId::Manual)) || Utils::FileSystem::exists(getMetadata(MetaDataId::Magazine)); // ? _("YES") : _("NO");
+//		return Utils::FileSystem::exists(getMetadata(MetaDataId::Manual)) || Utils::FileSystem::exists(getMetadata(MetaDataId::Magazine)); // ? _("YES") : _("NO");
+		return Utils::FileSystem::exists(getMetadata(MetaDataId::Manual)) || Utils::FileSystem::exists(getMetadata(MetaDataId::Magazine)); // ? std::string("YES") : std::string("NO");
 	}
 
 	if (name == "hasSaveState" || name == "hassavestate" || name == "savestate")

@@ -169,8 +169,8 @@ GuiNetPlay::GuiNetPlay(Window* window)
 
 	mHeaderGrid = std::make_shared<ComponentGrid>(mWindow, Vector2i(1, 5));
 
-	mTitle = std::make_shared<TextComponent>(mWindow, _("CONNECT TO NETPLAY"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
-	mSubtitle = std::make_shared<TextComponent>(mWindow, _("Select a game lobby to join"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
+	mTitle = std::make_shared<TextComponent>(mWindow, std::string("CONNECT TO NETPLAY"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
+	mSubtitle = std::make_shared<TextComponent>(mWindow, std::string("Select a game lobby to join"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
 	mHeaderGrid->setEntry(mTitle, Vector2i(0, 1), false, true);
 	mHeaderGrid->setEntry(mSubtitle, Vector2i(0, 3), false, true);
 
@@ -181,8 +181,8 @@ GuiNetPlay::GuiNetPlay(Window* window)
 
 	// Buttons
 	std::vector< std::shared_ptr<ButtonComponent> > buttons;
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("REFRESH"), _("REFRESH"), [this] { startRequest(); }));
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("CLOSE"), _("CLOSE"), [this] { delete this; }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("REFRESH"), std::string("REFRESH"), [this] { startRequest(); }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("CLOSE"), std::string("CLOSE"), [this] { delete this; }));
 
 	mButtonGrid = makeButtonGrid(mWindow, buttons);
 	mGrid.setEntry(mButtonGrid, Vector2i(0, 2), true, false);
@@ -214,7 +214,7 @@ GuiNetPlay::GuiNetPlay(Window* window)
 
 	// Loading
     mBusyAnim.setSize(Vector2f(Renderer::getScreenWidth(), Renderer::getScreenHeight()));
-	mBusyAnim.setText(_("PLEASE WAIT"));
+	mBusyAnim.setText(std::string("PLEASE WAIT"));
 	startRequest();
 }
 
@@ -264,7 +264,7 @@ void GuiNetPlay::update(int deltaTime)
 			if (status == HttpReq::REQ_SUCCESS)
 				populateFromJson(mLobbyRequest->getContent());
 			else
-				mWindow->pushGui(new GuiMsgBox(mWindow, _("FAILED") + std::string(" : ") + mLobbyRequest->getErrorMsg()));
+				mWindow->pushGui(new GuiMsgBox(mWindow, std::string("FAILED") + std::string(" : ") + mLobbyRequest->getErrorMsg()));
 
 			mLobbyRequest.reset();
 		}
@@ -287,8 +287,8 @@ bool GuiNetPlay::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiNetPlay::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mGrid.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("LAUNCH")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("LAUNCH")));
 	return prompts;
 }
 
@@ -379,28 +379,34 @@ public:
 		mText->setLineSpacing(1.5);
 		mText->setVerticalAlignment(ALIGN_TOP);
 
-		std::string userInfo = _U("\uf007  ") + entry.username + _U("  \uf0AC  ") + entry.country + _U("  \uf0E8  ") + entry.ip+ _U("  \uf108  ") + entry.frontend;
+//		std::string userInfo = _U("\uf007  ") + entry.username + _U("  \uf0AC  ") + entry.country + _U("  \uf0E8  ") + entry.ip+ _U("  \uf108  ") + entry.frontend;
+		std::string userInfo = "\uf007  " + entry.username + "  \uf0AC  " + entry.country + "  \uf0E8  " + entry.ip+ "  \uf108  " + entry.frontend;
 
 		mSubstring = std::make_shared<TextComponent>(mWindow, userInfo.c_str(), theme->TextSmall.font, theme->Text.color);
 		mSubstring->setOpacity(192);
 
-		std::string subInfo = _U("\uf11B  ") + entry.core_name + " (" + entry.retroarch_version + ")";
+//		std::string subInfo = _U("\uf11B  ") + entry.core_name + " (" + entry.retroarch_version + ")";
+		std::string subInfo = "\uf11B  " + entry.core_name + " (" + entry.retroarch_version + ")";
 
 		if (entry.fileData != nullptr)
 		{
 			if (!entry.isCrcValid)
 			{
 				if (entry.game_crc == "00000000")
-					subInfo = subInfo + "   " + _U("\uf059  ") + _("UNKNOWN ROM VERSION");
+//					subInfo = subInfo + "   " + _U("\uf059  ") + std::string("UNKNOWN ROM VERSION");
+					subInfo = subInfo + "   " + "\uf059  " + std::string("UNKNOWN ROM VERSION");
 				else
-					subInfo = subInfo + "   " + _U("\uf05E  ") + _("DIFFERENT ROM");
+//					subInfo = subInfo + "   " + _U("\uf05E  ") + std::string("DIFFERENT ROM");
+					subInfo = subInfo + "   " + "\uf05E  " + std::string("DIFFERENT ROM");
 			}
 			else
-				subInfo = subInfo + "  " + _U("\uf058  ") + _("SAME ROM");
+//				subInfo = subInfo + "  " + _U("\uf058  ") + std::string("SAME ROM");
+				subInfo = subInfo + "  " + "\uf058  " + std::string("SAME ROM");
 		}
 
 		if (entry.fileData != nullptr && !entry.coreExists)
-			subInfo = subInfo + "   " + _U("\uf071  ") + _("UNAVAILABLE CORE");
+//			subInfo = subInfo + "   " + _U("\uf071  ") + std::string("UNAVAILABLE CORE");
+			subInfo = subInfo + "   " + "\uf071  " + std::string("UNAVAILABLE CORE");
 		
 		mDetails = std::make_shared<TextComponent>(mWindow, subInfo.c_str(), theme->TextSmall.font, theme->Text.color);
 		mDetails->setOpacity(192);
@@ -408,9 +414,11 @@ public:
 		if (entry.has_password || entry.has_spectate_password)
 		{					
 			if (!entry.has_spectate_password)
-				mLockInfo = std::make_shared<TextComponent>(mWindow, std::string(_U("\uf06E")).c_str(), Font::get(FONT_SIZE_MEDIUM, FONT_PATH_REGULAR), theme->Text.color);
+//				mLockInfo = std::make_shared<TextComponent>(mWindow, std::string(_U("\uf06E")).c_str(), Font::get(FONT_SIZE_MEDIUM, FONT_PATH_REGULAR), theme->Text.color);
+				mLockInfo = std::make_shared<TextComponent>(mWindow, std::string("\uf06E").c_str(), Font::get(FONT_SIZE_MEDIUM, FONT_PATH_REGULAR), theme->Text.color);
 			else
-				mLockInfo = std::make_shared<TextComponent>(mWindow, std::string(_U("\uf023")).c_str(), Font::get(FONT_SIZE_MEDIUM, FONT_PATH_REGULAR), theme->Text.color);
+//				mLockInfo = std::make_shared<TextComponent>(mWindow, std::string(_U("\uf023")).c_str(), Font::get(FONT_SIZE_MEDIUM, FONT_PATH_REGULAR), theme->Text.color);
+				mLockInfo = std::make_shared<TextComponent>(mWindow, std::string("\uf023").c_str(), Font::get(FONT_SIZE_MEDIUM, FONT_PATH_REGULAR), theme->Text.color);
 
 			mLockInfo->setOpacity(192);
 			mLockInfo->setLineSpacing(1);
@@ -622,7 +630,7 @@ bool GuiNetPlay::populateFromJson(const std::string json)
 
 		if (netPlayShowMissingGames && !groupAvailable)
 		{			
-			mList->addGroup(_("AVAILABLE GAMES"), true);
+			mList->addGroup(std::string("AVAILABLE GAMES"), true);
 			groupAvailable = true;
 		}
 		
@@ -646,7 +654,7 @@ bool GuiNetPlay::populateFromJson(const std::string json)
 
 			if (!groupUnavailable)
 			{
-				mList->addGroup(_("UNAVAILABLE GAMES"), true);
+				mList->addGroup(std::string("UNAVAILABLE GAMES"), true);
 				groupUnavailable = true;
 			}
 
@@ -660,7 +668,7 @@ bool GuiNetPlay::populateFromJson(const std::string json)
 	{
 		ComponentListRow row;
 		auto empty = std::make_shared<TextComponent>(mWindow);
-		empty->setText(_("NO GAMES FOUND"));
+		empty->setText(std::string("NO GAMES FOUND"));
 		row.addElement(empty, true);
 		mList->addRow(row);
 
@@ -707,13 +715,14 @@ void GuiNetPlay::launchGame(LobbyAppEntry entry)
 	std::shared_ptr<Font> font = theme->Text.font;
 	unsigned int color = theme->Text.color;
 
-	GuiSettings* msgBox = new GuiSettings(mWindow, _("CONNECT TO NETPLAY"));
+	GuiSettings* msgBox = new GuiSettings(mWindow, std::string("CONNECT TO NETPLAY"));
 	msgBox->setSubTitle(entry.game_name);
 	msgBox->setTag("popup");
 	
 	std::shared_ptr<TextComponent> ed = nullptr;
 
-	msgBox->addEntry(_U("\uF144 ") + _("JOIN GAME"), false, [this, msgBox, entry, options, ed]
+//	msgBox->addEntry(_U("\uF144 ") + std::string("JOIN GAME"), false, [this, msgBox, entry, options, ed]
+	msgBox->addEntry("\uF144 " + std::string("JOIN GAME"), false, [this, msgBox, entry, options, ed]
 	{		
 		LaunchGameOptions opts = options;
 		ViewController::get()->launch(entry.fileData, opts);
@@ -723,7 +732,8 @@ void GuiNetPlay::launchGame(LobbyAppEntry entry)
 		delete pthis;
 	});
 
-	msgBox->addEntry(_U("\uF06E ") + _("WATCH GAME"), false, [this, msgBox, entry, options, ed]
+//	msgBox->addEntry(_U("\uF06E ") + std::string("WATCH GAME"), false, [this, msgBox, entry, options, ed]
+	msgBox->addEntry("\uF06E " + std::string("WATCH GAME"), false, [this, msgBox, entry, options, ed]
 	{
 		LaunchGameOptions opts = options;
 		opts.netPlayMode = NetPlayMode::SPECTATOR;

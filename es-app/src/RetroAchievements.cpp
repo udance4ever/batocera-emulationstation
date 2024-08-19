@@ -306,7 +306,9 @@ UserSummary RetroAchievements::getUserSummary(const std::string& userName, int g
 		doc.Parse(httpreq.getContent().c_str());
 		if (doc.HasParseError())
 		{
-			ret.Status = _("INVALID CONTENT");
+// $$
+//			ret.Status = _("INVALID CONTENT");
+			ret.Status = std::string("INVALID CONTENT");
 			return ret;
 		}
 
@@ -651,7 +653,8 @@ bool RetroAchievements::testAccount(const std::string& username, const std::stri
 {
 	if (username.empty() || password.empty())
 	{
-		tokenOrError = _("A valid account is required. Please register an account on https://retroachievements.org");
+//		tokenOrError = _("A valid account is required. Please register an account on https://retroachievements.org");
+		tokenOrError = std::string("A valid account is required. Please register an account on https://retroachievements.org");
 		return false;
 	}
 

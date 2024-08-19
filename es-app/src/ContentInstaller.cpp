@@ -5,7 +5,8 @@
 #include "ApiSystem.h"
 #include "LocaleES.h"
 
-#define ICONINDEX _U("\uF019 ")
+//#define ICONINDEX _U("\uF019 ")
+#define ICONINDEX "\uF019 "
 
 ContentInstaller*						ContentInstaller::mInstance = nullptr;
 std::mutex								ContentInstaller::mLock;
@@ -75,7 +76,9 @@ void ContentInstaller::updateNotificationComponentTitle(bool incQueueSize)
 		mQueueSize++;
 
 	std::string cnt = " " + std::to_string(mCurrent) + "/" + std::to_string(mQueueSize);
-	mWndNotification->updateTitle(ICONINDEX + _("DOWNLOADING")+ cnt);
+// $$
+//	mWndNotification->updateTitle(ICONINDEX + _("DOWNLOADING")+ cnt);
+	mWndNotification->updateTitle(ICONINDEX + std::string("DOWNLOADING")+ cnt);
 }
 
 void ContentInstaller::updateNotificationComponentContent(const std::string info)
@@ -137,11 +140,13 @@ void ContentInstaller::threadUpdate()
 			if (updateStatus.second == 0)
 			{
 				success = true;
-				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("THEME INSTALLED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("THEME INSTALLED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + std::string("THEME INSTALLED SUCCESSFULLY"));
 			}
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 				mWindow->displayNotificationMessage(ICONINDEX + error);
 			}
 
@@ -156,11 +161,13 @@ void ContentInstaller::threadUpdate()
 			if (updateStatus.second == 0)
 			{
 				success = true;
-				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("THEME UNINSTALLED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("THEME UNINSTALLED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + std::string("THEME UNINSTALLED SUCCESSFULLY"));
 			}
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 				mWindow->displayNotificationMessage(ICONINDEX + error);
 			}
 
@@ -175,11 +182,13 @@ void ContentInstaller::threadUpdate()
 			if (updateStatus.second == 0)
 			{
 				success = true;
-				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("BEZELS INSTALLED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("BEZELS INSTALLED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + std::string("BEZELS INSTALLED SUCCESSFULLY"));
 			}
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 				mWindow->displayNotificationMessage(ICONINDEX + error);
 			}
 		}
@@ -193,11 +202,13 @@ void ContentInstaller::threadUpdate()
 			if (updateStatus.second == 0)
 			{
 				success = true;
-				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("BEZELS UNINSTALLED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("BEZELS UNINSTALLED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + std::string("BEZELS UNINSTALLED SUCCESSFULLY"));
 			}
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 				mWindow->displayNotificationMessage(ICONINDEX + error);
 			}
 		}
@@ -211,11 +222,13 @@ void ContentInstaller::threadUpdate()
 			if (updateStatus.second == 0)
 			{
 				success = true;
-				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("PACKAGE INSTALLED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("PACKAGE INSTALLED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + std::string("PACKAGE INSTALLED SUCCESSFULLY"));
 			}
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 				mWindow->displayNotificationMessage(ICONINDEX + error);
 			}
 		}
@@ -229,11 +242,13 @@ void ContentInstaller::threadUpdate()
 			if (updateStatus.second == 0)
 			{
 				success = true;
-				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("PACKAGE REMOVED SUCCESSFULLY"));
+//				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + _("PACKAGE REMOVED SUCCESSFULLY"));
+				mWindow->displayNotificationMessage(ICONINDEX + data.second + " : " + std::string("PACKAGE REMOVED SUCCESSFULLY"));
 			}
 			else
 			{
-				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//				std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+				std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
 				mWindow->displayNotificationMessage(ICONINDEX + error);
 			}
 		}

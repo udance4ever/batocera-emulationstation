@@ -27,7 +27,12 @@ option(GL "Set to ON if targeting Desktop OpenGL" ON)
 
 # $$ ES-DE
 option(APPLICATION_UPDATER "Set to OFF to build without the application updater" ON)
-option(COMPILE_LOCALIZATIONS "Set to OFF to skip compilation of localization message catalogs" ON)
+# $$ 
+#  /bin/sh: --add-comments=TRANSLATION: command not found
+#  make[2]: *** [i18n] Error 127
+#  make[1]: *** [locale/CMakeFiles/i18n.dir/all] Error 2
+#option(COMPILE_LOCALIZATIONS "Set to OFF to skip compilation of localization message catalogs" ON)
+option(COMPILE_LOCALIZATIONS "Set to OFF to skip compilation of localization message catalogs" OFF)
 option(APPIMAGE_BUILD "Set to ON when building as an AppImage" OFF)
 option(AUR_BUILD "Set to ON when building for the AUR" OFF)
 option(FLATPAK_BUILD "Set to ON when building as a Flatpak" OFF)
@@ -267,6 +272,9 @@ if(APPLE)
         message(FATAL_ERROR "-- You need to build the dependencies in ./external first")
     endif()
     find_package(CURL REQUIRED)
+
+    # $$ since this is a /Library/Framework
+    find_package(SDL2 REQUIRED)
 elseif(WIN32)
     if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/pugixml/pugixml.dll)
         message(FATAL_ERROR "-- You need to build the dependencies in ./external first")
@@ -293,12 +301,15 @@ endif()
 # $$ commented out for now
 #
 # batocera / background musics
-#find_package(SDL2MIXER REQUIRED)
+
+find_package(SDL2MIXER REQUIRED)
+
 # batocera / customisations
 # $$ skipping VLC even though we are integrating it on macOS
 #find_package(VLC REQUIRED)
-#find_package(RapidJSON REQUIRED)
-#
+
+find_package(RapidJSON REQUIRED)
+
 #if(NOT WIN32)
 #	if(ENABLE_PULSE)
 #	  MESSAGE("pulse audio enabled")
@@ -737,7 +748,6 @@ set(COMMON_INCLUDE_DIRS ${CURL_INCLUDE_DIR}
 			)
 
 if(APPLE)
-    MESSAGE("Common Include Dirs: Apple")
     set(COMMON_INCLUDE_DIRS ${COMMON_INCLUDE_DIRS}
                             ${CMAKE_CURRENT_SOURCE_DIR}/external/FFmpeg
                             ${CMAKE_CURRENT_SOURCE_DIR}/external/freeimage/FreeImage/Source
@@ -747,6 +757,10 @@ if(APPLE)
                             ${CMAKE_CURRENT_SOURCE_DIR}/external/harfbuzz/src
                             ${CMAKE_CURRENT_SOURCE_DIR}/external/icu/icu4c/source/common
 #                            ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml/src
+
+			    ${RAPIDJSON_INCLUDE_DIRS}
+                            ${SDL2_INCLUDE_DIR}
+			    ${SDLMIXER_INCLUDE_DIR}
 
 			    # $$
 			    #  pugixml/src/pugixml.hpp
@@ -892,7 +906,6 @@ endif()
 # Dependency libraries.
 
 if(APPLE)
-    MESSAGE("Common Libraries: Apple")
     set(COMMON_LIBRARIES ${COMMON_LIBRARIES}
                          ${CURL_LIBRARIES}
                          ${PROJECT_SOURCE_DIR}/libavcodec.60.dylib
@@ -1165,7 +1178,9 @@ set(LIBRARY_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)
 
 # $$ ES-DE
 if(COMPILE_LOCALIZATIONS)
-    add_subdirectory(locale)
+    MESSAGE("Compiling localizations (not)")
+# $$ cmake won't listen to COMPILE_LOCALIZATION OFF (!)
+#    add_subdirectory(locale)
 endif()
 
 if(NOT HAIKU)

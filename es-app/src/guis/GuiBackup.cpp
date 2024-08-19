@@ -58,7 +58,7 @@ void GuiBackup::update(int deltaTime) {
 
         if(mState == 2){
 	  window->pushGui(
-			  new GuiMsgBox(window, _("FINISHED"), _("OK"),
+			  new GuiMsgBox(window, std::string("FINISHED"), std::string("OK"),
 					[this] {
 					  mState = -1;
 					}
@@ -68,7 +68,7 @@ void GuiBackup::update(int deltaTime) {
         }
         if(mState == 3){
             window->pushGui(
-                    new GuiMsgBox(window, mResult.first, _("OK"),
+                    new GuiMsgBox(window, mResult.first, std::string("OK"),
                                   [this] {
                                       mState = -1;
                                   }
@@ -97,7 +97,7 @@ void GuiBackup::onBackupError(std::pair<std::string, int> result)
     mLoading = false;
     mState = 3;
     mResult = result;
-    mResult.first = _("AN ERROR OCCURRED") + std::string(": check the system/logs directory");
+    mResult.first = std::string("AN ERROR OCCURRED") + std::string(": check the system/logs directory");
 }
 
 void GuiBackup::onBackupOk()

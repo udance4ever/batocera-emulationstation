@@ -10,7 +10,7 @@
 #include "components/SwitchComponent.h"
 
 GuiInstallStart::GuiInstallStart(Window* window) : GuiComponent(window),
-mMenu(window, _("INSTALL ON A NEW DISK").c_str())
+mMenu(window, std::string("INSTALL ON A NEW DISK").c_str())
 {
 	addChild(&mMenu);
 
@@ -23,8 +23,8 @@ mMenu(window, _("INSTALL ON A NEW DISK").c_str())
 	// available install storage
 	if (installationPossible) 
 	{
-		moptionsStorage = std::make_shared<OptionListComponent<std::string> >(window, _("TARGET DEVICE"), false);
-		moptionsStorage->add(_("SELECT"), "", true);
+		moptionsStorage = std::make_shared<OptionListComponent<std::string> >(window, std::string("TARGET DEVICE"), false);
+		moptionsStorage->add(std::string("SELECT"), "", true);
 
 		for (auto it = availableStorage.begin(); it != availableStorage.end(); it++) 
 		{
@@ -41,27 +41,27 @@ mMenu(window, _("INSTALL ON A NEW DISK").c_str())
 			}
 		}
 		
-		mMenu.addWithLabel(_("TARGET DEVICE"), moptionsStorage);
+		mMenu.addWithLabel(std::string("TARGET DEVICE"), moptionsStorage);
 	
 		// available install architecture
-		moptionsArchitecture = std::make_shared<OptionListComponent<std::string> >(window, _("TARGET ARCHITECTURE"), false);
-		moptionsArchitecture->add(_("SELECT"), "", false);
+		moptionsArchitecture = std::make_shared<OptionListComponent<std::string> >(window, std::string("TARGET ARCHITECTURE"), false);
+		moptionsArchitecture->add(std::string("SELECT"), "", false);
 
 		for (auto it = availableArchitecture.begin(); it != availableArchitecture.end(); it++)
 			moptionsArchitecture->add(*it, *it, *it == runningBoard);
 		if (!(moptionsArchitecture->hasSelection()))
 			moptionsArchitecture->selectFirstItem();
 
-		mMenu.addWithLabel(_("TARGET ARCHITECTURE"), moptionsArchitecture);
+		mMenu.addWithLabel(std::string("TARGET ARCHITECTURE"), moptionsArchitecture);
 
 		moptionsValidation = std::make_shared<SwitchComponent>(mWindow);
-		mMenu.addWithLabel(_("ARE YOU SURE?"), moptionsValidation);
+		mMenu.addWithLabel(std::string("ARE YOU SURE?"), moptionsValidation);
 		
-		mMenu.addButton(_("INSTALL"), "install", std::bind(&GuiInstallStart::start, this));
-		mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+		mMenu.addButton(std::string("INSTALL"), "install", std::bind(&GuiInstallStart::start, this));
+		mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 	}
 	else
-		mMenu.addButton(_("NETWORK REQUIRED"), "back", [&] { delete this; });	
+		mMenu.addButton(std::string("NETWORK REQUIRED"), "back", [&] { delete this; });	
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 		mMenu.setPosition((Renderer::getScreenWidth() - mMenu.getSize().x()) / 2, (Renderer::getScreenHeight() - mMenu.getSize().y()) / 2);
@@ -79,7 +79,7 @@ void GuiInstallStart::start()
 		delete this;
 	}
 	else
-		mWindow->pushGui(new GuiMsgBox(mWindow, _("INVALID PARAMETERS")));
+		mWindow->pushGui(new GuiMsgBox(mWindow, std::string("INVALID PARAMETERS")));
 }
 
 bool GuiInstallStart::input(InputConfig* config, Input input)
@@ -109,7 +109,7 @@ bool GuiInstallStart::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiInstallStart::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("CLOSE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("CLOSE")));
 	return prompts;
 }

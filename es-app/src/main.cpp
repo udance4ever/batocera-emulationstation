@@ -42,6 +42,8 @@
 #include "watchers/WatchersManager.h"
 #include "HttpReq.h"
 
+#include "LocaleES.h"
+
 #ifdef WIN32
 #include <Windows.h>
 #include <direct.h>
@@ -322,10 +324,11 @@ int setLocale(char * argv1)
 #if WIN32
 	std::locale::global(std::locale("en-US"));
 #else
-	if (Utils::FileSystem::exists("./locale/lang")) // for local builds
-		EsLocale::init("", "./locale/lang");	
-	else
-		EsLocale::init("", "/usr/share/locale");	
+// $$
+//	if (Utils::FileSystem::exists("./locale/lang")) // for local builds
+//		EsLocale::init("", "./locale/lang");	
+//	else
+//		EsLocale::init("", "/usr/share/locale");	
 #endif
 
 	setlocale(LC_TIME, "");
@@ -551,9 +554,10 @@ int main(int argc, char* argv[])
 
 	if (splashScreen)
 	{
-		std::string progressText = _("Loading...");
+// $$ _(
+		std::string progressText = std::string("Loading...");
 		if (splashScreenProgress)
-			progressText = _("Loading system config...");
+			progressText = std::string("Loading system config...");
 
 		window.renderSplashScreen(progressText);
 	}
@@ -573,7 +577,7 @@ int main(int argc, char* argv[])
 		}
 
 		// we can't handle es_systems.cfg file problems inside ES itself, so display the error message then quit
-		window.pushGui(new GuiMsgBox(&window, errorMsg, _("QUIT"), [] { Utils::Platform::quitES(); }));
+		window.pushGui(new GuiMsgBox(&window, errorMsg, std::string("QUIT"), [] { Utils::Platform::quitES(); }));
 	}
 
 	SystemConf* systemConf = SystemConf::getInstance();
@@ -747,7 +751,7 @@ int main(int argc, char* argv[])
 		delete window.peekGui();
 
 	if (SystemData::hasDirtySystems())
-		window.renderSplashScreen(_("SAVING METADATAS. PLEASE WAIT..."));
+		window.renderSplashScreen(std::string("SAVING METADATAS. PLEASE WAIT..."));
 
 	ImageIO::saveImageCache();
 	MameNames::deinit();

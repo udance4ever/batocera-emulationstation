@@ -96,8 +96,8 @@ GuiKeyMappingEditor::GuiKeyMappingEditor(Window* window, IKeyboardMapContainer* 
 	// Title
 	mHeaderGrid = std::make_shared<ComponentGrid>(mWindow, Vector2i(1, 5));
 
-	mTitle = std::make_shared<TextComponent>(mWindow, _("PAD TO KEYBOARD CONFIGURATION"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
-	mSubtitle = std::make_shared<TextComponent>(mWindow, _("SELECT ACTIONS TO CHANGE"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
+	mTitle = std::make_shared<TextComponent>(mWindow, std::string("PAD TO KEYBOARD CONFIGURATION"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
+	mSubtitle = std::make_shared<TextComponent>(mWindow, std::string("SELECT ACTIONS TO CHANGE"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
 
 	if (!mEditable)
 		mSubtitle->setText("");
@@ -120,15 +120,15 @@ GuiKeyMappingEditor::GuiKeyMappingEditor(Window* window, IKeyboardMapContainer* 
 
 	if (mEditable)
 	{
-		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("SAVE"), _("SAVE"), [this] {  save(); delete this; }));
+		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("SAVE"), std::string("SAVE"), [this] {  save(); delete this; }));
 
 		if (mMapping.isValid())
-			buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("DELETE"), _("DELETE"), [this] { deleteMapping(); }));
+			buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("DELETE"), std::string("DELETE"), [this] { deleteMapping(); }));
 
-		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("CANCEL"), _("CANCEL"), [this] { delete this; }));
+		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("CANCEL"), std::string("CANCEL"), [this] { delete this; }));
 	}
 	else 
-		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("CLOSE"), _("CLOSE"), [this] { delete this; }));
+		buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("CLOSE"), std::string("CLOSE"), [this] { delete this; }));
 
 	mButtonGrid = makeButtonGrid(mWindow, buttons);
 	mGrid.setEntry(mButtonGrid, Vector2i(0, 3), true, false);
@@ -140,16 +140,16 @@ GuiKeyMappingEditor::GuiKeyMappingEditor(Window* window, IKeyboardMapContainer* 
 		return false;
 	});
 
-	mTabs->addTab(_("PLAYER 1"), "0", true);
+	mTabs->addTab(std::string("PLAYER 1"), "0", true);
 
 	if (mEditable || mMapping.getPlayerMappings(1).size() > 0)
-		mTabs->addTab(_("PLAYER 2"), "1");
+		mTabs->addTab(std::string("PLAYER 2"), "1");
 
 	if (mEditable || mMapping.getPlayerMappings(2).size() > 0)
-		mTabs->addTab(_("PLAYER 3"), "2");
+		mTabs->addTab(std::string("PLAYER 3"), "2");
 
 	if (mEditable || mMapping.getPlayerMappings(3).size() > 0)
-		mTabs->addTab(_("PLAYER 4"), "3");
+		mTabs->addTab(std::string("PLAYER 4"), "3");
 
 	mTabs->setCursorChangedCallback([&](const CursorState& state)
 	{
@@ -224,7 +224,7 @@ void GuiKeyMappingEditor::loadList(bool restoreIndex)
 	std::string mouseMapping = mMapping.getMouseMapping(mPlayer);
 
 
-	//	mList->addGroup(_("JOYSTICK MAPPING"));
+	//	mList->addGroup(std::string("JOYSTICK MAPPING"));
 	//	i++;
 
 	for (auto mappingName : mMappingNames)
@@ -240,7 +240,7 @@ void GuiKeyMappingEditor::loadList(bool restoreIndex)
 
 		if (!gp && mappingName.name.find("+") != std::string::npos && mEditable)
 		{
-			mList->addGroup(_("COMBINATIONS"));
+			mList->addGroup(std::string("COMBINATIONS"));
 			gp = true;
 			i++;
 		}
@@ -319,7 +319,7 @@ void GuiKeyMappingEditor::loadList(bool restoreIndex)
 
 			if (!gp && mEditable)
 			{
-				mList->addGroup(_("COMBINATIONS"));
+				mList->addGroup(std::string("COMBINATIONS"));
 				gp = true;
 			}
 
@@ -357,24 +357,24 @@ void GuiKeyMappingEditor::loadList(bool restoreIndex)
 
 	if (mEditable || !mouseMapping.empty())
 	{
-		mList->addGroup(_("MOUSE CURSOR"));
+		mList->addGroup(std::string("MOUSE CURSOR"));
 		i++;
 
 		ComponentListRow mouseRow;
 
 		auto theme = ThemeData::getMenuTheme();
 
-		auto text = std::make_shared<TextComponent>(mWindow, _("EMULATE MOUSE CURSOR"), theme->Text.font, theme->Text.color);
+		auto text = std::make_shared<TextComponent>(mWindow, std::string("EMULATE MOUSE CURSOR"), theme->Text.font, theme->Text.color);
 		mouseRow.addElement(text, true);
 
 		if (mEditable)
 		{
-			auto imageSource = std::make_shared< OptionListComponent<std::string> >(mWindow, _("EMULATE MOUSE CURSOR"));
+			auto imageSource = std::make_shared< OptionListComponent<std::string> >(mWindow, std::string("EMULATE MOUSE CURSOR"));
 
 			imageSource->addRange({
-				{ _("NO"), "" },
-				{ _("LEFT ANALOG STICK") , "joystick1" },
-				{ _("RIGHT ANALOG STICK") , "joystick2" } }, mouseMapping);
+				{ std::string("NO"), "" },
+				{ std::string("LEFT ANALOG STICK") , "joystick1" },
+				{ std::string("RIGHT ANALOG STICK") , "joystick2" } }, mouseMapping);
 
 			mouseRow.addElement(imageSource, false);
 
@@ -391,7 +391,7 @@ void GuiKeyMappingEditor::loadList(bool restoreIndex)
 		}
 		else
 		{
-			auto info = std::make_shared<TextComponent>(mWindow, mouseMapping == "joystick1" ? _("LEFT ANALOG STICK") : _("RIGHT ANALOG STICK"), theme->Text.font, theme->Text.color);
+			auto info = std::make_shared<TextComponent>(mWindow, mouseMapping == "joystick1" ? std::string("LEFT ANALOG STICK") : std::string("RIGHT ANALOG STICK"), theme->Text.font, theme->Text.color);
 			info->setPadding(Vector4f(0, 0, Renderer::getScreenWidth() * 0.01f, 0));
 			mouseRow.addElement(info, false);
 			mList->addRow(mouseRow, idx > 0 && last);
@@ -443,23 +443,23 @@ bool GuiKeyMappingEditor::input(InputConfig* config, Input input)
 			};
 
 			if (Settings::getInstance()->getBool("UseOSK"))
-				mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _("EDIT DESCRIPTION"), mappingDescription, updateVal, false));
+				mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, std::string("EDIT DESCRIPTION"), mappingDescription, updateVal, false));
 			else
-				mWindow->pushGui(new GuiTextEditPopup(mWindow, _("EDIT DESCRIPTION"), mappingDescription, updateVal, false));
+				mWindow->pushGui(new GuiTextEditPopup(mWindow, std::string("EDIT DESCRIPTION"), mappingDescription, updateVal, false));
 
 			return true;
 		}		
 
 		if (config->isMappedTo("x", input) && input.value != 0)
 		{
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), _("YES"), [this, mappingName]
+			mWindow->pushGui(new GuiMsgBox(mWindow, std::string("ARE YOU SURE YOU WANT TO DELETE THIS ITEM?"), std::string("YES"), [this, mappingName]
 			{
 				if (mMapping.removeMapping(mPlayer, mappingName))
 				{
 					mDirty = true;
 					loadList(true);
 				}
-			}, _("NO"), nullptr));
+			}, std::string("NO"), nullptr));
 
 			return true;
 		}
@@ -474,13 +474,13 @@ bool GuiKeyMappingEditor::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiKeyMappingEditor::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts;// = mList->getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("SAVE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("SAVE")));
 
 	if (mList->size() > 0 && !mList->getSelected().empty())
 	{
-		prompts.push_back(HelpPrompt("x", _("DELETE MAPPING")));
-		prompts.push_back(HelpPrompt("y", _("EDIT DESCRIPTION")));
+		prompts.push_back(HelpPrompt("x", std::string("DELETE MAPPING")));
+		prompts.push_back(HelpPrompt("y", std::string("EDIT DESCRIPTION")));
 	}
 
 	return prompts;
@@ -495,18 +495,18 @@ void GuiKeyMappingEditor::close()
 	}
 	
 	mWindow->pushGui(new GuiMsgBox(mWindow,
-		_("SAVE CHANGES?"),
-		_("YES"), [this] { save(); delete this; },
-		_("NO"), [this] { delete this; }
+		std::string("SAVE CHANGES?"),
+		std::string("YES"), [this] { save(); delete this; },
+		std::string("NO"), [this] { delete this; }
 	));	
 }
 
 void GuiKeyMappingEditor::deleteMapping()
 {
 	mWindow->pushGui(new GuiMsgBox(mWindow,
-		_("ARE YOU SURE?"),
-		_("YES"), [this] { mMapping.deleteFile(); delete this; },
-		_("NO"), [this] { }
+		std::string("ARE YOU SURE?"),
+		std::string("YES"), [this] { mMapping.deleteFile(); delete this; },
+		std::string("NO"), [this] { }
 	));
 }
 
@@ -551,16 +551,18 @@ GuiKeyMappingEditorEntry::GuiKeyMappingEditorEntry(Window* window, MappingInfo& 
 		mImageCombi->setImage(mMappingInfo.combination);
 	}
 
-	mText = std::make_shared<TextComponent>(mWindow, _(Utils::String::toUpper(mMappingInfo.dispName).c_str()), theme->Text.font, theme->Text.color);
+	mText = std::make_shared<TextComponent>(mWindow, std::string(Utils::String::toUpper(mMappingInfo.dispName).c_str()), theme->Text.font, theme->Text.color);
 	mText->setLineSpacing(1.5);
 
 	mTargetText = std::make_shared<TextComponent>(mWindow, mTarget.toTargetString(), theme->Text.font, theme->Text.color);
 	mTargetText->setLineSpacing(1.5);
 
-//	if (!target.description.empty())
+	if (!target.description.empty())
 //		mTargetText->setText(mTarget.toTargetString() + _U("      \uF05A ") + target.description);
+		mTargetText->setText(mTarget.toTargetString() + "      \uF05A " + target.description);
 
-	mDescription = std::make_shared<TextComponent>(mWindow, mTarget.description.empty() ? "" : std::string(_U("\uF05A  ")) + pgettext("keys_files", mTarget.description.c_str()), theme->Text.font, theme->Text.color);
+//	mDescription = std::make_shared<TextComponent>(mWindow, mTarget.description.empty() ? "" : std::string(_U("\uF05A  ")) + pgettext("keys_files", mTarget.description.c_str()), theme->Text.font, theme->Text.color);
+	mDescription = std::make_shared<TextComponent>(mWindow, mTarget.description.empty() ? "" : std::string("\uF05A  ") + mTarget.description.c_str(), theme->Text.font, theme->Text.color);
 	mDescription->setLineSpacing(1.5);
 
 	setEntry(mImage, Vector2i(0, 0), false, true);

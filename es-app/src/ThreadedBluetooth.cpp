@@ -5,7 +5,9 @@
 #include "ApiSystem.h"
 #include "LocaleES.h"
 
-#define ICONINDEX _U("\uF085 ")
+// $$
+//#define ICONINDEX _U("\uF085 ")
+#define ICONINDEX "\uF085 "
 
 ThreadedBluetooth* ThreadedBluetooth::mInstance = nullptr;
 
@@ -13,8 +15,10 @@ ThreadedBluetooth::ThreadedBluetooth(Window* window)
 	: mWindow(window)
 {
 	mWndNotification = mWindow->createAsyncNotificationComponent();
-	mWndNotification->updateTitle(ICONINDEX + _("SCANNING BLUETOOTH"));	
-	mWndNotification->updateText(_("Searching for devices..."));
+//	mWndNotification->updateTitle(ICONINDEX + _("SCANNING BLUETOOTH"));	
+//	mWndNotification->updateText(_("Searching for devices..."));
+	mWndNotification->updateTitle(ICONINDEX + std::string("SCANNING BLUETOOTH"));	
+	mWndNotification->updateText(std::string("Searching for devices..."));
 
 	mHandle = new std::thread(&ThreadedBluetooth::run, this);
 }
@@ -51,7 +55,8 @@ void ThreadedBluetooth::start(Window* window)
 {
 	if (ThreadedBluetooth::mInstance != nullptr)
 	{
-		window->pushGui(new GuiMsgBox(window, _("BLUETOOTH SCAN IS ALREADY RUNNING.")));
+//		window->pushGui(new GuiMsgBox(window, _("BLUETOOTH SCAN IS ALREADY RUNNING.")));
+		window->pushGui(new GuiMsgBox(window, std::string("BLUETOOTH SCAN IS ALREADY RUNNING.")));
 		return;
 	}
 	
@@ -70,8 +75,10 @@ ThreadedFormatter::ThreadedFormatter(Window* window, const std::string disk, con
 	mFileSystem = fileSystem;
 
 	mWndNotification = mWindow->createAsyncNotificationComponent();
-	mWndNotification->updateTitle(ICONINDEX + _("FORMATTING DEVICE"));
-	mWndNotification->updateText(_("Formatting") + " " + disk);
+//	mWndNotification->updateTitle(ICONINDEX + _("FORMATTING DEVICE"));
+//	mWndNotification->updateText(_("Formatting") + " " + disk);
+	mWndNotification->updateTitle(ICONINDEX + std::string("FORMATTING DEVICE"));
+	mWndNotification->updateText(std::string("Formatting") + " " + disk);
 
 	mHandle = new std::thread(&ThreadedFormatter::run, this);
 }
@@ -105,7 +112,8 @@ void ThreadedFormatter::run()
 	});
 
 	if (ret == 69)
-		mWindow->displayNotificationMessage(_("A REBOOT IS REQUIRED TO COMPLETE THE OPERATION"));
+//		mWindow->displayNotificationMessage(_("A REBOOT IS REQUIRED TO COMPLETE THE OPERATION"));
+		mWindow->displayNotificationMessage(std::string("A REBOOT IS REQUIRED TO COMPLETE THE OPERATION"));
 
 	delete this;
 	ThreadedFormatter::mInstance = nullptr;
@@ -115,7 +123,8 @@ void ThreadedFormatter::start(Window* window, const std::string disk, const std:
 {
 	if (ThreadedFormatter::mInstance != nullptr)
 	{
-		window->pushGui(new GuiMsgBox(window, _("A DRIVE IS ALREADY BEING FORMATTED.")));
+//		window->pushGui(new GuiMsgBox(window, _("A DRIVE IS ALREADY BEING FORMATTED.")));
+		window->pushGui(new GuiMsgBox(window, std::string("A DRIVE IS ALREADY BEING FORMATTED.")));
 		return;
 	}
 

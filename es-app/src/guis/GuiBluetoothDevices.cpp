@@ -13,7 +13,7 @@
 #include "GuiBluetoothDeviceOptions.h"
 
 GuiBluetoothDevices::GuiBluetoothDevices(Window* window)
-	: GuiComponent(window), mMenu(window, _("BLUETOOTH DEVICE LIST").c_str())
+	: GuiComponent(window), mMenu(window, std::string("BLUETOOTH DEVICE LIST").c_str())
 {
 	mWaitingLoad = false;
 
@@ -22,9 +22,9 @@ GuiBluetoothDevices::GuiBluetoothDevices(Window* window)
 	addChild(&mMenu);
 
 	if (load())		
-		mMenu.addButton(_("REMOVE ALL"), "manual input", [&] { onRemoveAll(); });
+		mMenu.addButton(std::string("REMOVE ALL"), "manual input", [&] { onRemoveAll(); });
 
-	mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+	mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 
 	if (Renderer::ScreenSettings::fullScreenMenus())
 		mMenu.setPosition((Renderer::getScreenWidth() - mMenu.getSize().x()) / 2, (Renderer::getScreenHeight() - mMenu.getSize().y()) / 2);
@@ -39,7 +39,7 @@ bool GuiBluetoothDevices::load()
 	mMenu.clear();
 
 	if (ssids.size() == 0)
-		mMenu.addEntry(_("NO BLUETOOTH DEVICES FOUND"), false);
+		mMenu.addEntry(std::string("NO BLUETOOTH DEVICES FOUND"), false);
 	else
     {
 		for (auto ssid : ssids)
@@ -55,7 +55,7 @@ bool GuiBluetoothDevices::load()
 				auto connected = Utils::String::extractString(ssid, "connected=\"", "\"", false);
 
 				std::string icon = type.empty() ? "unknown" : type;
-				std::string status = (connected == "yes") ? _(" (Connected)") : "";
+				std::string status = (connected == "yes") ? std::string(" (Connected)") : "";
 
 				mMenu.addWithDescription(name + status, id, nullptr, [this, id, name, connected]() {
 					mWindow->pushGui(new GuiBluetoothDeviceOptions(mWindow, id, name, connected == "yes", [this]() { load(); }));
@@ -93,8 +93,8 @@ bool GuiBluetoothDevices::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiBluetoothDevices::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt(BUTTON_OK, _("REMOVE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt(BUTTON_OK, std::string("REMOVE")));
 	return prompts;
 }
 
@@ -105,7 +105,7 @@ void GuiBluetoothDevices::onRemoveAll()
 
 	Window* window = mWindow;
 
-	mWindow->pushGui(new GuiLoading<bool>(mWindow, _("PLEASE WAIT"),
+	mWindow->pushGui(new GuiLoading<bool>(mWindow, std::string("PLEASE WAIT"),
 		[this, window](auto gui)
 		{
 			mWaitingLoad = true;
@@ -117,7 +117,7 @@ void GuiBluetoothDevices::onRemoveAll()
 		[this, window](bool ret)
 		{
 			mWaitingLoad = false;
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("BLUETOOTH DEVICES HAVE BEEN DELETED."), _("OK")));
+			mWindow->pushGui(new GuiMsgBox(mWindow, std::string("BLUETOOTH DEVICES HAVE BEEN DELETED."), std::string("OK")));
 			delete this;
 		}));	
 }
@@ -141,10 +141,10 @@ void GuiBluetoothDevices::onRemoveDevice(const std::string& id, const std::strin
 		deviceName = macAddress;
 
 	Window* window = mWindow;
-	window->pushGui(new GuiMsgBox(window, Utils::String::format(_("ARE YOU SURE YOU WANT TO REMOVE '%s' ?").c_str(), deviceName.c_str()),
-		_("YES"), [this, window, macAddress]
+	window->pushGui(new GuiMsgBox(window, Utils::String::format(std::string("ARE YOU SURE YOU WANT TO REMOVE '%s' ?").c_str(), deviceName.c_str()),
+		std::string("YES"), [this, window, macAddress]
 		{ 			
-			window->pushGui(new GuiLoading<bool>(window, _("PLEASE WAIT"),
+			window->pushGui(new GuiLoading<bool>(window, std::string("PLEASE WAIT"),
 				[this, window, macAddress](auto gui)
 				{
 					mWaitingLoad = true;
@@ -156,5 +156,5 @@ void GuiBluetoothDevices::onRemoveDevice(const std::string& id, const std::strin
 					load();
 				}));
 		},
-		_("NO"), nullptr));
+		std::string("NO"), nullptr));
 }

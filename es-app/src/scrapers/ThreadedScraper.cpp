@@ -7,7 +7,8 @@
 #include "Gamelist.h"
 #include "Log.h"
 
-#define GUIICON _U("\uF03E ")
+//#define GUIICON _U("\uF03E ")
+#define GUIICON "\uF03E "
 
 ThreadedScraper* ThreadedScraper::mInstance = nullptr;
 bool ThreadedScraper::mPaused = false;
@@ -19,7 +20,8 @@ ThreadedScraper::ThreadedScraper(Window* window, const std::queue<ScraperSearchP
 	mTotal = (int) mSearchQueue.size();
 
 	mWndNotification = mWindow->createAsyncNotificationComponent();
-	mWndNotification->updateTitle(GUIICON + _("SCRAPING"));
+//	mWndNotification->updateTitle(GUIICON + _("SCRAPING"));
+	mWndNotification->updateTitle(GUIICON + std::string("SCRAPING"));
 
 	for (int i = 0; i < threadCount; i++)
 	{
@@ -144,7 +146,8 @@ void ThreadedScraper::processError(int status, const std::string statusString)
 	{
 		mExitCode = ASYNC_ERROR;
 		Window* w = mWindow;
-		mWindow->postToUiThread([statusString, w]() { w->pushGui(new GuiMsgBox(w, _("SCRAPE FAILED") + " : " + statusString)); });
+//		mWindow->postToUiThread([statusString, w]() { w->pushGui(new GuiMsgBox(w, _("SCRAPE FAILED") + " : " + statusString)); });
+		mWindow->postToUiThread([statusString, w]() { w->pushGui(new GuiMsgBox(w, std::string("SCRAPE FAILED") + " : " + statusString)); });
 	}
 	else
 		mErrors.push_back(statusString);
@@ -206,7 +209,8 @@ void ThreadedScraper::run()
 	}
 	
 	if (mExitCode == ASYNC_DONE)
-		mWindow->displayNotificationMessage(GUIICON + _("SCRAPING FINISHED") + std::string(". ") + _("UPDATE GAMELISTS TO APPLY CHANGES."));
+//		mWindow->displayNotificationMessage(GUIICON + _("SCRAPING FINISHED") + std::string(". ") + _("UPDATE GAMELISTS TO APPLY CHANGES."));
+		mWindow->displayNotificationMessage(GUIICON + std::string("SCRAPING FINISHED") + std::string(". ") + std::string("UPDATE GAMELISTS TO APPLY CHANGES."));
 
 	delete this;
 	ThreadedScraper::mInstance = nullptr;
@@ -221,7 +225,8 @@ void ThreadedScraper::updateUI()
 	std::string idx = std::to_string(remaining) + "/" + std::to_string(mTotal);	
 	int percentDone = remaining * 100 / (mTotal + 1);
 
-	mWndNotification->updateTitle(GUIICON + _("SCRAPING") + " " + idx);
+//	mWndNotification->updateTitle(GUIICON + _("SCRAPING") + " " + idx);
+	mWndNotification->updateTitle(GUIICON + std::string("SCRAPING") + " " + idx);
 	mWndNotification->updateText(mCurrentGame);
 	mWndNotification->updatePercent(percentDone);
 }
@@ -265,7 +270,8 @@ void ThreadedScraper::start(Window* window, const std::queue<ScraperSearchParams
 	int threadCount = Scraper::getScraper()->getThreadCount(error);
 	if (threadCount < 0)
 	{
-		window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + std::string(" :\r\n") + error));
+//		window->pushGui(new GuiMsgBox(window, _("AN ERROR OCCURRED") + std::string(" :\r\n") + error));
+		window->pushGui(new GuiMsgBox(window, std::string("AN ERROR OCCURRED") + std::string(" :\r\n") + error));
 		return;
 	}
 

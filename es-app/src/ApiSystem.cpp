@@ -3,8 +3,7 @@
 #include "Log.h"
 #include "HttpReq.h"
 #include "AudioManager.h"
-// $$
-//#include "VolumeControl.h"
+#include "VolumeControl.h"
 #include "InputManager.h"
 #include "EmulationStation.h"
 #include "SystemConf.h"
@@ -399,8 +398,7 @@ void ApiSystem::launchExternalWindow_before(Window *window)
 	LOG(LogDebug) << "ApiSystem::launchExternalWindow_before";
 
 	AudioManager::getInstance()->deinit();
-// $$
-//	VolumeControl::getInstance()->deinit();
+	VolumeControl::getInstance()->deinit();
 	window->deinit();
 
 	LOG(LogDebug) << "ApiSystem::launchExternalWindow_before OK";
@@ -411,8 +409,8 @@ void ApiSystem::launchExternalWindow_after(Window *window)
 	LOG(LogDebug) << "ApiSystem::launchExternalWindow_after";
 
 	window->init();
-// $$
-//	VolumeControl::getInstance()->init();
+
+	VolumeControl::getInstance()->init();
 	AudioManager::getInstance()->init();
 	window->normalizeNextUpdate();
 	window->reactivateGui();

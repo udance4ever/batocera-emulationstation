@@ -32,8 +32,8 @@ GuiThemeInstaller::GuiThemeInstaller(Window* window)
 	// Title
 	mHeaderGrid = std::make_shared<ComponentGrid>(mWindow, Vector2i(1, 5));
 
-	mTitle = std::make_shared<TextComponent>(mWindow, _("THEMES DOWNLOADER"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
-	mSubtitle = std::make_shared<TextComponent>(mWindow, _("SELECT THEMES TO INSTALL/REMOVE"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
+	mTitle = std::make_shared<TextComponent>(mWindow, std::string("THEMES DOWNLOADER"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
+	mSubtitle = std::make_shared<TextComponent>(mWindow, std::string("SELECT THEMES TO INSTALL/REMOVE"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
 	mHeaderGrid->setEntry(mTitle, Vector2i(0, 1), false, true);
 	mHeaderGrid->setEntry(mSubtitle, Vector2i(0, 3), false, true);
 
@@ -41,9 +41,9 @@ GuiThemeInstaller::GuiThemeInstaller(Window* window)
 
 	// Tabs
 	mTabs = std::make_shared<ComponentTab>(mWindow);
-	mTabs->addTab(_("All"));
-	mTabs->addTab(_("Installed"));
-	mTabs->addTab(_("Available"));
+	mTabs->addTab(std::string("All"));
+	mTabs->addTab(std::string("Installed"));
+	mTabs->addTab(std::string("Available"));
 
 	mTabs->setCursorChangedCallback([&](const CursorState& /*state*/)
 	{
@@ -64,7 +64,7 @@ GuiThemeInstaller::GuiThemeInstaller(Window* window)
 
 	// Buttons
 	std::vector<std::shared_ptr<ButtonComponent>> buttons;
-	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, _("BACK"), _("BACK"), [this] { delete this; }));
+	buttons.push_back(std::make_shared<ButtonComponent>(mWindow, std::string("BACK"), std::string("BACK"), [this] { delete this; }));
 
 	mButtonGrid = makeButtonGrid(mWindow, buttons);
 	mGrid.setEntry(mButtonGrid, Vector2i(0, 3), true, false);
@@ -212,7 +212,7 @@ void GuiThemeInstaller::loadList()
 		auto theme = ThemeData::getMenuTheme();
 		ComponentListRow row;
 		row.selectable = false;
-		auto text = std::make_shared<TextComponent>(mWindow, _("No items"), theme->TextSmall.font, theme->Text.color, ALIGN_CENTER);
+		auto text = std::make_shared<TextComponent>(mWindow, std::string("No items"), theme->TextSmall.font, theme->Text.color, ALIGN_CENTER);
 		row.addElement(text, true);
 		mList->addRow(row, false, false);
 	}
@@ -225,7 +225,7 @@ void GuiThemeInstaller::loadThemesAsync()
 {
 	Window* window = mWindow;
 
-	mWindow->pushGui(new GuiLoading<std::vector<BatoceraTheme>>(mWindow, _("PLEASE WAIT"),
+	mWindow->pushGui(new GuiLoading<std::vector<BatoceraTheme>>(mWindow, std::string("PLEASE WAIT"),
 		[this, window](auto gui)
 		{
 			return ApiSystem::getInstance()->getBatoceraThemesList();		
@@ -259,11 +259,13 @@ void GuiThemeInstaller::processTheme(BatoceraTheme theme, bool isCurrentTheme)
 
 	if (theme.isInstalled)
 	{
-		msgBox->addEntry(_U("\uF019 ") + _("UPDATE"), false, [this, msgBox, theme]
+//		msgBox->addEntry(_U("\uF019 ") + std::string("UPDATE"), false, [this, msgBox, theme]
+		msgBox->addEntry("\uF019 " + std::string("UPDATE"), false, [this, msgBox, theme]
 		{
 			char trstring[1024];
-			snprintf(trstring, 1024, _("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), theme.name.c_str());
-			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			snprintf(trstring, 1024, std::string("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), theme.name.c_str());
+//			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			mWindow->displayNotificationMessage("\uF019 " + std::string(trstring));
 
 			ContentInstaller::Enqueue(mWindow, ContentInstaller::CONTENT_THEME_INSTALL, theme.name);
 			
@@ -273,16 +275,19 @@ void GuiThemeInstaller::processTheme(BatoceraTheme theme, bool isCurrentTheme)
 
 		if (!isCurrentTheme)
 		{
-			msgBox->addEntry(_U("\uF014 ") + _("REMOVE"), false, [this, msgBox, theme]
+//			msgBox->addEntry(_U("\uF014 ") + std::string("REMOVE"), false, [this, msgBox, theme]
+			msgBox->addEntry("\uF014 " + std::string("REMOVE"), false, [this, msgBox, theme]
 			{
 				auto updateStatus = ApiSystem::getInstance()->uninstallBatoceraTheme(theme.name);
 
 				if (updateStatus.second == 0)
-					mWindow->displayNotificationMessage(_U("\uF019 ") + theme.name + " : " + _("THEME UNINSTALLED SUCCESSFULLY"));
+//					mWindow->displayNotificationMessage(_U("\uF019 ") + theme.name + " : " + std::string("THEME UNINSTALLED SUCCESSFULLY"));
+					mWindow->displayNotificationMessage("\uF019 " + theme.name + " : " + std::string("THEME UNINSTALLED SUCCESSFULLY"));
 				else
 				{
-					std::string error = _("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
-					mWindow->displayNotificationMessage(_U("\uF019 ") + error);
+					std::string error = std::string("AN ERROR OCCURRED") + std::string(": ") + updateStatus.first;
+//					mWindow->displayNotificationMessage(_U("\uF019 ") + error);
+					mWindow->displayNotificationMessage("\uF019 " + error);
 				}
 
 				mReloadList = 2;
@@ -292,11 +297,13 @@ void GuiThemeInstaller::processTheme(BatoceraTheme theme, bool isCurrentTheme)
 	}
 	else
 	{
-		msgBox->addEntry(_U("\uF019 ") + _("INSTALL"), false, [this, msgBox, theme]
+//		msgBox->addEntry(_U("\uF019 ") + std::string("INSTALL"), false, [this, msgBox, theme]
+		msgBox->addEntry("\uF019 " + std::string("INSTALL"), false, [this, msgBox, theme]
 		{
 			char trstring[1024];
-			snprintf(trstring, 1024, _("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), theme.name.c_str());
-			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			snprintf(trstring, 1024, std::string("'%s' ADDED TO DOWNLOAD QUEUE").c_str(), theme.name.c_str());
+//			mWindow->displayNotificationMessage(_U("\uF019 ") + std::string(trstring));
+			mWindow->displayNotificationMessage("\uF019 " + std::string(trstring));
 
 			ContentInstaller::Enqueue(mWindow, ContentInstaller::CONTENT_THEME_INSTALL, theme.name);
 
@@ -338,8 +345,8 @@ bool GuiThemeInstaller::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiThemeInstaller::getHelpPrompts()
 {
 	std::vector<HelpPrompt> prompts = mList->getHelpPrompts();
-	prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
-	prompts.push_back(HelpPrompt("start", _("CLOSE")));
+	prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
+	prompts.push_back(HelpPrompt("start", std::string("CLOSE")));
 	return prompts;
 }
 
@@ -367,33 +374,40 @@ GuiBatoceraThemeEntry::GuiBatoceraThemeEntry(Window* window, BatoceraTheme& entr
 	mImage->setHorizontalAlignment(Alignment::ALIGN_CENTER);
 	mImage->setVerticalAlignment(Alignment::ALIGN_TOP);
 	mImage->setFont(theme->Text.font);
-	mImage->setText(isInstalled ? _U("\uF058") : _U("\uF019"));
+//	mImage->setText(isInstalled ? _U("\uF058") : _U("\uF019"));
+	mImage->setText(isInstalled ? "\uF058" : "\uF019");
 	mImage->setSize(theme->Text.font->getLetterHeight() * 1.5f, 0);
 
 	mText = std::make_shared<TextComponent>(mWindow, Utils::String::replace(entry.name, "_", " "), theme->Text.font, theme->Text.color);
 	mText->setLineSpacing(1.5);
 	mText->setVerticalAlignment(ALIGN_TOP);
 
-	std::string details = _U("\uf007  ") + entry.author;
+//	std::string details = _U("\uf007  ") + entry.author;
+	std::string details = "\uf007  " + entry.author;
 
 	if (entry.size > 0)
-		details = details + _U("  \uf019  ") + std::to_string(entry.size) + "Mb";
+//		details = details + _U("  \uf019  ") + std::to_string(entry.size) + "Mb";
+		details = details + "  \uf019  " + std::to_string(entry.size) + "Mb";
 	
 	if (!entry.lastUpdate.empty())
 	{
 		details = details + "\r\n";
-		details = details + _U("\uf073  ") + entry.lastUpdate + "  ";
+//		details = details + _U("\uf073  ") + entry.lastUpdate + "  ";
+		details = details + "\uf073  " + entry.lastUpdate + "  ";
 		for (int i = 0; i < entry.upToDate; i++)
-			details = details + _U("\uf006 ");		
+//			details = details + _U("\uf006 ");		
+			details = details + "\uf006 ";		
 	}
 
 	details = details + "\r\n";
-	details = details + _U("\uf0AC  ") + entry.url;
+//	details = details + _U("\uf0AC  ") + entry.url;
+	details = details + "\uf0AC  " + entry.url;
 
 	if (mIsCurrentTheme)
-		details = _U("\uf05A  ") + _("CURRENT THEME") + std::string("  ") + details;
+//		details = _U("\uf05A  ") + std::string("CURRENT THEME") + std::string("  ") + details;
+		details = "\uf05A  " + std::string("CURRENT THEME") + std::string("  ") + details;
 	else if (mIsPending)
-		details = _("CURRENTLY IN DOWNLOAD QUEUE");	
+		details = std::string("CURRENTLY IN DOWNLOAD QUEUE");	
 
 	mSubstring = std::make_shared<TextComponent>(mWindow, details, theme->TextSmall.font, theme->Text.color);
 	mSubstring->setOpacity(192);
@@ -422,9 +436,11 @@ GuiBatoceraThemeEntry::GuiBatoceraThemeEntry(Window* window, BatoceraTheme& entr
 	if (mIsPending)
 	{
 		if (mIsCurrentTheme)
-			mImage->setText(_U("\uF05E"));
+//			mImage->setText(_U("\uF05E"));
+			mImage->setText("\uF05E");
 		else
-			mImage->setText(_U("\uF04B"));
+//			mImage->setText(_U("\uF04B"));
+			mImage->setText("\uF04B");
 
 		mImage->setOpacity(120);
 		mText->setOpacity(150);

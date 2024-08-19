@@ -4,7 +4,7 @@
 #include "ApiSystem.h"
 
 GuiBluetoothDeviceOptions::GuiBluetoothDeviceOptions(Window* window, const std::string& id, const std::string& name, bool isConnected, std::function<void()> onComplete)
-    : GuiComponent(window), mMenu(window, _("DEVICE OPTIONS").c_str()), mId(id), mName(name), mIsConnected(isConnected), mWaitingLoad(false), mOnComplete(onComplete)
+    : GuiComponent(window), mMenu(window, std::string("DEVICE OPTIONS").c_str()), mId(id), mName(name), mIsConnected(isConnected), mWaitingLoad(false), mOnComplete(onComplete)
 {
     addChild(&mMenu);
 
@@ -12,14 +12,14 @@ GuiBluetoothDeviceOptions::GuiBluetoothDeviceOptions(Window* window, const std::
 
     if (mIsConnected)
     {
-        mMenu.addButton(_("DISCONNECT"), "disconnect", [&] { onDisconnectDevice(); });
+        mMenu.addButton(std::string("DISCONNECT"), "disconnect", [&] { onDisconnectDevice(); });
     }
     else
     {
-        mMenu.addButton(_("CONNECT"), "connect", [&] { onConnectDevice(); });
+        mMenu.addButton(std::string("CONNECT"), "connect", [&] { onConnectDevice(); });
     }
-    mMenu.addButton(_("FORGET"), "forget", [&] { onForgetDevice(); });
-    mMenu.addButton(_("BACK"), "back", [&] { delete this; });
+    mMenu.addButton(std::string("FORGET"), "forget", [&] { onForgetDevice(); });
+    mMenu.addButton(std::string("BACK"), "back", [&] { delete this; });
 
     mMenu.setPosition((Renderer::getScreenWidth() - mMenu.getSize().x()) / 2, (Renderer::getScreenHeight() - mMenu.getSize().y()) / 2);
 }
@@ -43,7 +43,7 @@ bool GuiBluetoothDeviceOptions::input(InputConfig* config, Input input)
 std::vector<HelpPrompt> GuiBluetoothDeviceOptions::getHelpPrompts()
 {
     std::vector<HelpPrompt> prompts = mMenu.getHelpPrompts();
-    prompts.push_back(HelpPrompt(BUTTON_BACK, _("BACK")));
+    prompts.push_back(HelpPrompt(BUTTON_BACK, std::string("BACK")));
     return prompts;
 }
 
@@ -53,10 +53,10 @@ void GuiBluetoothDeviceOptions::onForgetDevice()
         return;
 
     Window* window = mWindow;
-    window->pushGui(new GuiMsgBox(window, Utils::String::format(_("ARE YOU SURE YOU WANT TO FORGET '%s' ?").c_str(), mName.c_str()),
-        _("YES"), [this, window]
+    window->pushGui(new GuiMsgBox(window, Utils::String::format(std::string("ARE YOU SURE YOU WANT TO FORGET '%s' ?").c_str(), mName.c_str()),
+        std::string("YES"), [this, window]
         {             
-            window->pushGui(new GuiLoading<bool>(window, _("PLEASE WAIT"),
+            window->pushGui(new GuiLoading<bool>(window, std::string("PLEASE WAIT"),
                 [this, window](auto gui)
                 {
                     mWaitingLoad = true;
@@ -69,7 +69,7 @@ void GuiBluetoothDeviceOptions::onForgetDevice()
                     delete this;
                 }));
         },
-        _("NO"), nullptr));
+        std::string("NO"), nullptr));
 }
 
 void GuiBluetoothDeviceOptions::onConnectDevice()
@@ -78,10 +78,10 @@ void GuiBluetoothDeviceOptions::onConnectDevice()
         return;
 
     Window* window = mWindow;
-    window->pushGui(new GuiMsgBox(window, Utils::String::format(_("ARE YOU SURE YOU WANT TO CONNECT TO '%s' ?").c_str(), mName.c_str()),
-        _("YES"), [this, window]
+    window->pushGui(new GuiMsgBox(window, Utils::String::format(std::string("ARE YOU SURE YOU WANT TO CONNECT TO '%s' ?").c_str(), mName.c_str()),
+        std::string("YES"), [this, window]
         {             
-            window->pushGui(new GuiLoading<bool>(window, _("PLEASE WAIT"),
+            window->pushGui(new GuiLoading<bool>(window, std::string("PLEASE WAIT"),
                 [this, window](auto gui)
                 {
                     mWaitingLoad = true;
@@ -94,7 +94,7 @@ void GuiBluetoothDeviceOptions::onConnectDevice()
                     delete this;
                 }));
         },
-        _("NO"), nullptr));
+        std::string("NO"), nullptr));
 }
 
 void GuiBluetoothDeviceOptions::onDisconnectDevice()
@@ -103,10 +103,10 @@ void GuiBluetoothDeviceOptions::onDisconnectDevice()
         return;
 
     Window* window = mWindow;
-    window->pushGui(new GuiMsgBox(window, Utils::String::format(_("ARE YOU SURE YOU WANT TO DISCONNECT '%s' ?").c_str(), mName.c_str()),
-        _("YES"), [this, window]
+    window->pushGui(new GuiMsgBox(window, Utils::String::format(std::string("ARE YOU SURE YOU WANT TO DISCONNECT '%s' ?").c_str(), mName.c_str()),
+        std::string("YES"), [this, window]
         {             
-            window->pushGui(new GuiLoading<bool>(window, _("PLEASE WAIT"),
+            window->pushGui(new GuiLoading<bool>(window, std::string("PLEASE WAIT"),
                 [this, window](auto gui)
                 {
                     mWaitingLoad = true;
@@ -119,5 +119,5 @@ void GuiBluetoothDeviceOptions::onDisconnectDevice()
                     delete this;
                 }));
         },
-        _("NO"), nullptr));
+        std::string("NO"), nullptr));
 }
