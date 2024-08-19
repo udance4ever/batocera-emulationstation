@@ -245,26 +245,20 @@ list(APPEND CMAKE_LIBRARY_PATH /opt/local/lib)
 #---------------------------------------------------------------------------------------------------
 # Package dependencies.
 
+# $$ merged w batocera
 if(GLSYSTEM MATCHES "Desktop OpenGL")
-    MESSAGE("Checking Desktop OpenGL dependency...")
+    MESSAGE("Checking for Desktop OpenGL package...")
     set(OpenGL_GL_PREFERENCE GLVND)
     find_package(OpenGL REQUIRED)
 elseif(ANDROID)
     find_package(OpenGLES3 REQUIRED)
+elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
+    find_package(OpenGLES2 REQUIRED)
 elseif(GLES AND NOT EMSCRIPTEN)
     find_package(OpenGLES2 REQUIRED)
+else()
+    find_package(OpenGLES REQUIRED)
 endif()
-
-# $$ commenting batocera version out
-#finding necessary packages
-#-------------------------------------------------------------------------------
-#if(${GLSYSTEM} MATCHES "Desktop OpenGL")
-#    find_package(OpenGL REQUIRED)
-#elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
-#    find_package(OpenGLES2 REQUIRED)
-#else()
-#    find_package(OpenGLES REQUIRED)
-#endif()
 
 # On macOS and Windows all dependencies are kept in-tree in the "external" directory.
 if(APPLE)
@@ -274,7 +268,8 @@ if(APPLE)
     find_package(CURL REQUIRED)
 
     # $$ since this is a /Library/Framework
-    find_package(SDL2 REQUIRED)
+    #  we compiled SDL in external...
+#    find_package(SDL2 REQUIRED)
 elseif(WIN32)
     if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/pugixml/pugixml.dll)
         message(FATAL_ERROR "-- You need to build the dependencies in ./external first")
@@ -302,7 +297,8 @@ endif()
 #
 # batocera / background musics
 
-find_package(SDL2MIXER REQUIRED)
+# $$ it's not finding it in external/SDLmixer
+#find_package(SDL2MIXER REQUIRED)
 
 # batocera / customisations
 # $$ skipping VLC even though we are integrating it on macOS
@@ -719,6 +715,7 @@ endif()
 
 if(${GLSYSTEM} MATCHES "Desktop OpenGL")
     add_definitions(-DUSE_OPENGL_21)
+    MESSAGE("DEBUG: added -DUSE_OPENGL_21")
 elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
     add_definitions(-DUSE_OPENGLES_20)
 else()
@@ -759,18 +756,19 @@ if(APPLE)
 #                            ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml/src
 
 			    ${RAPIDJSON_INCLUDE_DIRS}
-                            ${SDL2_INCLUDE_DIR}
-			    ${SDLMIXER_INCLUDE_DIR}
 
-			    # $$
-			    #  pugixml/src/pugixml.hpp
-			    #  vlc/vlc.h
+			    # $$ allow <pugixml/src/pugixml.hpp> to resolve
 			    ${CMAKE_CURRENT_SOURCE_DIR}/external
 
 #			    ${CMAKE_CURRENT_SOURCE_DIR}/es-core/src
 
-			    # $$ workaround to find SDL_audio.h, SDL_joystick.h (but SDL_mixer.h is missing)
+#			    ${SDL2_INCLUDE_DIR}
                             ${CMAKE_CURRENT_SOURCE_DIR}/external/SDL/include
+
+#			    ${SDLMIXER_INCLUDE_DIR}
+			    ${CMAKE_CURRENT_SOURCE_DIR}/external/SDL_mixer/include
+
+			    ${CMAKE_CURRENT_SOURCE_DIR}/external/vlc/include
 
                             ${CMAKE_CURRENT_SOURCE_DIR}/external/SDL)
 elseif(WIN32)
@@ -876,6 +874,7 @@ else()
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGL_INCLUDE_DIR}
         )
+	MESSAGE("DEBUG: Added Desktop OpenGL include directories")
     elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGLES2_INCLUDE_DIR}
@@ -923,7 +922,14 @@ if(APPLE)
                          ${PROJECT_SOURCE_DIR}/libicuuc.75.dylib
                          ${PROJECT_SOURCE_DIR}/libintl.8.dylib
                          ${PROJECT_SOURCE_DIR}/libpugixml.a
-                         ${PROJECT_SOURCE_DIR}/libSDL2-2.0.0.dylib)
+                         ${PROJECT_SOURCE_DIR}/libSDL2-2.0.0.dylib
+
+                         ${PROJECT_SOURCE_DIR}/libSDL2_mixer-2.0.0.dylib
+                         ${PROJECT_SOURCE_DIR}/libvlc.12.dylib			
+                         ${PROJECT_SOURCE_DIR}/libnanosvg.a
+                         ${PROJECT_SOURCE_DIR}/libid3v2.a
+                         ${PROJECT_SOURCE_DIR}/liblibcheevos.a
+			)
 elseif(WIN32)
     set(COMMON_LIBRARIES ${PROJECT_SOURCE_DIR}/avcodec.lib
                             ${PROJECT_SOURCE_DIR}/avfilter.lib
@@ -1127,6 +1133,7 @@ else()
         LIST(APPEND COMMON_LIBRARIES
             ${OPENGL_LIBRARIES}
         )
+	MESSAGE("DEBUG: Added Desktop OpenGL libraries")
     elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_LIBRARIES
             EGL
@@ -1137,7 +1144,6 @@ else()
     elseif(GLES)
         list(APPEND COMMON_LIBRARIES ${OPENGLES2_LIBRARIES})
     else()
-	# $$ default in batocera-ES
         LIST(APPEND COMMON_LIBRARIES
             EGL
             ${OPENGLES_LIBRARIES}

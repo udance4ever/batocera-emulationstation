@@ -317,7 +317,12 @@ bool TextureData::loadFromVideo()
 		libvlc_media_player_set_rate(vlcMediaPlayer, 1);
 		libvlc_audio_set_mute(vlcMediaPlayer, 1);
 		libvlc_media_player_play(vlcMediaPlayer);
-		libvlc_media_player_set_time(vlcMediaPlayer, ms);
+
+		// $$ now has a 3rd parameter
+		//  b_fast	prefer fast seeking or precise seeking
+		//  https://videolan.videolan.me/vlc/group__libvlc__media__player.html#ga1cd0ce28691890ba988b8ca288a7f106
+//		libvlc_media_player_set_time(vlcMediaPlayer, ms);
+		libvlc_media_player_set_time(vlcMediaPlayer, ms, 1);
 
 		auto time = libvlc_media_player_get_time(vlcMediaPlayer);
 		while (time <= ms)
@@ -325,7 +330,9 @@ bool TextureData::loadFromVideo()
 
 		int result = libvlc_video_take_snapshot(vlcMediaPlayer, 0, localFile.c_str(), 0, 0);
 
-		libvlc_media_player_stop(vlcMediaPlayer);
+		// $$ https://mailman.videolan.org/pipermail/vlc-commits/2019-May/055820.html
+//		libvlc_media_player_stop(vlcMediaPlayer);
+		libvlc_media_player_stop_async(vlcMediaPlayer);
 		libvlc_media_player_release(vlcMediaPlayer);
 		libvlc_media_release(vlcMedia);
 		libvlc_release(vlcInstance);

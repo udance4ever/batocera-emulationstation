@@ -57,30 +57,36 @@ namespace glext
 		if (!SDL_GL_ExtensionSupported("GL_ARB_shader_objects"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_shader_objects";
-			return false;
+// $$$ debugging macOS batocera-emulationstation
+//			return false;
 		}
 
 		if (!SDL_GL_ExtensionSupported("GL_ARB_shading_language_100"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_shading_language_100";
-			return false;
+// $$$ debugging macOS batocera-emulationstation
+//			return false;
 		}
 
 		if (!SDL_GL_ExtensionSupported("GL_ARB_vertex_shader"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_vertex_shader";
-			return false;
+// $$$ debugging macOS batocera-emulationstation
+//			return false;
 		}
 
 		if (!SDL_GL_ExtensionSupported("GL_ARB_fragment_shader"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_fragment_shader";
+// $$$ debugging macOS batocera-emulationstation
+			LOG(LogError) << "If we go any further, we will just get a black screen with lots of GL errors";
+			LOG(LogError) << "This is as far as we get for now until we learn how to integrate OpenGL in macOS as ES-DE has.";
 			return false;
 		}
 
 		glCreateShader = (PFNGLCREATESHADERPROC)_glProcAddress("glCreateShader");
 		glCompileShader = (PFNGLCOMPILESHADERPROC)_glProcAddress("glCompileShader");
-// $$$
+// $$$ seem clang is strict on what looks like a typo!
 //		glCreateProgram = (PFNGLCREATEPROGRAMOBJECTARBPROC)_glProcAddress("glCreateProgram");
 		glCreateProgram = (PFNGLCREATEPROGRAMPROC)_glProcAddress("glCreateProgram");
 		glGenBuffers = (PFNGLGENBUFFERSPROC)_glProcAddress("glGenBuffers");

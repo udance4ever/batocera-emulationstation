@@ -849,9 +849,8 @@ void VideoVlcComponent::startVideo()
 				{
 					if (!getPlayAudio() || (!mScreensaverMode && !Settings::getInstance()->getBool("VideoAudio")) || (Settings::getInstance()->getBool("ScreenSaverVideoMute") && mScreensaverMode))
 						libvlc_audio_set_mute(mMediaPlayer, 1);
-//					else
-// $$
-//						AudioManager::setVideoPlaying(true);
+					else
+						AudioManager::setVideoPlaying(true);
 				}
 
 				libvlc_media_player_play(mMediaPlayer);
@@ -875,7 +874,11 @@ void VideoVlcComponent::stopVideo()
 	// Release the media player so it stops calling back to us
 	if (mMediaPlayer)
 	{
-		libvlc_media_player_stop(mMediaPlayer);
+		// $$$ has the API changed?  has libvlc_media_player_stop() been depreciated?
+		//   https://videolan.videolan.me/vlc/group__libvlc__media__player.html#gac88bb9c89ae87d77173882fd78636652
+		//   [vlc-commits] libvlc: player: rename stop() to stop_async(): https://mailman.videolan.org/pipermail/vlc-commits/2019-May/055820.html
+//		libvlc_media_player_stop(mMediaPlayer);
+		libvlc_media_player_stop_async(mMediaPlayer);
 		libvlc_media_player_release(mMediaPlayer);
 		mMediaPlayer = NULL;
 	}
@@ -889,8 +892,8 @@ void VideoVlcComponent::stopVideo()
 		
 	freeContext();
 	PowerSaver::resume();	
-// $$
-//	AudioManager::setVideoPlaying(false);
+
+	AudioManager::setVideoPlaying(false);
 }
 
 void VideoVlcComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
@@ -1036,8 +1039,8 @@ void VideoVlcComponent::pauseVideo()
 		libvlc_media_player_pause(mMediaPlayer);
 		
 		PowerSaver::resume();
-// $$
-//		AudioManager::setVideoPlaying(false);
+
+		AudioManager::setVideoPlaying(false);
 	}
 }
 
@@ -1055,8 +1058,8 @@ void VideoVlcComponent::resumeVideo()
 	mIsPlaying = true;
 	libvlc_media_player_play(mMediaPlayer);
 	PowerSaver::pause();
-// $$
-//	AudioManager::setVideoPlaying(true);
+
+	AudioManager::setVideoPlaying(true);
 }
 
 bool VideoVlcComponent::isPaused()
