@@ -80,7 +80,7 @@ namespace glext
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_fragment_shader";
 // $$$ debugging macOS batocera-emulationstation
 			LOG(LogError) << "If we go any further, we will just get a black screen with lots of GL errors";
-			LOG(LogError) << "This is as far as we get for now until we learn how to integrate OpenGL in macOS as ES-DE has.";
+			LOG(LogError) << "This is as far as we get for now until we learn how to integrate Desktop OpenGL in macOS as ES-DE has.";
 			return false;
 		}
 
