@@ -10,7 +10,8 @@ std::map< std::string, std::shared_ptr<Sound> > Sound::sMap;
 
 std::shared_ptr<Sound> Sound::get(const std::string& path)
 {
-	std::string file = ResourceManager::getInstance()->getResourcePath(path);
+	// $$
+	std::string file = ResourceManager::getInstance().getResourcePath(path);
 
 	auto it = sMap.find(file);
 	if (it != sMap.cend())

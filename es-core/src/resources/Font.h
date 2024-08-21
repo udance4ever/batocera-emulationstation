@@ -65,6 +65,8 @@ public:
 	float getHeight(float lineSpacing = 1.5f) const;
 	float getLetterHeight();
 
+	// $$$ error: non-virtual member function marked 'override' hides virtual member function
+	//  ResourceManager.h:33:18: note: hidden overloaded virtual function 'IReloadable::unload' declared here: different number of parameters (1 vs 0)
 	bool unload() override;
 	void reload() override;
 

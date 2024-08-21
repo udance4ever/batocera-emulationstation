@@ -58,7 +58,9 @@ MameNames::MameNames()
 	pugi::xml_parse_result result;
 
 	// Read mame games information
-	xmlpath = ResourceManager::getInstance()->getResourcePath(":/arcaderoms.xml");
+	// $$ ES-DE ResourceManager rewrite
+//	xmlpath = ResourceManager::getInstance()->getResourcePath(":/arcaderoms.xml");
+	xmlpath = ResourceManager::getInstance().getResourcePath(":/arcaderoms.xml");
 	if (Utils::FileSystem::exists(xmlpath))
 	{		
 		result = doc.load_file(WINSTRINGW(xmlpath).c_str());
@@ -118,7 +120,8 @@ MameNames::MameNames()
 	}
 	
 	// Read gun games for non arcade systems
-	xmlpath = ResourceManager::getInstance()->getResourcePath(":/gamesdb.xml");
+//	xmlpath = ResourceManager::getInstance()->getResourcePath(":/gamesdb.xml");
+	xmlpath = ResourceManager::getInstance().getResourcePath(":/gamesdb.xml");
 	if (Utils::FileSystem::exists(xmlpath))
 	{
 		result = doc.load_file(WINSTRINGW(xmlpath).c_str());
