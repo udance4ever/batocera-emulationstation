@@ -706,8 +706,8 @@ void ImageGridComponent<T>::render(const Transform4x4f& parentTrans)
 	Transform4x4f trans = parentTrans * getTransform();
 	Transform4x4f tileTrans = trans;
 
-	auto rect = Renderer::getScreenRect(trans, mSize);
-	if (!Renderer::isVisibleOnScreen(rect))
+	auto rect = Renderer::getInstance()->getScreenRect(trans, mSize);
+	if (!Renderer::getInstance()->isVisibleOnScreen(rect))
 		return;
 
 	if (Settings::DebugGrid())

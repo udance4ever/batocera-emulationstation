@@ -1188,9 +1188,9 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 	{
 		const std::string tinyScreenAttr = node.attribute("tinyScreen").as_string();
 
-		if (!Renderer::isSmallScreen() && tinyScreenAttr == "true")
+		if (!Renderer::getInstance()->isSmallScreen() && tinyScreenAttr == "true")
 			return false;
-		else if (Renderer::isSmallScreen() && tinyScreenAttr == "false")
+		else if (Renderer::getInstance()->isSmallScreen() && tinyScreenAttr == "false")
 			return false;
 	}
 

@@ -43,9 +43,12 @@ public:
 class ResourceManager
 {
 public:
-    static ResourceManager& getInstance();
+//    static ResourceManager& getInstance();
+    static ResourceManager* getInstance();
 
     void addReloadable(std::weak_ptr<IReloadable> reloadable);
+    // $$ batocera
+    void removeReloadable(std::weak_ptr<IReloadable> reloadable);
 
     void unloadAll();
     void reloadAll();

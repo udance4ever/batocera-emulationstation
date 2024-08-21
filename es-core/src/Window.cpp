@@ -115,14 +115,14 @@ bool Window::init(bool initRenderer, bool initInputManager)
 
 	if (initRenderer)
 	{
-		if (!Renderer::init())
+		if (!Renderer::getInstance()->init())
 		{
 			LOG(LogError) << "Renderer failed to initialize!";
 			return false;
 		}
 	}
 	else 
-		Renderer::activateWindow();
+		Renderer::getInstance()->activateWindow();
 
 	if (initInputManager)
 		InputManager::getInstance()->init();
@@ -199,7 +199,7 @@ void Window::deinit(bool deinitRenderer)
 	ResourceManager::getInstance()->unloadAll();
 
 	if (deinitRenderer)
-		Renderer::deinit();
+		Renderer::getInstance()->deinit();
 }
 
 void Window::textInput(const char* text)
@@ -585,8 +585,9 @@ void Window::renderSindenBorders()
 			innerBorderWidth = Renderer::getScreenHeight() * 0.02f;
 		}
 
-		Renderer::setScreenMargin(0, 0);
-		Renderer::setMatrix(Transform4x4f::Identity());
+		Renderer::getInstance()->setScreenMargin(0, 0);
+		// $$$ error: no viable conversion from 'const Transform4x4f' to 'const glm::mat4' (aka 'const mat<4, 4, float, defaultp>')
+		Renderer::getInstance()->setMatrix(Transform4x4f::Identity());
 
 		const unsigned int outerBorderColor = 0x000000FF;
 		unsigned int innerBorderColor = 0xFFFFFFFF;
@@ -598,22 +599,22 @@ void Window::renderSindenBorders()
 		if (bordersColor == "white") innerBorderColor = 0xFFFFFFFF;
 
 		// outer border
-		Renderer::drawRect(0, 0, Renderer::getScreenWidth(), outerBorderWidth, outerBorderColor);
-		Renderer::drawRect(Renderer::getScreenWidth() - outerBorderWidth, 0, outerBorderWidth, Renderer::getScreenHeight(), outerBorderColor);
-		Renderer::drawRect(0, Renderer::getScreenHeight() - outerBorderWidth, Renderer::getScreenWidth(), outerBorderWidth, outerBorderColor);
-		Renderer::drawRect(0, 0, outerBorderWidth, Renderer::getScreenHeight(), outerBorderColor);
+		Renderer::getInstance()->drawRect(0, 0, Renderer::getInstance()->getScreenWidth(), outerBorderWidth, outerBorderColor);
+		Renderer::getInstance()->drawRect(Renderer::getInstance()->getScreenWidth() - outerBorderWidth, 0, outerBorderWidth, Renderer::getInstance()->getScreenHeight(), outerBorderColor);
+		Renderer::getInstance()->drawRect(0, Renderer::getInstance()->getScreenHeight() - outerBorderWidth, Renderer::getInstance()->getScreenWidth(), outerBorderWidth, outerBorderColor);
+		Renderer::getInstance()->drawRect(0, 0, outerBorderWidth, Renderer::getInstance()->getScreenHeight(), outerBorderColor);
 
 		// inner border
-		Renderer::drawRect(outerBorderWidth, outerBorderWidth, Renderer::getScreenWidth() - outerBorderWidth * 2, innerBorderWidth, innerBorderColor);
-		Renderer::drawRect(Renderer::getScreenWidth() - outerBorderWidth - innerBorderWidth, outerBorderWidth, innerBorderWidth, Renderer::getScreenHeight() - outerBorderWidth * 2, innerBorderColor);
-		Renderer::drawRect(outerBorderWidth, Renderer::getScreenHeight() - outerBorderWidth - innerBorderWidth, Renderer::getScreenWidth() - outerBorderWidth * 2, innerBorderWidth, innerBorderColor);
-		Renderer::drawRect(outerBorderWidth, outerBorderWidth, innerBorderWidth, Renderer::getScreenHeight() - outerBorderWidth * 2, innerBorderColor);
+		Renderer::getInstance()->drawRect(outerBorderWidth, outerBorderWidth, Renderer::getInstance()->getScreenWidth() - outerBorderWidth * 2, innerBorderWidth, innerBorderColor);
+		Renderer::getInstance()->drawRect(Renderer::getInstance()->getScreenWidth() - outerBorderWidth - innerBorderWidth, outerBorderWidth, innerBorderWidth, Renderer::getInstance()->getScreenHeight() - outerBorderWidth * 2, innerBorderColor);
+		Renderer::getInstance()->drawRect(outerBorderWidth, Renderer::getInstance()->getScreenHeight() - outerBorderWidth - innerBorderWidth, Renderer::getInstance()->getScreenWidth() - outerBorderWidth * 2, innerBorderWidth, innerBorderColor);
+		Renderer::getInstance()->drawRect(outerBorderWidth, outerBorderWidth, innerBorderWidth, Renderer::getInstance()->getScreenHeight() - outerBorderWidth * 2, innerBorderColor);
 
-		Renderer::setScreenMargin(outerBorderWidth + innerBorderWidth, outerBorderWidth + innerBorderWidth);
-		Renderer::setMatrix(Transform4x4f::Identity());
+		Renderer::getInstance()->setScreenMargin(outerBorderWidth + innerBorderWidth, outerBorderWidth + innerBorderWidth);
+		Renderer::getInstance()->setMatrix(Transform4x4f::Identity());
 	}
 	else
-		Renderer::setScreenMargin(0, 0);
+		Renderer::getInstance()->setScreenMargin(0, 0);
 }
 
 void Window::renderMenuBackgroundShader()
@@ -624,15 +625,16 @@ void Window::renderMenuBackgroundShader()
 	if (!info.path.empty())
 	{
 		if (mMenuBackgroundShaderTextureCache == -1)
-			Renderer::postProcessShader(info.path, 0, 0, Renderer::getScreenWidth(), Renderer::getScreenHeight(), info.parameters, &mMenuBackgroundShaderTextureCache);
+			Renderer::getInstance()->postProcessShader(info.path, 0, 0, Renderer::getScreenWidth(), Renderer::getInstance()->getScreenHeight(), info.parameters, &mMenuBackgroundShaderTextureCache);
 
 		if (mMenuBackgroundShaderTextureCache != -1)
 		{
-			Renderer::bindTexture(mMenuBackgroundShaderTextureCache);
-			Renderer::setMatrix(Transform4x4f::Identity());
+			// $$$ Window.cpp:631:74: error: too few arguments to function call, expected 2, have 1
+			Renderer::getInstance()->bindTexture(mMenuBackgroundShaderTextureCache);
+			Renderer::getInstance()->setMatrix(Transform4x4f::Identity());
 
-			int w = Renderer::getScreenWidth();
-			int h = Renderer::getScreenHeight();
+			int w = Renderer::getInstance()->getScreenWidth();
+			int h = Renderer::getInstance()->getScreenHeight();
 
 			Renderer::Vertex vertices[4];
 			vertices[0] = { { (float)0    , (float)0       }, { 0.0f, 1.0f }, 0xFFFFFFFF };
@@ -640,8 +642,8 @@ void Window::renderMenuBackgroundShader()
 			vertices[2] = { { (float)0 + w, (float)0       }, { 1.0f, 1.0f }, 0xFFFFFFFF };
 			vertices[3] = { { (float)0 + w, (float)0 + h   }, { 1.0f, 0.0f }, 0xFFFFFFFF };
 
-			Renderer::drawTriangleStrips(&vertices[0], 4, Renderer::Blend::ONE, Renderer::Blend::ONE);
-			Renderer::bindTexture(0);
+			Renderer::getInstance()->ndrawTriangleStrips(&vertices[0], 4, Renderer::Blend::ONE, Renderer::Blend::ONE);
+			Renderer::getInstance()->bindTexture(0);
 		}
 	}
 	else
@@ -652,7 +654,7 @@ void Window::resetMenuBackgroundShader()
 {
 	if (mMenuBackgroundShaderTextureCache != -1)
 	{
-		Renderer::destroyTexture(mMenuBackgroundShaderTextureCache);
+		Renderer::getInstance()->destroyTexture(mMenuBackgroundShaderTextureCache);
 		mMenuBackgroundShaderTextureCache = -1;
 	}
 }
@@ -718,16 +720,16 @@ void Window::render()
 	// FPS overlay
 	if (Settings::DrawFramerate() && mFrameDataText)
 	{
-		Renderer::setMatrix(transform);
-		Renderer::drawSolidRectangle(40.f, 45.f, mFrameDataText->metrics.size.x() + 10.f, mFrameDataText->metrics.size.y() + 10.f, 0x00000080, 0xFFFFFF30, 2.0f, 3.0f);
+		Renderer::getInstance()->setMatrix(transform);
+		Renderer::getInstance()->drawSolidRectangle(40.f, 45.f, mFrameDataText->metrics.size.x() + 10.f, mFrameDataText->metrics.size.y() + 10.f, 0x00000080, 0xFFFFFF30, 2.0f, 3.0f);
 
 		auto trans = transform;
 		trans.translate(1, 1);
-		Renderer::setMatrix(trans);
+		Renderer::getInstance()->setMatrix(trans);
 
 		mFrameDataText->setColor(0x000000FF);
 		mDefaultFonts.at(1)->renderTextCache(mFrameDataText.get());
-		Renderer::setMatrix(transform);
+		Renderer::getInstance()->setMatrix(transform);
 
 		mFrameDataText->setColor(0xFFFF40FF);		
 		mDefaultFonts.at(1)->renderTextCache(mFrameDataText.get());
@@ -737,13 +739,13 @@ void Window::render()
 	if (Settings::DrawClock() && mClock && (mGuiStack.size() < 2 || !Renderer::ScreenSettings::fullScreenMenus()))
 		mClock->render(transform);
 
-	if (Settings::ShowControllerActivity() && mControllerActivity != nullptr && (mGuiStack.size() < 2 || !Renderer::isSmallScreen()))
+	if (Settings::ShowControllerActivity() && mControllerActivity != nullptr && (mGuiStack.size() < 2 || !Renderer::getInstance()->isSmallScreen()))
 		mControllerActivity->render(transform);
 
 	if (mBatteryIndicator != nullptr && (mGuiStack.size() < 2 || !Renderer::ScreenSettings::fullScreenMenus()))
 		mBatteryIndicator->render(transform);
 
-	Renderer::setMatrix(transform);
+	Renderer::getInstance()->setMatrix(transform);
 
 	unsigned int screensaverTime = (unsigned int)Settings::ScreenSaverTime();
 	if (mTimeSinceLastInput >= screensaverTime && screensaverTime != 0)
@@ -786,8 +788,8 @@ void Window::render()
 	// Render calibration dark background & text
 	if (mCalibrationText)
 	{
-		Renderer::setMatrix(transform);
-		Renderer::drawRect(0, 0, Renderer::getScreenWidth(), Renderer::getScreenHeight(), 0x000000A0);
+		Renderer::getInstance()->setMatrix(transform);
+		Renderer::getInstance()->drawRect(0, 0, Renderer::getInstance()->getScreenWidth(), Renderer::getInstance()->getScreenHeight(), 0x000000A0);
 		mCalibrationText->render(transform);
 	}
 
@@ -795,8 +797,8 @@ void Window::render()
 	auto guns = InputManager::getInstance()->getGuns();
 	if (!mRenderScreenSaver && guns.size())
 	{
-		auto margin = Renderer::setScreenMargin(0, 0);
-		Renderer::setMatrix(Transform4x4f::Identity());
+		auto margin = Renderer::getInstance()->setScreenMargin(0, 0);
+		Renderer::getInstance()->setMatrix(Transform4x4f::Identity());
 
 		bool hasMousePointer = false;
 
@@ -816,7 +818,7 @@ void Window::render()
 				if (gun->isLastTickElapsed())
 					continue;
 
-				int pointerSize = (Renderer::isVerticalScreen() ? Renderer::getScreenWidth() : Renderer::getScreenHeight()) / 32;
+				int pointerSize = (Renderer::getInstance()->isVerticalScreen() ? Renderer::getInstance()->getScreenWidth() : Renderer::getInstance()->getScreenHeight()) / 32;
 
 				Vector2f topLeft = { gun->x() - pointerSize, gun->y() - pointerSize };
 				Vector2f bottomRight = { gun->x() + pointerSize, gun->y() + pointerSize };
@@ -828,7 +830,7 @@ void Window::render()
 					auto mixIndex = (gun->index() + 3) % _gunAimColors.size();
 					auto invertColor = _gunAimColors[mixIndex];
 
-					aimColor = Renderer::mixColors(aimColor, invertColor, 0.5);
+					aimColor = Renderer::getInstance()->mixColors(aimColor, invertColor, 0.5);
 				}
 
 				Renderer::Vertex vertices[4];
@@ -837,7 +839,7 @@ void Window::render()
 				vertices[2] = { { bottomRight.x(), topLeft.y() }, { 1.0f, 0.0f }, aimColor };
 				vertices[3] = { { bottomRight.x(), bottomRight.y() }, { 1.0f, 1.0f }, aimColor };
 
-				Renderer::drawTriangleStrips(&vertices[0], 4);
+				Renderer::getInstance()->drawTriangleStrips(&vertices[0], 4);
 			}
 		}	
 
@@ -859,7 +861,7 @@ void Window::render()
 
 					SDL_SysWMinfo wmInfo;
 					SDL_VERSION(&wmInfo.version);
-					if (SDL_GetWindowWMInfo(Renderer::getSDLWindow(), &wmInfo))
+					if (SDL_GetWindowWMInfo(Renderer::getInstance()->getSDLWindow(), &wmInfo))
 					{
 						HWND hWnd = wmInfo.info.win.window;
 
@@ -878,7 +880,7 @@ void Window::render()
 							continue;
 					}					
 
-					int pointerSize = (Renderer::isVerticalScreen() ? Renderer::getScreenWidth() : Renderer::getScreenHeight()) / 38;
+					int pointerSize = (Renderer::getInstance()->isVerticalScreen() ? Renderer::getInstance()->getScreenWidth() : Renderer::getInstance()->getScreenHeight()) / 38;
 					
 					Vector2i sz = ImageIO::adjustPictureSize(mMouseCursorTexture->getSize(), Vector2i(pointerSize, pointerSize));
 
@@ -896,14 +898,14 @@ void Window::render()
 					vertices[2] = { { bottomRight.x(), topLeft.y() }, { 1.0f, 1.0f }, aimColor };
 					vertices[3] = { { bottomRight.x(), bottomRight.y() }, { 1.0f, 0.0f }, aimColor };
 
-					Renderer::drawTriangleStrips(&vertices[0], 4);
+					Renderer::getInstance()->drawTriangleStrips(&vertices[0], 4);
 					break;
 				}
 			}
 		}
 #endif
 
-		Renderer::setScreenMargin(margin.x(), margin.y());
+		Renderer::getInstance()->setScreenMargin(margin.x(), margin.y());
 	}
 }
 
@@ -1126,14 +1128,14 @@ void Window::renderAsyncNotifications(const Transform4x4f& trans)
 {
 	std::unique_lock<std::mutex> lock(mNotificationMessagesLock);
 
-#define PADDING_H  (Renderer::getScreenWidth()*0.01)
+#define PADDING_H  (Renderer::getInstance()->getScreenWidth()*0.01)
 
-	float posY = Renderer::getScreenHeight() * 0.02f;
+	float posY = Renderer::getInstance()->getScreenHeight() * 0.02f;
 
 	bool first = true;
 	for (auto child : mAsyncNotificationComponent)
 	{		
-		float posX = Renderer::getScreenWidth()*0.99f - child->getSize().x();
+		float posX = Renderer::getInstance()->getScreenWidth()*0.99f - child->getSize().x();
 
 		float offset = child->getSize().y() + PADDING_H;
 
@@ -1150,7 +1152,7 @@ void Window::renderAsyncNotifications(const Transform4x4f& trans)
 				offset = offset - (offset * fadingOut);
 
 				auto sz = child->getSize();
-				Renderer::pushClipRect(Vector2i(
+				Renderer::getInstance()->pushClipRect(Vector2i(
 					(int)trans.translation()[0] + posX - PADDING_H, 
 					(int)trans.translation()[1] + (first ? 0 : posY)), 
 					Vector2i(
@@ -1166,7 +1168,7 @@ void Window::renderAsyncNotifications(const Transform4x4f& trans)
 		child->render(trans);
 
 		if (fadingOut != 0 && child->isClosing())
-			Renderer::popClipRect();
+			Renderer::getInstance()->popClipRect();
 
 		posY += offset;
 		first = false;
@@ -1279,8 +1281,8 @@ void Window::onThemeChanged(const std::shared_ptr<ThemeData>& theme)
 				mClock->setFont(Font::getFromTheme(elem, ThemeFlags::ALL, Font::get(FONT_SIZE_MEDIUM)));
 		}
 		
-		mClock->setPosition(Renderer::getScreenWidth()*0.94, Renderer::getScreenHeight()*0.9965 - mClock->getFont()->getHeight());
-		mClock->setSize(Renderer::getScreenWidth()*0.05, 0);
+		mClock->setPosition(Renderer::getInstance()->getScreenWidth()*0.94, Renderer::getInstance()->getScreenHeight()*0.9965 - mClock->getFont()->getHeight());
+		mClock->setSize(Renderer::getInstance()->getScreenWidth()*0.05, 0);
 
 		mClock->applyTheme(theme, "screen", "clock", ThemeFlags::ALL ^ (ThemeFlags::TEXT));
 	}
@@ -1308,7 +1310,7 @@ void Window::setGunCalibrationState(bool isCalibrating)
 			mCalibrationText->setHorizontalAlignment(ALIGN_CENTER);
 			mCalibrationText->setVerticalAlignment(ALIGN_CENTER);
 			mCalibrationText->setPosition(0.0f, 0.0f);
-			mCalibrationText->setSize(Renderer::getScreenWidth(), Renderer::getScreenHeight() / 2.1f);
+			mCalibrationText->setSize(Renderer::getInstance()->getScreenWidth(), Renderer::getInstance()->getScreenHeight() / 2.1f);
 			mCalibrationText->setColor(0xFFFFFFFF);
 			mCalibrationText->setGlowSize(1);
 			mCalibrationText->setGlowColor(0x00000040);			

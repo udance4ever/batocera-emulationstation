@@ -16,11 +16,21 @@
 
 #include <fstream>
 
-ResourceManager& ResourceManager::getInstance()
+// ES-DE
+//
+//ResourceManager& ResourceManager::getInstance()
+//{
+//    static ResourceManager instance;
+//    return instance;
+//}
+
+// $$$ consistency with Renderer
+ResourceManager* ResourceManager::getInstance()
 {
     static ResourceManager instance;
-    return instance;
+    return &instance;
 }
+
 
 std::string ResourceManager::getResourcePath(const std::string& path, bool terminateOnFailure) const
 {
@@ -190,4 +200,27 @@ void ResourceManager::reloadAll()
 void ResourceManager::addReloadable(std::weak_ptr<IReloadable> reloadable)
 {
     mReloadables.push_back(reloadable);
+}
+
+// $$ batocera
+void ResourceManager::removeReloadable(std::weak_ptr<IReloadable> reloadable)
+{
+	auto iter = mReloadables.cbegin();
+	while (iter != mReloadables.cend())
+	{
+		std::shared_ptr<ReloadableInfo> info = *iter;
+
+		if (!info->data.expired())
+		{
+			if (info->data.lock() == reloadable.lock())
+			{
+				info->locked = true;
+				break;
+			}
+
+			iter++;
+		}
+		else
+			iter = mReloadables.erase(iter);
+	}
 }

@@ -200,7 +200,7 @@ Splash::Splash(Window* window, const std::string image, bool fullScreenBackGroun
 
 Splash::~Splash()
 {
-	Renderer::setSwapInterval();
+	Renderer::getInstance()->setSwapInterval();
 
 	for (auto extra : mExtras)
 		delete extra;
@@ -224,8 +224,10 @@ void Splash::render(float opacity, bool swapBuffers)
 	mText.setOpacity(alpha);
 
 	Transform4x4f trans = Transform4x4f::Identity();
-	Renderer::setMatrix(trans);
-	Renderer::drawRect(0, 0, Renderer::getScreenWidth(), Renderer::getScreenHeight(), (mBackgroundColor & 0xFFFFFF00) | alpha);
+	// $$$ Splash.cpp:227:37: error: no viable conversion from 'Transform4x4f' to 'const glm::mat4' (aka 'const mat<4, 4, float, defaultp>')
+	Renderer::getInstance()->setMatrix(trans);
+	// $$$ Splash.cpp:228:138: error: too few arguments to function call, expected at least 6, have 5
+	Renderer::getInstance()->drawRect(0, 0, Renderer::getScreenWidth(), Renderer::getScreenHeight(), (mBackgroundColor & 0xFFFFFF00) | alpha);
 
 	for (auto extra : mExtras)
 		extra->setOpacity(alpha);
@@ -243,7 +245,7 @@ void Splash::render(float opacity, bool swapBuffers)
 
 	if (mPercent >= 0)
 	{
-		Renderer::setMatrix(trans);
+		Renderer::getInstance()->setMatrix(trans);
 
 		auto pos = mInactiveProgressbar.getPosition();
 		auto sz = mInactiveProgressbar.getSize();
@@ -255,13 +257,13 @@ void Splash::render(float opacity, bool swapBuffers)
 		float radius = Math::max(sz.x(), sz.y()) * mRoundCorners;
 
 		if (radius > 1)
-			Renderer::enableRoundCornerStencil(pos.x(), pos.y(), sz.x(), sz.y(), radius);
+			Renderer::getInstance()->enableRoundCornerStencil(pos.x(), pos.y(), sz.x(), sz.y(), radius);
 
 		mInactiveProgressbar.render(trans);
 		mActiveProgressbar.render(trans);
 
 		if (radius > 1)
-			Renderer::disableStencil();
+			Renderer::getInstance()->disableStencil();
 	}
 
 	if (!mText.getText().empty())
@@ -282,7 +284,7 @@ void Splash::render(float opacity, bool swapBuffers)
 
 	if (swapBuffers)
 	{
-		Renderer::swapBuffers();
+		Renderer::getInstance()->swapBuffers();
 
 #if defined(_WIN32)
 		// Avoid Window Freezing on Windows

@@ -71,7 +71,7 @@ class ThemeColorAnimation : public ThemeAnimation
 {
 	ThemeData::ThemeElement::Property computeValue(float value) override
 	{
-		return Renderer::mixColors(from.i, to.i, value);
+		return Renderer::getInstance()->mixColors(from.i, to.i, value);
 	}
 };
 

@@ -105,23 +105,23 @@ void GuiComponent::render(const Transform4x4f& parentTrans)
 
 	Transform4x4f trans = parentTrans * getTransform();
 
-	auto rect = Renderer::getScreenRect(trans, mSize);
+	auto rect = Renderer::getInstance()->getScreenRect(trans, mSize);
 
 	// Don't use soft clip if rotation applied : let renderer do the work
-	if (mRotation == 0 && trans.r0().y() == 0 && !Renderer::isVisibleOnScreen(rect))	
+	if (mRotation == 0 && trans.r0().y() == 0 && !Renderer::getInstance()->isVisibleOnScreen(rect))	
 		return;
 
 	if (mClipChildren)
-		Renderer::pushClipRect(rect);
+		Renderer::getInstance()->pushClipRect(rect);
 	else if (!mClipRect.empty() && !GuiComponent::isLaunchTransitionRunning)
-		Renderer::pushClipRect(mClipRect.x(), mClipRect.y(), mClipRect.z(), mClipRect.w());
+		Renderer::getInstance()->pushClipRect(mClipRect.x(), mClipRect.y(), mClipRect.z(), mClipRect.w());
 	
 	renderChildren(trans);
 
 	if (mClipChildren)
-		Renderer::popClipRect();
+		Renderer::getInstance()->popClipRect();
 	else if (!mClipRect.empty() && !GuiComponent::isLaunchTransitionRunning)
-		Renderer::popClipRect();
+		Renderer::getInstance()->popClipRect();
 }
 
 void GuiComponent::renderChildren(const Transform4x4f& transform) const
@@ -1266,13 +1266,15 @@ void GuiComponent::beginCustomClipRect()
 		mTransform.translate(Vector3f(mOrigin.x() * mSize.x() * -1, mOrigin.y() * mSize.y() * -1, 0.0f));
 	}*/
 
-	Renderer::pushClipRect(mClipRect.x(), mClipRect.y(), mClipRect.z(), mClipRect.w());
+	Renderer::getInstance()->pushClipRect(mClipRect.x(), mClipRect.y(), mClipRect.z(), mClipRect.w());
 }
 
 void GuiComponent::endCustomClipRect()
 {
 	if (!mClipRect.empty() && !GuiComponent::isLaunchTransitionRunning)
-		Renderer::popClipRect();
+	{
+		Renderer::getInstance()->popClipRect();
+	}
 }
 
 void GuiComponent::onPositionChanged() 
@@ -1337,7 +1339,7 @@ bool GuiComponent::hitTest(int x, int y, Transform4x4f& parentTransform, std::ve
 
 	Transform4x4f trans = getTransform() * parentTransform;
 
-	auto rect = Renderer::getScreenRect(trans, getSize(), true);
+	auto rect = Renderer::getInstance()->getScreenRect(trans, getSize(), true);
 	if (x != -1 && y != -1 && rect.contains(x, y))
 	{
 		if (pResult)

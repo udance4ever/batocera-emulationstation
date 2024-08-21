@@ -59,10 +59,10 @@ class GlobalBinding : public IBindable
 			return Renderer::getScreenHeight();
 
 		if (name == "screenRatio" || name == "ratio")
-			return Renderer::getAspectRatio();
+			return Renderer::getInstance()->getAspectRatio();
 
 		if (name == "vertical")
-			return  Renderer::isVerticalScreen();
+			return Renderer::getInstance()->isVerticalScreen();
 
 		return BindableProperty::Null;
 	}

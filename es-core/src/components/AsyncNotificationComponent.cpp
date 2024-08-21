@@ -129,7 +129,7 @@ void AsyncNotificationComponent::render(const Transform4x4f& parentTrans)
 	h /= 10.0;
 	y += lastControl->getSize().y();
 
-	Renderer::setMatrix(trans);
+	Renderer::getInstance()->setMatrix(trans);
 
 	if (mPercent >= 0)
 	{
@@ -141,7 +141,8 @@ void AsyncNotificationComponent::render(const Transform4x4f& parentTrans)
 
 		auto theme = ThemeData::getMenuTheme();
 		auto color = theme->Text.color & 0xFFFFFF00 | (unsigned char)((theme->Text.color & 0xFF) * (getOpacity() / 255.0));
-		Renderer::drawRect(x, y, (w*percent), h, color);
+		// $$$ error: too few arguments to function call, expected at least 6, have 5
+		Renderer::getInstance()->drawRect(x, y, (w*percent), h, color);
 	}
 
 	mGrid->render(trans);

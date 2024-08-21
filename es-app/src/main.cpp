@@ -54,6 +54,12 @@ static std::string gPlayVideo;
 static int gPlayVideoDuration = 0;
 static bool enable_startup_game = true;
 
+// $$ ES-DE
+namespace
+{
+	Renderer* renderer {nullptr};
+}
+
 bool parseArgs(int argc, char* argv[])
 {
 	Paths::setExePath(argv[0]);
@@ -534,6 +540,8 @@ int main(int argc, char* argv[])
 	Genres::init();
 	MetaDataList::initMetadata();
 
+	// $$$ integrate ES-DE Renderer
+	renderer = Renderer::getInstance();
 	Window window;
 	SystemScreenSaver screensaver(&window);
 	ViewController::init(&window);

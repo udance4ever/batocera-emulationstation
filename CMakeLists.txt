@@ -410,6 +410,9 @@ else()
     endif()
 endif()
 
+# $$ suppress all warnings: https://stackoverflow.com/a/65011914/9983389
+add_definitions(-w)
+
 # Silence some annoying warnings caused by invalid characters in some FreeImage source comments.
 if(CMAKE_CXX_COMPILER_ID MATCHES Clang AND CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 15.0.0)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-utf8")
