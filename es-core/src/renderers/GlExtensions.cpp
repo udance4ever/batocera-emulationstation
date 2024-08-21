@@ -52,26 +52,24 @@ namespace glext
 		return ret;
 	}
 
+	// $$$ these look like OpenGL 2.1 capabilities (aka "Legacy GL" in macOS)
 	bool initializeGlExtensions()
 	{
 		if (!SDL_GL_ExtensionSupported("GL_ARB_shader_objects"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_shader_objects";
-// $$$ debugging macOS batocera-emulationstation
 //			return false;
 		}
 
 		if (!SDL_GL_ExtensionSupported("GL_ARB_shading_language_100"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_shading_language_100";
-// $$$ debugging macOS batocera-emulationstation
 //			return false;
 		}
 
 		if (!SDL_GL_ExtensionSupported("GL_ARB_vertex_shader"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_vertex_shader";
-// $$$ debugging macOS batocera-emulationstation
 //			return false;
 		}
 

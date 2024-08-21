@@ -874,7 +874,7 @@ else()
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGL_INCLUDE_DIR}
         )
-	MESSAGE("DEBUG: Added Desktop OpenGL include directories")
+	MESSAGE("DEBUG: Added Desktop OpenGL include directories: ${OPENGL_INCLUDE_DIR}")
     elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGLES2_INCLUDE_DIR}
@@ -1133,7 +1133,7 @@ else()
         LIST(APPEND COMMON_LIBRARIES
             ${OPENGL_LIBRARIES}
         )
-	MESSAGE("DEBUG: Added Desktop OpenGL libraries")
+	MESSAGE("DEBUG: Added Desktop OpenGL libraries: ${OPENGL_LIBRARIES}")
     elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_LIBRARIES
             EGL
