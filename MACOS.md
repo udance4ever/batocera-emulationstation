@@ -23,7 +23,19 @@ ERROR: 0:4: 'attribute' : syntax error: syntax error
 ```
 ### PROPOSED SOLUTION
 
-assess effort to backport [Renderer from ES-DE](https://gitlab.com/es-de/emulationstation-de/-/blob/master/es-core/src/renderers/Renderer.cpp) (completely rewritten and verified working on macOS)
+assess effort to backport
+* [Renderer from ES-DE](https://gitlab.com/es-de/emulationstation-de/-/blob/master/es-core/src/renderers/Renderer.cpp) (completely rewritten and verified working on macOS)
+* review of [ES-DE CHANGELOG](https://gitlab.com/es-de/emulationstation-de/-/blob/master/CHANGELOG.md)
+	* build support: clang/LLVM and Apple Silicon and eliminating Homebrew library support (./external)
+ 	* controller drivers
+ 	* file case-sensitivity
+    	* code optimizations (eg. reducing background CPU usage)
+        * high DPI display support
+  	* startup animations
+  	* Apple conventions (eg. Command-Q to quit instead of F4 on Windows/UN*X)
+   	* Game Mode compatibility
+   	* cleanup app shutdown
+   	* ES vars: %STARTDIR% and %EMUPATH%
 
 ### COMPILATION
 Hints to get emulationstation compiled on macOS (MacBookPro 2020 M1 16GB 1TB):
