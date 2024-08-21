@@ -55,6 +55,21 @@ namespace glext
 	// $$$ these look like OpenGL 2.1 capabilities (aka "Legacy GL" in macOS)
 	bool initializeGlExtensions()
 	{
+		// $$$ trying to force OpenGL 2.1 compatibility context...
+//		SDL_Init(SDL_INIT_VIDEO);
+
+		// $$$ https://stackoverflow.com/a/63073212/9983389
+		// $$$ https://stackoverflow.com/a/77796766/9983389
+//		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		// https://discourse.libsdl.org/t/specifying-sdl-gl-context-profile-compatibility-forces-opengl-2-1-on-mac/19922
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY );
+
+		// $$$ https://www.khronos.org/opengl/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
+
+		// $$ 4.1 vs 2.1 extension lists: https://www.geeks3d.com/20210202/apple-silicon-m1-mac-mini-arm-test-opengl/
 		if (!SDL_GL_ExtensionSupported("GL_ARB_shader_objects"))
 		{
 			LOG(LogError) << "GL Extensions not supported. GL_ARB_shader_objects";
