@@ -247,7 +247,7 @@ list(APPEND CMAKE_LIBRARY_PATH /opt/local/lib)
 
 # $$ merged w batocera
 if(GLSYSTEM MATCHES "Desktop OpenGL")
-    MESSAGE("Checking for Desktop OpenGL package...")
+#    MESSAGE("Checking for Desktop OpenGL package...")
     set(OpenGL_GL_PREFERENCE GLVND)
     find_package(OpenGL REQUIRED)
 elseif(ANDROID)
@@ -373,6 +373,7 @@ endif()
 
 # Set up compiler and linker flags for debug, profiling or release builds.
 if(CMAKE_BUILD_TYPE MATCHES Debug)
+#    MESSAGE("Debug build")
     # Enable the C++17 standard and disable optimizations as it's a debug build.
     if(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17 /Od /DEBUG:FULL")
@@ -715,7 +716,7 @@ endif()
 
 if(${GLSYSTEM} MATCHES "Desktop OpenGL")
     add_definitions(-DUSE_OPENGL_21)
-    MESSAGE("DEBUG: added -DUSE_OPENGL_21")
+#    MESSAGE("DEBUG: added -DUSE_OPENGL_21")
 elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
     add_definitions(-DUSE_OPENGLES_20)
 else()
@@ -874,7 +875,7 @@ else()
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGL_INCLUDE_DIR}
         )
-	MESSAGE("DEBUG: Added Desktop OpenGL include directories: ${OPENGL_INCLUDE_DIR}")
+#	MESSAGE("DEBUG: Added Desktop OpenGL include directories: ${OPENGL_INCLUDE_DIR}")
     elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_INCLUDE_DIRS
             ${OPENGLES2_INCLUDE_DIR}
@@ -1133,7 +1134,7 @@ else()
         LIST(APPEND COMMON_LIBRARIES
             ${OPENGL_LIBRARIES}
         )
-	MESSAGE("DEBUG: Added Desktop OpenGL libraries: ${OPENGL_LIBRARIES}")
+#	MESSAGE("DEBUG: Added Desktop OpenGL libraries: ${OPENGL_LIBRARIES}")
     elseif(${GLSYSTEM} MATCHES "OpenGL ES 2.0")
         LIST(APPEND COMMON_LIBRARIES
             EGL

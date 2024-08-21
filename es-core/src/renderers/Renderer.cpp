@@ -147,6 +147,8 @@ namespace Renderer
 	{
 		LOG(LogInfo) << "Creating window...";
 
+		// $$ step 1: SDL_Init()
+		//  https://stackoverflow.com/a/78726566/9983389
 		if(SDL_Init(SDL_INIT_VIDEO) != 0)
 		{
 			LOG(LogError) << "Error initializing SDL!\n	" << SDL_GetError();
@@ -224,12 +226,23 @@ namespace Renderer
 		windowFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
 #endif
 
+		// $$ step 2: SDL_GL_SetAttribute()
+		// $$  this is not happening before SDL_CreateWindow()
+		//     https://stackoverflow.com/a/78726566/9983389
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
+		//  https://www.khronos.org/opengl/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
+		// $$ step 3: SDL_CreateWindow()
 		if((sdlWindow = SDL_CreateWindow("EmulationStation", sdlWindowPosition.x(), sdlWindowPosition.y(), windowWidth, windowHeight, windowFlags)) == nullptr)
 		{
 			LOG(LogError) << "Error creating SDL window!\n\t" << SDL_GetError();
 			return false;
 		}
 
+		// $$ step 4: probing for required GL extensions happens here
 		createContext();
 		setIcon();
 		setSwapInterval();

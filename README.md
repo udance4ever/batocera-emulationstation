@@ -1,3 +1,5 @@
+🛑 **NOTE**: You are in a branch dedicated to porting batocera-emulationstation to macOS (state of this effort is documented [here](MACOS.md)) 🛑
+---
 EmulationStation
 ================
 
