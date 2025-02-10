@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import os
+import atexit
+from pathlib import Path
+
+parser = argparse.ArgumentParser()
+parser.add_argument("file")
+parser.add_argument("--lime3ds", action=argparse.BooleanOptionalAction)
+args = parser.parse_args()
+
+mount=None
+def exit_handler():
+    if mount:
+        if os.path.exists(mount):
+            if os.path.ismount(mount):
+                print("Unmounting and removing:", mount)
+                os.system('umount "{}"'.format(mount))
+                os.rmdir(mount)
+atexit.register(exit_handler)
+
+file = args.file
+if not os.path.exists(file):
+    print(file, "not found. Exiting.")
+    exit(1)
+
+rompath = file
+if file.endswith(".squashfs"):
+    (mount, ext) = os.path.splitext(file)
+    if not os.path.exists(mount):
+        os.mkdir(mount)
+    else:
+        if os.path.ismount(mount):
+            print("unmounting:", mount)
+            os.system("umount '{}'".format(mount))
+
+    cmd = '/usr/local/bin/squashfuse "{}" "{}"'.format(file, mount)
+
+    status = os.system(cmd)
+    if status != 0:
+        print("Failed to mount:", file)
+        exit(1)
+
+    # override
+    rompath = mount
+
+# ---
+
+if args.lime3ds:
+    appexec = '/Applications/#emu/lime3ds.app/Contents/macOS/lime3ds'
+else:
+    appexec = '/Applications/#emu/citra-qt.app/Contents/macOS/citra-qt'
+
+if mount:
+    rompath = "{}/{}".format(mount, os.path.basename(mount))
+
+# $ alt (macOS): cmd = 'open -W "{}" --args "{}"'.format(app, os.path.realpath(rompath))
+cmd = '"{}" "{}"'.format(appexec, os.path.realpath(rompath))
+
+# ---
+
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print("{} failed to exit cleanly (status={})".format(cmd.split()[0], status))

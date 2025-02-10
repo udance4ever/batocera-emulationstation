@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Feb 8, 2025
+
+# launch ROM with custom Flycast ContentPath
+
+# assumptions
+# - config file exists (and valid): /userdata/system/configs/flycast/emu.cfg
+# - ROM is a valid for Flycast
+# - emulator in /Applications/#emu/Flycast.app
+
+printUsage() {
+        echo "usage: `basename $0` <rom>"
+}
+
+# https://stackoverflow.com/a/3063887/9983389
+if [ ! -z "$1" ]; then
+        rom="$1"
+else
+        printUsage
+        exit 1
+fi
+
+config=/userdata/system/configs/flycast/emu.cfg
+
+# https://stackoverflow.com/a/18898718/9983389
+roots=(
+	"/userdata"
+
+	"/Volumes/MEDIA"
+	"/Volumes/MEDIA 1"
+	"/Volumes/MEDIA-1"
+
+	"/Volumes/SHARE"
+	"/Volumes/SHARE 1"
+
+	"/Volumes/SHARE_FAV"
+	"/Volumes/SHARE_MEDIA"
+)
+
+for root in "${roots[@]}"; do
+	for system in dreamcast naomi naomi2 atomiswave; do
+		if [[ -e $root/roms/$system ]]; then
+			if [ -n "$path" ]; then
+				path="$path;$root/roms/$system"
+			else
+				path="$root/roms/$system"
+			fi
+		fi
+	done
+done
+
+echo "generated ContentPath: $path"
+echo -n "character count: "
+echo $path | wc -c
+
+# https://stackoverflow.com/a/12061491/9983389
+pathesc=$(echo $path | sed 's_/_\\/_g')
+
+# assumes cfg file already exists
+sed -i.bak "s/^\(Dreamcast\.ContentPath\ =\ \).*/\1$pathesc/" $config
+
+/Applications/#emu/Flycast.app/Contents/MacOS/flycast "$rom"

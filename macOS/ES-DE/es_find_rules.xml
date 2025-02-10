@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<!-- This is the ES-DE find rules configuration file for macOS -->
+
+<!-- Feb 10, 2025 custom version: assumes /userdata is a valid path -->
+
+<ruleList>
+    <emulator name="OS-SHELL">
+        <!-- Operating system shell -->
+        <rule type="systempath">
+            <entry>zsh</entry>
+            <entry>bash</entry>
+        </rule>
+    </emulator>
+<!-- $$ not working
+    <emulator name="LOCALE">
+        <rule type="staticpath">
+            <entry>/usr/bin/locale</entry>
+        </rule>
+    </emulator>
+-->
+    <emulator name="RETROARCH">
+        <rule type="staticpath">
+            <entry>/Applications/#emu/RetroArch.app/Contents/MacOS/RetroArch</entry>
+            <entry>/Applications/RetroArch.app/Contents/MacOS/RetroArch</entry>
+        </rule>
+    </emulator>
+    <core name="RETROARCH">
+        <rule type="corepath">
+	    <entry>/userdata/system/configs/retroarch/cores</entry>
+
+            <!-- RetroArch >= v1.9.2 -->
+            <entry>~/Library/Application Support/RetroArch/cores</entry>
+            <!-- RetroArch < v1.9.2 -->
+            <entry>/Applications/RetroArch.app/Contents/Resources/cores</entry>
+        </rule>
+    </core>
+    <emulator name="AETHERSX2">
+        <!-- Sony PlayStation 2 emulator AetherSX2 -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/AetherSX2.app/Contents/MacOS/AetherSX2</entry>
+            <entry>/Applications/AetherSX2.app/Contents/MacOS/AetherSX2</entry>
+        </rule>
+    </emulator>
+    <emulator name="ARES">
+        <!-- Multi-system emulator ares -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/ares.app/Contents/MacOS/ares</entry>
+            <entry>/Applications/ares.app/Contents/MacOS/ares</entry>
+        </rule>
+    </emulator>
+    <emulator name="BASILISKII">
+        <!-- Macintosh 68k emulator Basilisk II -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/BasiliskII.app/Contents/MacOS/BasiliskII</entry>
+            <entry>/Applications/BasiliskII.app/Contents/MacOS/BasiliskII</entry>
+        </rule>
+    </emulator>
+    <emulator name="CEMU">
+        <!-- Nintendo Wii U emulator Cemu -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Cemu.app/Contents/MacOS/Cemu</entry>
+            <entry>/Applications/Cemu.app/Contents/MacOS/Cemu</entry>
+        </rule>
+    </emulator>
+    <emulator name="CITRA">
+        <!-- Nintendo 3DS emulator Citra -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/citra-qt.app/Contents/MacOS/citra-qt</entry>
+            <entry>/Applications/citra-qt.app/Contents/MacOS/citra-qt</entry>
+            <entry>/Applications/Citra/nightly/citra-qt.app/Contents/MacOS/citra-qt</entry>
+            <entry>/Applications/Citra/canary/citra-qt.app/Contents/MacOS/citra-qt</entry>
+        </rule>
+    </emulator>
+    <emulator name="3DS_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/3dsLaunch</entry>
+        </rule>
+    </emulator>
+    <emulator name="DOLPHIN">
+        <!-- Nintendo GameCube and Wii emulator Dolphin -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Dolphin.app/Contents/MacOS/Dolphin</entry>
+            <entry>/Applications/Dolphin.app/Contents/MacOS/Dolphin</entry>
+        </rule>
+    </emulator>
+    <emulator name="DOLPHIN-TRIFORCE">
+        <!-- Triforce emulator -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Dolphin (Triforce).app/Contents/MacOS/Dolphin</entry>
+        </rule>
+    </emulator>
+    <emulator name="FLYCAST">
+        <!-- Sega Dreamcast emulator Flycast -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Flycast.app/Contents/MacOS/Flycast</entry>
+            <entry>/Applications/Flycast.app/Contents/MacOS/Flycast</entry>
+        </rule>
+    </emulator>
+    <emulator name="GSPLUS">
+        <!-- Apple IIGS emulator Apple GSplus -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/GSplus.app/Contents/MacOS/gsplus</entry>
+            <entry>/Applications/GSplus.app/Contents/MacOS/gsplus</entry>
+        </rule>
+    </emulator>
+    <emulator name="GSPLUS_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/apple2gsLaunch</entry>
+        </rule>
+    </emulator>
+    <emulator name="HYPSEUS-SINGE_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/hypseusLaunch</entry>
+        </rule>
+    </emulator>
+    <emulator name="LIME3DS">
+        <!-- Nintendo 3DS emulator Lime3DS -->
+        <rule type="staticpath">
+	    <entry>/Applications/#emu/lime3ds.app/Contents/MacOS/lime3ds</entry>
+	    <entry>/Applications/lime3ds.app/Contents/MacOS/lime3ds</entry>
+            <entry>/Applications/lime3ds-gui.app/Contents/MacOS/lime3ds-gui</entry>
+            <entry>/Applications/lime-qt.app/Contents/MacOS/lime-qt</entry>
+        </rule>
+    </emulator>
+    <emulator name="MELONDS">
+        <!-- Nintendo DS and DSi emulator melonDS -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/melonDS.app/Contents/MacOS/melonDS</entry>
+            <entry>/Applications/melonDS.app/Contents/MacOS/melonDS</entry>
+        </rule>
+    </emulator>
+    <emulator name="PCSX2">
+        <!-- Sony PlayStation 2 emulator PCSX2 -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/PCSX2.app/Contents/MacOS/PCSX2</entry>
+            <entry>/Applications/PCSX2.app/Contents/MacOS/PCSX2</entry>
+        </rule>
+    </emulator>
+    <emulator name="PLAY!">
+        <!-- Sony PlayStation 2 [and Namco 2x6] emulator Play! -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Play.app/Contents/MacOS/Play</entry>
+            <entry>/Applications/Play.app/Contents/MacOS/Play</entry>
+        </rule>
+    </emulator>
+    <emulator name="PPSSPP">
+        <!-- Sony PlayStation Portable emulator PPSSPP -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/PPSSPPSDL.app/Contents/MacOS/PPSSPPSDL</entry>
+            <entry>/Applications/PPSSPPSDL.app/Contents/MacOS/PPSSPPSDL</entry>
+            <entry>/opt/homebrew/bin/ppsspp</entry>
+            <entry>/usr/local/bin/ppsspp</entry>
+        </rule>
+    </emulator>
+    <emulator name="REDREAM">
+        <!-- Sega Dreamcast emulator Redream -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/redream.app/Contents/MacOS/redream</entry>
+            <entry>/Applications/redream.app/Contents/MacOS/redream</entry>
+        </rule>
+    </emulator>
+    <emulator name="RPCS3">
+        <!-- Sony PlayStation 3 emulator RPCS3 -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/RPCS3.app/Contents/MacOS/rpcs3</entry>
+            <entry>/Applications/RPCS3.app/Contents/MacOS/rpcs3</entry>
+        </rule>
+    </emulator>
+    <emulator name="RPCS3_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/ps3Launch</entry>
+        </rule>
+    </emulator>
+    <emulator name="RYUJINX">
+        <!-- Nintendo Switch emulator Ryujinx -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Ryujinx.app/Contents/MacOS/Ryujinx</entry>
+            <entry>/Applications/Ryujinx.app/Contents/MacOS/Ryujinx</entry>
+        </rule>
+    </emulator>
+    <emulator name="SCUMMVM">
+        <!-- ScummVM game engine -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/ScummVM.app/Contents/MacOS/scummvm</entry>
+            <entry>/Applications/ScummVM.app/Contents/MacOS/scummvm</entry>
+            <entry>/opt/homebrew/bin/scummvm</entry>
+            <entry>/usr/local/bin/scummvm</entry>
+        </rule>
+    </emulator>
+    <emulator name="SDLPOP">
+        <rule type="staticpath">
+            <entry>/userdata/system/configs/sdlpop/prince</entry>
+        </rule>
+    </emulator>
+    <emulator name="SCUMMVM_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/scummvmLaunch</entry>
+        </rule>
+    </emulator>
+    <emulator name="SNES-MSU1_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/snes-msu1Launch</entry>
+        </rule>
+    </emulator>
+    <emulator name="SOLARUS">  
+        <!-- Solarus game engine -->
+        <rule type="staticpath">
+            <entry>/opt/homebrew/bin/solarus-run</entry>
+            <entry>/usr/local/bin/solarus-run</entry>
+<!-- doesn't work (workaround below)
+	    <entry>/Applications/#emu/Solarus Launcher.app/Contents/MacOS/solarus-run</entry>
+-->
+	    <entry>/Applications/#emu/Solarus Launcher.app/Contents/Resources/solarus-run</entry>
+	    <entry>/Applications/Solarus Launcher.app/Contents/Resources/solarus-run</entry>
+        </rule>
+    </emulator>
+    <emulator name="SUPERMODEL">
+        <!-- Sega Model 3 Arcade Emulator -->
+        <rule type="staticpath">
+	    <entry>/userdata/system/configs/supermodel/bin/supermodel</entry>
+        </rule>
+    </emulator>
+    <emulator name="VISUAL-PINBALL">
+        <!-- Pinball simulator Visual Pinball -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/VPinballX_GL.app/Contents/MacOS/VPinballX_GL</entry>
+            <entry>/Applications/VPinballX_GL.app/Contents/MacOS/VPinballX_GL</entry>
+        </rule>
+    </emulator>
+    <emulator name="VITA3K">
+        <!-- Sony Playstation Vita emulator Vita3K -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Vita3K.app/Contents/MacOS/Vita3K</entry>
+            <entry>/Applications/Vita3K.app/Contents/MacOS/Vita3K</entry>
+        </rule>
+    </emulator>
+    <emulator name="VITA3K_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/psvitaLaunch</entry>
+        </rule>
+    </emulator>
+    <emulator name="XEMU">
+        <!-- Microsoft Xbox emulator xemu -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/xemu.app/Contents/MacOS/xemu</entry>
+            <entry>/Applications/xemu.app/Contents/MacOS/xemu</entry>
+        </rule>
+    </emulator>
+    <emulator name="XEMU_LAUNCHER">
+        <rule type="staticpath">
+            <entry>/userdata/system/admin/bin/xboxLaunch</entry>
+        </rule>
+    </emulator>
+    <emulator name="XENIA">
+        <!-- Microsoft Xbox 360 emulator xenia -->
+	<!-- NOTE: This is a placeholder. Xenia works thorugh Whisky/Crossover on macOS Sequoia -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/Xenia (Canary).app/Contents/MacOS/xenia</entry>
+            <entry>/Applications/Xenia (Canary).app/Contents/MacOS/xenia</entry>
+            <entry>/Applications/Xenia.app/Contents/MacOS/xenia</entry>
+        </rule>
+    </emulator>
+    <emulator name="XROAR">
+        <!-- Dragon and Tandy 8-bit computer emulator XRoar -->
+        <rule type="staticpath">
+            <entry>/Applications/#emu/XRoar.app/Contents/MacOS/xroar</entry>
+            <entry>/Applications/XRoar.app/Contents/MacOS/xroar</entry>
+        </rule>
+    </emulator>
+    <emulator name="WHISKYCMD">
+        <rule type="staticpath">
+            <entry>/Applications/Whisky.app/Contents/Resources/WhiskyCmd</entry>
+        </rule>
+    </emulator>
+    <emulator name="WINE">
+        <!-- NOTE: depends on Whisky having run at least once -->
+        <rule type="staticpath">
+            <entry>~/Library/Application Support/com.isaacmarovitz.Whisky/Libraries/Wine/bin/wine64</entry>
+        </rule>
+    </emulator>
+</ruleList>

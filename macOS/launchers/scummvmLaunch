@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import os
+import atexit
+from pathlib import Path
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--tmpmount", action=argparse.BooleanOptionalAction)
+parser.add_argument("file")
+args = parser.parse_args()
+
+mount=None
+def exit_handler():
+    if mount:
+        if os.path.exists(mount):
+            if os.path.ismount(mount):
+                print("Unmounting and removing:", mount)
+                os.system('umount "{}"'.format(mount))
+                os.rmdir(mount)
+atexit.register(exit_handler)
+
+file = args.file
+
+if not os.path.exists(file):
+    print(file, "not found. Exiting.")
+    exit(1)
+
+rompath = file
+if file.endswith(".squashfs"):
+    (mount, ext) = os.path.splitext(file)
+
+    # use tmp mount (1) not writable (2) --tmpmount (3) macOS (glob() SMB)
+    #
+    # https://stackoverflow.com/a/2113511/9983389
+    if (not os.access(os.path.dirname(os.path.realpath(mount)), os.W_OK)) or args.tmpmount or (os.uname().sysname == "Darwin"):
+        mount = "/tmp/scummvmLaunch.{}".format(os.getpid())
+
+    print("Using mount:", mount)
+
+    if not os.path.exists(mount):
+        os.mkdir(mount)
+    else:
+        if os.path.ismount(mount):
+            print("unmounting:", mount)
+            os.system("umount '{}'".format(mount))
+
+    cmd = '/usr/local/bin/squashfuse "{}" "{}"'.format(file, mount)
+
+    status = os.system(cmd)
+    if status != 0:
+        print("Failed to mount:", file)
+        exit(1)
+
+    # override
+    rompath = mount
+
+# ---
+
+# glob() & listdir() fail to find files if rompath is over macOS SMB
+#
+# glob:
+#      gameID = next(Path(rompath).glob("*.scummvm")).stem
+#               ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#  StopIteration
+#
+# listdir:
+#  for file in os.listdir(rompath):
+#      (gameID, ext) = os.path.splitext(file)
+#      if ext == ".scummvm": break
+#
+# workaround: mount in /tmp (force --tmpmount)
+#
+# (taken from scummvmGenerator.py)
+gameID = next(Path(rompath).glob("*.scummvm")).stem
+
+# $$ next() throws error on null glob() so we currently won't get this far...
+if not gameID:
+    print("ERROR: no gameID found (missing .scummvm?). Exiting")
+    exit(1)
+
+cmd = '/Applications/#emu/ScummVM.app/Contents/MacOS/scummvm -f --path="{}" "{}"'.format(mount, gameID)
+
+# ---
+
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print("{} failed to exit cleanly (status={})".format(cmd.split()[0], status))

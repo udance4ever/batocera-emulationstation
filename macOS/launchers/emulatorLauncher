@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+
+# Feb 5, 2025
+
+# pre-cursor to the grand merge of emu launcher helper scripts on macOS
+
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("rom")
+parser.add_argument("--system", required=True)
+args = parser.parse_args()
+
+rom = args.rom
+if not os.path.exists(rom):
+    print("ERROR: ROM file does not exist:", rom)
+    exit(1)
+
+match args.system:
+    case "3ds":
+	# .squashfs
+        cmd = f'3dsLaunch "{rom}"'
+
+    case "apple2gs":
+	# configgen
+        cmd = f'apple2gsLaunch "{rom}"'
+
+    case "atomiswave" | "dreamcast" | "naomi" | "naomi2":
+	# configgen
+        cmd = f'flycastLaunch "{rom}"'
+
+    case "daphne" | "singe":
+        # .squashfs
+        cmd = f'hypseusLaunch "{rom}"'
+
+    case "ps3":
+	# .squashfs, devmount
+        cmd = f'ps3Launch "{rom}"'
+
+    case "psvita":
+	# bootByID
+        cmd = f'psvitaLaunch "{rom}"'
+
+    case "scummvm":
+	# .squashfs, bootByID
+        cmd = f'scummvmLaunch "{rom}"'
+
+    case "snes-msu1":
+	# .squashfs
+        cmd = f'snes-msu1Launch "{rom}"'
+
+    case "xbox":
+	# .squashfs
+        cmd = f'xboxLaunch "{rom}"'
+
+    case _:
+        print("ERROR: Unsupported system:", args.system)
+        exit(1)
+
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print(f"{cmd.split()[0]} failed to exit cleanly (status={status})")
