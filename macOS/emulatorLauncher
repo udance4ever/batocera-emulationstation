@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+# Feb 5, 2025
+
+# pre-cursor to the grand merge of emu launcher helper scripts on macOS
+
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("rom")
+parser.add_argument("--system", required=True)
+args = parser.parse_args()
+
+rom = args.rom
+if not os.path.exists(rom):
+    print("ERROR: ROM file does not exist:", rom)
+    exit(1)
+
+match args.system:
+    case "3ds":
+	# .squashfs
+        cmd = '3dsLaunch "{}"'.format(rom)
+
+    case "apple2gs":
+	# configgen
+        cmd = 'apple2gsLaunch "{}"'.format(rom)
+
+    case "atomiswave" | "dreamcast" | "naomi" | "naomi2":
+	# configgen
+        cmd = 'flycastLaunch "{}"'.format(rom)
+
+    case "ps3":
+	# .squashfs, devmount
+        cmd = 'ps3Launch "{}"'.format(rom)
+
+    case "psvita":
+	# bootByID
+        cmd = 'psvitaLaunch "{}"'.format(rom)
+
+    case "scummvm":
+	# .squashfs, bootByID
+        cmd = 'scummvmLaunch "{}"'.format(rom)
+
+    case "xbox":
+	# .squashfs
+        cmd = 'xboxLaunch "{}"'.format(rom)
+
+    case _:
+        print("ERROR: Unsupported system:", args.system)
+        exit(1)
+
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print("{} failed to exit cleanly (status={})".format(cmd.split()[0], status))

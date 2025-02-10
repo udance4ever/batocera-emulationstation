@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Feb 1, 2025
+
+# script to rewrite GSPlus config file with ROM given on command line
+
+# assumptions
+# - config file exists (and valid format) in ~ ($HOME)
+# - BIOS location (g_cfg_rom_path) is valid
+# - emulator in /Applications/#emu/GSPlus.app
+
+printUsage() {
+        echo "usage: `basename $0` <rom>"
+}
+
+# https://stackoverflow.com/a/3063887/9983389
+if [ ! -z "$1" ]; then
+        rom="$1"
+else
+        printUsage
+        exit 1
+fi
+
+config=~/.config.gsp
+
+# https://stackoverflow.com/a/12061491/9983389
+romesc=$(echo $rom | sed 's_/_\\/_g')
+
+# assumes cfg file already exists
+sed -i.bak "s/^\(s7d1\ =\ \).*/\1$romesc/" $config
+
+/Applications/#emu/GSplus.app/Contents/MacOS/gsplus
+

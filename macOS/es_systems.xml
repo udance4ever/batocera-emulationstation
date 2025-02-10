@@ -1,0 +1,410 @@
+<?xml version="1.0"?>
+<!-- This is the ES-DE game systems configuration file for macOS -->
+<!-- July 31, 2024: align with Batocera Linux -->
+
+<!-- https://gitlab.com/es-de/emulationstation-de/-/blob/master/INSTALL.md?ref_type=heads#es_find_rulesxml -->
+
+<systemList>
+
+    <!-- include bios/apple2 in -rompath -->
+    <system>
+        <name>apple2</name>
+        <fullname>Apple II</fullname>
+        <path>%ROMPATH%/apple2</path>
+        <extension>.do .DO .dsk .DSK .nib .NIB .po .PO .zip</extension>
+        <command label="Mednafen (Standalone)">%EMULATOR_MEDNAFEN% -force_module apple2 %ROM%</command>
+        <command label="MAME - Current">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame_libretro.dylib "apple2e -rompath \"%GAMEDIRRAW%;%ROMPATH%/apple2\" -gameio joy -flop1 \"%ROMRAW%\""</command>
+        <command label="MAME (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/apple2\;%ROMPATH%/../bios/apple2 apple2e -gameio joy -flop1 %ROM%</command>
+        <platform>apple2</platform>
+        <theme>apple2</theme>
+    </system>
+
+    <!-- implement GSPlus launcher for configgen (~/.config.gsp) -->
+    <system>
+        <name>apple2gs</name>
+        <fullname>Apple IIGS</fullname>
+        <path>%ROMPATH%/apple2gs</path>
+        <extension>.2mg .2MG .7z .7z .zip .ZIP</extension>
+	<command label="GSplus (Standalone)">%EMULATOR_GSPLUS% %ROM%</command>
+	<command label="GSplus (Launcher)">%EMULATOR_GSPLUS_LAUNCHER% %ROM%</command>
+        <command label="MAME - Current">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame_libretro.dylib "apple2gs -rompath \"%GAMEDIRRAW%;%ROMPATH%/apple2gs\" -gameio joy -flop3 \"%ROMRAW%\""</command>
+        <command label="MAME (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/apple2gs apple2gs -gameio joy -flop3 %ROM%</command>
+        <platform>apple2gs</platform>
+        <theme>apple2gs</theme>
+    </system>
+
+    <!-- clone & rename of: amiga -->
+    <system>
+        <name>amiga500</name>
+        <fullname>Commodore Amiga</fullname>
+        <path>%ROMPATH%/amiga500</path>
+        <extension>.adf .ADF .adz .ADZ .ccd .CCD .chd .CHD .cue .CUE .dms .DMS .fdi .FDI .hdf .HDF .hdz .HDZ .ipf .IPF .iso .ISO .lha .LHA .m3u .M3U .mds .MDS .nrg .NRG .rp9 .RP9 .uae .UAE .7z .7Z .zip .ZIP</extension>
+        <command label="PUAE">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/puae_libretro.dylib %ROM%</command>
+        <command label="PUAE 2021">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/puae2021_libretro.dylib %ROM%</command>
+        <command label="FS-UAE (Standalone)">%EMULATOR_FS-UAE% %ROM%</command>
+        <command label="Amiberry (Standalone)">%STARTDIR%=%EMUDIR% %EMULATOR_AMIBERRY% --autoload %ROM%</command>
+        <platform>amiga</platform>
+        <theme>amiga</theme>
+    </system>
+
+    <!-- clone & rename of: atarijaguar -->
+    <system>
+        <name>jaguar</name>
+        <fullname>Atari Jaguar</fullname>
+        <path>%ROMPATH%/jaguar</path>
+        <extension>.abs .ABS .bin .BIN .cdi .CDI .cof .COF .cue .CUE .j64 .J64 .jag .JAG .prg .PRG .rom .ROM .7z .7Z .zip .ZIP</extension>
+        <command label="Virtual Jaguar">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/virtualjaguar_libretro.dylib %ROM%</command>
+        <command label="MAME (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/atarijaguar jaguar -cart %ROM%</command>
+        <platform>atarijaguar</platform>
+        <theme>atarijaguar</theme>
+    </system>
+
+    <!-- clone & rename of: atarijaguarcd -->
+    <system>
+        <name>jaguarcd</name>
+        <fullname>Atari Jaguar CD</fullname>                                    
+        <path>%ROMPATH%/jaguarcd</path>
+        <extension>.7z .7Z .zip .ZIP .cue</extension>
+        <command>PLACEHOLDER %ROM%</command>
+        <platform>atarijaguarcd</platform>
+        <theme>atarijaguarcd</theme>
+    </system>
+
+    <!-- clone & rename of: atarilynx -->
+    <system>
+        <name>lynx</name>
+        <fullname>Atari Lynx</fullname>
+        <path>%ROMPATH%/lynx</path>
+        <extension>.lnx .LNX .o .O .7z .7Z .zip .ZIP</extension>
+        <command label="Handy">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/handy_libretro.dylib %ROM%</command>
+        <command label="Beetle Lynx">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mednafen_lynx_libretro.dylib %ROM%</command> 
+        <command label="Mednafen (Standalone)">%EMULATOR_MEDNAFEN% -force_module lynx %ROM%</command>
+        <platform>atarilynx</platform>
+        <theme>atarilynx</theme>
+    </system>
+
+    <!-- clone & rename of: cdimono1 -->
+    <!-- fix -rompath: bios is in bios/cdi (not bios/cdimoni1) -->
+    <system>
+        <name>cdi</name>
+        <fullname>Philips CD-i</fullname>
+        <path>%ROMPATH%/cdi</path>
+        <extension>.chd .CHD .cue .CUE .iso .ISO</extension>
+        <command label="SAME CDi">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/same_cdi_libretro.dylib %ROM%</command>
+        <command label="CDi 2015">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/cdi2015_libretro.dylib %ROM%</command>
+        <command label="MAME (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/../bios/cdi cdimono1 -cdrom %ROM%</command>
+        <platform>cdimono1</platform>
+        <theme>cdimono1</theme>
+    </system>
+
+    <!-- clone & rename of: cdtv -->
+    <system>
+        <name>amigacdtv</name>
+        <fullname>Commodore CDTV</fullname>
+        <path>%ROMPATH%/amigacdtv</path>
+        <extension>.adf .ADF .adz .ADZ .ccd .CCD .chd .CHD .cue .CUE .dms .DMS .fdi .FDI .hdf .HDF .hdz .HDZ .ipf .IPF .iso .ISO .lha .LHA .m3u .M3U .mds .MDS .nrg .NRG .rp9 .RP9 .uae .UAE .7z .7Z .zip .ZIP</extension>
+        <command label="PUAE">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/puae_libretro.dylib %ROM%</command>
+        <command label="PUAE 2021">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/puae2021_libretro.dylib %ROM%</command>
+        <command label="FS-UAE (Standalone)">%EMULATOR_FS-UAE% --config:amiga-model=CDTV %ROM%</command>
+        <command label="Amiberry (Standalone)">%STARTDIR%=%EMUDIR% %EMULATOR_AMIBERRY% --model CDTV --autoload %ROM%</command>
+        <platform>cdtv</platform>
+        <theme>cdtv</theme>
+    </system>
+
+    <!-- add -flop1 -->
+    <!-- $$ does ES-DE have a variable such as %BIOSPATH%? -->
+    <!-- 2025/01/21: .zip support broken until we sort out software lists -->
+    <!-- 2025/01/31: xroar -type <=> mame -autoboot_command (both assume binary LOADM) -->
+    <system>
+        <name>coco</name>
+        <fullname>Tandy Color Computer</fullname>
+        <path>%ROMPATH%/coco</path>
+        <extension>.cas .CAS .ccc .CCC .dsk .DSK .rom .ROM .zip</extension>
+        <command label="XRoar CoCo 2 NTSC (Standalone)">%EMULATOR_XROAR% -fs -default-machine coco2bus -no-disk-write-back -rompath %ROMPATH%/../bios/coco %ROM%</command>
+        <command label="XRoar CoCo 2 PAL (Standalone)">%EMULATOR_XROAR% -fs -default-machine coco2b -no-disk-write-back -rompath %ROMPATH%/../bios/coco %ROM%</command>
+        <command label="XRoar CoCo 2 NTSC [Disk] (Standalone)">%EMULATOR_XROAR% -fs -default-machine coco2bus -no-disk-write-back -rompath %ROMPATH%/../bios/coco -type 'LOADM"%BASENAME%":EXEC\r' %ROM%</command>
+        <command label="MAME [Cartridge] (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/coco coco -cart %ROM%</command>
+        <command label="MAME [Tape] (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/coco coco -autoboot_delay "2" -autoboot_command "cloadm:exec\n" -cass %ROM%</command>
+        <command label="MAME [Disk] (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -skip_gameinfo -rompath %GAMEDIR%\;%ROMPATH%/coco\;%ROMPATH%/../bios/coco coco -autoboot_delay "2" -autoboot_command "LOADM \"%BASENAME%\":EXEC\n" -flop1 %ROM%</command>
+        <platform>coco</platform>
+        <theme>coco</theme>
+    </system>
+
+    <!-- clone & rename of: doom -->
+    <system>
+        <name>prboom</name>
+        <fullname>Doom</fullname>
+        <path>%ROMPATH%/prboom</path>
+        <extension>.app .iwad .IWAD .pwad .PWAD .sh .wad .WAD</extension>
+        <command label="PrBoom">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/prboom_libretro.dylib %ROM%</command>
+        <command label="PrBoom+ (Standalone)">%EMULATOR_PRBOOM-PLUS% -iwad %ROM%</command>
+        <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>pc, pcwindows</platform>
+        <theme>doom</theme>
+    </system>
+
+    <!-- clone & rename of: gc -->
+    <system>
+        <name>gamecube</name>
+        <fullname>Nintendo GameCube</fullname>
+        <path>%ROMPATH%/gamecube</path>
+        <extension>.ciso .CISO .dff .DFF .dol .DOL .elf .ELF .gcm .GCM .gcz .GCZ .iso .ISO .json .JSON .m3u .M3U .rvz .RVZ .tgc .TGC .wad .WAD .wbfs .WBFS .wia .WIA .7z .7Z .zip .ZIP</extension>
+        <command label="Dolphin">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/dolphin_libretro.dylib %ROM%</command>
+        <command label="Dolphin (Standalone)">%EMULATOR_DOLPHIN% -b -e %ROM%</command>
+        <platform>gc</platform>
+        <theme>gc</theme>
+    </system>
+
+    <!-- launcher handles .squashfs -->
+    <system>
+        <name>3ds</name>
+        <fullname>Nintendo 3DS</fullname>
+        <path>%ROMPATH%/3ds</path>
+        <extension>.3ds .3DS .3dsx .3DSX .app .APP .axf .AXF .cci .CCI .cxi .CXI .elf .ELF .7z .7Z .zip .ZIP .squashfs</extension>
+        <command label="Citra (Standalone)">%EMULATOR_CITRA% %ROM%</command>
+        <command label="Lime3DS (Standalone)">%EMULATOR_LIME3DS% %ROM%</command>
+        <command label="Panda3DS (Standalone)">%EMULATOR_PANDA3DS% %ROM%</command>
+        <command label="Citra squashfs (Standalone)">%EMULATOR_3DS_LAUNCHER% %ROM%</command>
+        <command label="Lime3DS squashfs (Standalone)">%EMULATOR_3DS_LAUNCHER% --lime3ds %ROM%</command>
+        <platform>n3ds</platform>
+        <theme>n3ds</theme>
+    </system>
+
+    <!-- clone & rename of: odyssey2 -->
+    <system>
+        <name>o2em</name>
+        <fullname>Magnavox Odyssey 2</fullname>
+        <path>%ROMPATH%/o2em</path>
+        <extension>.bin .BIN .7z .7Z .zip .ZIP</extension>
+        <command label="O2EM">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/o2em_libretro.dylib %ROM%</command>
+        <command label="MAME - Current">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame_libretro.dylib "odyssey2 -rompath \"%GAMEDIRRAW%;%ROMPATH%/odyssey2\" -cart \"%ROMRAW%\""</command>
+        <command label="MAME (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -rompath %GAMEDIR%\;%ROMPATH%/odyssey2 odyssey2 -cart %ROM%</command>
+        <platform>odyssey2</platform>
+        <theme>odyssey2</theme>
+    </system>
+
+    <!-- launcher handles .squashfs and .psn files -->
+    <system>
+        <name>ps3</name>
+        <fullname>Sony PlayStation 3</fullname>
+        <path>%ROMPATH%/ps3</path>
+        <extension>.app .ps3 .PS3 .ps3dir .PS3DIR .squashfs .psn</extension>
+        <command label="RPCS3 Shortcut (Standalone)">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <command label="RPCS3 Directory (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
+        <command label="RPCS3 squashfs (Standalone)">%EMULATOR_RPCS3_LAUNCHER% %ROM%</command>
+        <command label="RPCS3 locale (debug)">/usr/bin/locale</command>
+        <platform>ps3</platform>
+        <theme>ps3</theme>
+    </system>
+
+    <!-- launcher handles .psvita files -->
+    <system>
+        <name>psvita</name>
+        <fullname>Sony PlayStation Vita</fullname>
+        <path>%ROMPATH%/psvita</path>
+        <extension>.psvita</extension>
+        <command label="Vita3K (Standalone)">%EMULATOR_VITA3K_LAUNCHER% "%BASENAME%"</command>
+        <command label="Vita3K (Velocity Ultra)">%EMULATOR_VITA3K% -F -w -f -r PCSB00302</command>
+	<command label="Vita3K (emuLauncher)">emulatorLauncher -system psvita -rom %BASENAME% -emulator vita3k</command>
+        <platform>psvita</platform>
+        <theme>psvita</theme>
+    </system>
+
+    <!-- clone & rename of: quake -->
+    <system>
+        <name>tyrquake</name>
+        <fullname>Quake</fullname>
+        <path>%ROMPATH%/tyrquake</path>
+        <extension>.app .pak .PAK .pk3 .PK3 .sh</extension>
+        <command label="TyrQuake">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/tyrquake_libretro.dylib %ROM%</command>
+        <command label="vitaQuake 2">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/vitaquake2_libretro.dylib %ROM%</command>
+        <command label="vitaQuake 2 [Rogue]">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/vitaquake2-rogue_libretro.dylib %ROM%</command>
+        <command label="vitaQuake 2 [Xatrix]">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/vitaquake2-xatrix_libretro.dylib %ROM%</command>
+        <command label="vitaQuake 2 [Zaero]">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/vitaquake2-zaero_libretro.dylib %ROM%</command>
+        <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>pc, pcwindows</platform>
+        <theme>quake</theme>
+    </system>
+
+    <!-- launcher handles .squashfs & extracting gameID from .scummvm file -->
+    <system>
+        <name>scummvm</name>
+        <fullname>ScummVM Game Engine</fullname>
+        <path>%ROMPATH%/scummvm</path>
+        <extension>.scummvm .SCUMMVM .svm .SVM .squashfs</extension>
+        <command label="ScummVM">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/scummvm_libretro.dylib %ROM%</command>
+        <command label="ScummVM (Standalone)">%STARTDIR%=%GAMEDIR% %EMULATOR_SCUMMVM% %BASENAME%</command>
+        <command label="ScummVM squashfs (Standalone)">%EMULATOR_SCUMMVM_LAUNCHER% %ROM%</command>
+        <platform>scummvm</platform>
+        <theme>scummvm</theme>
+    </system>
+
+    <!-- clone & rename of: sg-1000 -->
+    <system>
+        <name>sg1000</name>
+        <fullname>Sega SG-1000</fullname>
+        <path>%ROMPATH%/sg1000</path>
+        <extension>.68k .68K .bin .BIN .bms .BMS .chd .CHD .cue .CUE .gen .GEN .gg .GG .iso .ISO .m3u .M3U .md .MD .mdx .MDX .ri .RI .rom .ROM .sg .SG .sgd .SGD .smd .SMD .sms .SMS .7z .7Z .zip .ZIP</extension>
+        <command label="Genesis Plus GX">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/genesis_plus_gx_libretro.dylib %ROM%</command>
+        <command label="Genesis Plus GX Wide">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/genesis_plus_gx_wide_libretro.dylib %ROM%</command>
+        <command label="Gearsystem">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/gearsystem_libretro.dylib %ROM%</command>
+        <command label="blueMSX">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/bluemsx_libretro.dylib %ROM%</command>
+        <command label="ares (Standalone)">%EMULATOR_ARES% --fullscreen --system "SG-1000" %ROM%</command>
+        <platform>sg-1000</platform>
+        <theme>sg-1000</theme>
+    </system>
+
+    <!-- $$ add .steam (how to launch based on game ID in macOS?) -->
+    <system>
+        <name>steam</name>
+        <fullname>Valve Steam</fullname>
+        <path>%ROMPATH%/steam</path>
+        <extension>.app .sh .steam</extension>
+        <command label="Steam (Standalone)">%RUNINBACKGROUND% %ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>steam</platform>
+        <theme>steam</theme>
+    </system>
+
+    <!-- $$ is Dolphin Triforce built for macOS? -->
+    <system>
+        <name>triforce</name>
+        <fullname>Namco-Sega-Nintendo Triforce</fullname>
+        <path>%ROMPATH%/triforce</path>
+        <extension>.gcm .iso .ISO .gcz .ciso .wbfs .elf .dol .m3u</extension>
+        <command label="Dolphin (Triforce) (Standalone)">%EMULATOR_DOLPHIN-TRIFORCE% -b -e %ROM%</command>
+        <platform>arcade</platform>
+        <theme>triforce</theme>
+    </system>
+
+    <!-- add -f for fullscreen -->
+    <system>                                                                                                                 
+        <name>wiiu</name>
+        <fullname>Nintendo Wii U</fullname>
+        <path>%ROMPATH%/wiiu</path>
+        <extension>.elf .ELF .rpx .RPX .tmd .TMD .wua .WUA .wud .WUD .wuhb .WUHB .wux .WUX</extension>
+        <command label="Cemu (Standalone)">%EMULATOR_CEMU% -f -g %ROM%</command>
+        <platform>wiiu</platform>
+        <theme>wiiu</theme>
+    </system>
+
+    <!-- add .pc and WINE support -->
+    <system>
+        <name>windows</name>
+        <fullname>Microsoft Windows</fullname>
+        <path>%ROMPATH%/windows</path>
+        <extension>.app .sh .pc .exe</extension>
+        <command label="Suspend ES-DE">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <command label="Keep ES-DE running">%RUNINBACKGROUND% %ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>pcwindows</platform>
+        <command label="(WINE)">%EMULATOR_WINE% %ROM%</command>
+        <platform>pcwindows</platform>
+        <theme>windows</theme>
+    </system>
+
+    <!-- leaving out clone & rename of: wonderswan -> wswan -->
+
+    <!-- clone & rename of: wonderswancolor -->
+    <system>
+        <name>wswanc</name>
+        <fullname>Bandai WonderSwan Color</fullname>
+        <path>%ROMPATH%/wswanc</path>
+        <extension>.pc2 .PC2 .ws .WS .wsc .WSC .7z .7Z .zip .ZIP</extension>
+        <command label="Beetle Cygne">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mednafen_wswan_libretro.dylib %ROM%</command>
+        <command label="Mednafen (Standalone)">%EMULATOR_MEDNAFEN% -force_module wswan %ROM%</command>
+        <command label="ares (Standalone)">%EMULATOR_ARES% --fullscreen --system "WonderSwan Color" %ROM%</command>
+        <platform>wonderswancolor</platform>
+        <theme>wonderswancolor</theme>
+    </system>
+
+    <!-- launcher handles .squashfs -->
+    <system>
+        <name>xbox</name>
+        <fullname>Microsoft Xbox</fullname>
+        <path>%ROMPATH%/xbox</path>
+        <extension>.iso .ISO .squashfs</extension>
+        <command label="xemu (Standalone)">%EMULATOR_XEMU% -dvd_path %ROM%</command>
+        <command label="xemu squashfs (Standalone)">%EMULATOR_XEMU_LAUNCHER% %ROM%</command>
+        <platform>xbox</platform>
+        <theme>xbox</theme>
+    </system>
+
+    <!-- updating placeholder ($$ need future .xbox360 & .squashfs handler) -->
+    <system>
+        <name>xbox360</name>
+        <fullname>Microsoft Xbox 360</fullname>
+        <path>%ROMPATH%/xbox360</path>
+        <extension>.7z .7Z .zip .ZIP .xbox360 .squashfs</extension>
+        <command label="Xenia Canary (Standalone)">%EMULATOR_XENIA% %ROM%</command>
+        <platform>xbox360</platform>
+        <theme>xbox360</theme>
+    </system>
+
+    <!-- support for bios and bios/mame in -rompath -->
+    <system>
+        <name>mame</name>
+        <fullname>Multiple Arcade Machine Emulator</fullname>
+        <path>%ROMPATH%/mame</path>
+        <extension>.app .cmd .CMD .neo .NEO .sh .7z .7Z .zip .ZIP</extension>
+        <command label="MAME - Current">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame_libretro.dylib %ROM%</command>
+        <command label="MAME 2010">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame2010_libretro.dylib %ROM%</command>
+        <command label="MAME 2003-Plus">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame2003_plus_libretro.dylib %ROM%</command>
+        <command label="MAME 2003">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame2003_libretro.dylib %ROM%</command>
+        <command label="MAME 2000">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mame2000_libretro.dylib %ROM%</command>
+        <command label="MAME (Standalone)">%STARTDIR%=~/.mame %EMULATOR_MAME% -skip_gameinfo -rompath %GAMEDIR%\;%ROMPATH%/../bios/mame\;%ROMPATH%/../bios %BASENAME%</command>
+        <command label="FinalBurn Neo">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/fbneo_libretro.dylib %ROM%</command>
+        <command label="FB Alpha 2012">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/fbalpha2012_libretro.dylib %ROM%</command>
+        <command label="Geolith">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/geolith_libretro.dylib %ROM%</command>
+        <command label="Flycast">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/flycast_libretro.dylib %ROM%</command>
+        <command label="Flycast (Standalone)">%EMULATOR_FLYCAST% %ROM%</command>
+        <command label="Flycast Dojo (Standalone)">%EMULATOR_FLYCAST-DOJO% %ROM%</command>
+        <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>arcade</platform>
+        <theme>mame</theme>
+    </system>
+
+    <!-- Batocera Linux supported system -->
+    <system>
+        <name>cannonball</name>
+        <fullname>Cannonball</fullname>
+        <path>%ROMPATH%/cannonball</path>
+        <extension>.cannonball</extension>
+        <command label="Cannonball">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/cannonball_libretro.dylib %ROM%</command>
+    </system>
+
+    <!-- Batocera Linux supported system -->
+    <system>
+        <name>mrboom</name>
+        <fullname>Mr Boom</fullname>
+        <path>%ROMPATH%/mrboom</path>
+        <extension>.libretro</extension>
+        <command label="Mr Boom">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mrboom_libretro.dylib %ROM%</command>
+    </system>
+
+    <!-- Batocera Linux supported system -->
+    <system>
+        <name>superbroswar</name>
+        <fullname>Super Bros War</fullname>
+        <path>%ROMPATH%/superbroswar</path>
+        <extension>.game .GAME</extension>
+        <command label="Super Bros War">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/superbroswar_libretro.dylib %ROM%</command>
+    </system>
+
+    <!-- Batocera Linux supported system -->
+    <system>
+        <name>xrick</name>
+        <fullname>XRick</fullname>
+        <path>%ROMPATH%/xrick</path>
+        <extension>.zip .ZIP</extension>
+        <command label="XRick">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/xrick_libretro.dylib %ROM%</command>
+    </system>
+
+    <!-- Batocera Linux supported system -->
+    <system>
+        <name>gb2players</name>
+        <fullname>GB 2 Players</fullname>
+        <path>%ROMPATH%/gb2players</path>
+        <extension>.gb .gb2 .gbc2 .zip .7z</extension>
+        <command label="TGB Dual">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/tgbdual_libretro.dylib %ROM%</command>
+    </system>
+
+</systemList>

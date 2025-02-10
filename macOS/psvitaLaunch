@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+import os
+
+# https://stackoverflow.com/a/5423400/9983389
+if len(sys.argv) != 2:
+    print("usage: $0 <string [gameID]>")
+    exit(1)
+else:
+    title = sys.argv[1]
+
+# https://stackoverflow.com/a/8569258/9983389
+m = re.search(r"\[([A-Za-z0-9_]+)\]", title)
+gameID = m.group(1)
+
+# ---
+
+cmd = '/Applications/#emu/Vita3K.app/Contents/MacOS/Vita3K -F -w -f -r {}'.format(gameID)
+
+# ---
+
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print("{} failed to exit cleanly (status={})".format(cmd.split()[0], status))

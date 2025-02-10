@@ -5,8 +5,54 @@
 	* renders dialog box if config file not present
 	* reads `es_systems.cfg` and verifies which directories exist
 	* reports not existent systems to log file
-2. alpha build of [ES-DE](https://es-de.org) launches all RetroArch cores (sans same_cdi) and standalone emulators (sans Vita3K) on Apple Silicon (M1) (macOS Sonoma 14.6.1)
-	* custom Xenia build working in beta macOS Sequoia 15 w AVX support in Rosetta 2
+2. alpha build of [ES-DE](https://es-de.org) tested & working on Apple Silicon (M1) (macOS Sequoia 15.3)
+	* workaround: enables ES-DE to launch Python-based launcher scripts (issue reported)
+		* `alias ES-DE='LANG="en_US.UTF-8" /Applications/#emu/ES-DE.app/Contents/MacOS/ES-DE'`
+	* .squashfs support in macOS implemented with [squashfuse](https://github.com/vasi/squashfuse)
+	* Batocera systems working & tested:
+		* 3do, amstradcpc, gx4000
+		* apple2e (MAME)
+		* apple2gs (GSPlus using Python launcher script for configgen)
+		* atari2600, atari5200, atari7800, atari800
+		* jaguar, lynx, wsanc, cannonball, colecovision, c64, amiga500, amiga1200, amigacd32, amigcdtv, prboom, fnbeo, gb2players, vectrex, o2em, intellivision
+		* windows (WINE in Whisky)
+		* xbox (xemu with .squashfs support using Python launcher)
+		* mrboom, msx, msx2
+		* mame (standalone MAME 0.274)
+		* pcengine, pcenginecd, pc98, pcfx, supergrafx
+		* 3ds (Citra/Lime3DS with .squashfs support using Python launcher)
+		* n64 (also works in Ares)
+		* nds, nes, fds
+		* gameandwatch (MAME)
+		* gb, gba, gbc
+		* gamecube, wii (Dolphin)
+		* pokemini, satellaview, snes
+		* switch (Ryujinx)
+		* virtualboy
+		* wiiu (Cemu)
+		* cdi (MAME only, RetroArch core not built for M1)
+		* pico8, tyrquake
+		* dreamcast, atomiswave, naomi, naomi2 (Flycast)
+		* scummvm (ScummVM with .squashfs support using Python launcher)
+		* segacd, gamegear, mastersystem, megadrive, sega32x, saturn, sg1000, x68000, zxspectrum, neogeo, neogeocd, ngpc
+		* solarus (Solarus Launcher)
+		* psx
+		* ps2 (PCSX2)
+		* ps3 (RPCS3 with .squashfs support using Python launcher)
+		* psp (PPSSPP)
+		* psvita (Vita3K with .psvita launch file support using Python launcher)
+		* superbroswar
+		* coco (XRoar w rudimentary autoboot support)
+		* tic80, wasm4, xrick
+	* additonal working RetroArch core
+		* palm
+	* experimental
+		* xbox360 (custom Xenia with AVX check removed verified working in Whisky)
+	* not tested
+		* jaguarcd (Catalyst version of BigPEmu.app exists in App Store for $9.99)
+		* wswan, ngp (assumed working as color counterparts work: wswanc, ngpc)
+	* known missing
+		* triforce (Dolphin Triforce M1 build not known avail)
 
 ### ISSUES
 1. crash after reading `es_systems.cfg` and verifying rom directories
