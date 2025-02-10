@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+
+import sys
+import argparse
+import os
+import atexit
+import re
+
+# boolean: https://stackoverflow.com/a/52403318/9983389
+parser = argparse.ArgumentParser()
+parser.add_argument("--tmpmount", help='mount in /tmp', default=False, action='store_true')
+#parser.add_argument("--app", help='specify custom executable')
+parser.add_argument("file")
+parser.add_argument("--devmount", help='mount in dev_hdd0/game', default=False, action='store_true')
+args = parser.parse_args()
+
+mount = None
+def exit_handler():
+    if mount:
+        if os.path.exists(mount):
+            if os.path.ismount(mount):
+                if os.path.basename(sys.argv[0]) != "squashfsmount":
+                    print("Unmounting and removing:", mount)
+                    os.system(f'umount "{mount}"')
+                    os.rmdir(mount)
+atexit.register(exit_handler)
+
+file = args.file
+if not os.path.exists(file):
+    print(file, "not found. Exiting.")
+    exit(1)
+
+devpath = "/userdata/system/configs/rpcs3/dev_hdd0/game/"
+devmount = False
+#rompath = file
+
+if not file.endswith(".squashfs"):
+    print(file, "not a squashfs archive. Exiting.")
+    exit(1)
+else:
+    (mount, ext) = os.path.splitext(file)
+
+    # https://stackoverflow.com/a/8569258/9983389
+    serial = None
+    m = re.search(r"\[hdd0,([A-Za-z0-9_]+)\]", mount)
+
+    if m:
+        serial = m.group(1)
+        print("Found serial:", serial)
+
+    # $$ hack to redirect mount to dev_hdd0/game if "[hdd0,<serial>]" in filename
+    if args.devmount or serial:
+        devmount = True
+
+    if devmount:
+        if not serial:
+            print("no serial in filename to mount in dev_hdd0/game. Exiting")
+            exit(1)
+        mount = devpath + serial
+
+    # https://stackoverflow.com/a/2113511/9983389
+    if (not os.access(os.path.dirname(os.path.realpath(mount)), os.W_OK)) or args.tmpmount:
+        mount = f"/tmp/squashfsmount.{os.getpid()}"
+
+    print("Using mount:", mount)
+
+    if not os.path.exists(mount):
+        os.mkdir(mount)
+    elif os.path.ismount(mount):
+        print("unmounting:", mount)
+        os.system(f"umount '{mount}'")
+
+    cmd = f'/usr/local/bin/squashfuse "{file}" "{mount}"'
+
+    print("cmd:", cmd)
+
+    status = os.system(cmd)
+    if status != 0:
+        print("Failed to mount:", file)
+        exit(1)
+
+    # https://learnpython.com/blog/python-if-in-one-line/
+    r = "r" if os.access(mount, os.R_OK) else "-"
+    w = "w" if os.access(mount, os.W_OK) else "-"
+    x = "x" if os.access(mount, os.X_OK) else "-"
+    print(f"permissions: {r}{w}{x}")
+
+    if not os.access(mount, os.R_OK | os.X_OK):
+        print(f"Mounted file system inaccessible ({r}{w}{x}): {mount}")
+        print("    You may need to run `mksquashfs source FILESYSTEM -all-root`")
+        exit(1)
+
+    # override
+    #rompath = mount

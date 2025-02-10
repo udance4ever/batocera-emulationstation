@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import atexit
+from pathlib import Path
+
+mount=None
+def exit_handler():
+    if mount:
+        if os.path.exists(mount):
+            if os.path.ismount(mount):
+                print("Unmounting and removing:", mount)
+                os.system('umount "{}"'.format(mount))
+                os.rmdir(mount)
+atexit.register(exit_handler)
+
+file = sys.argv[1]
+
+if not os.path.exists(file):
+    print(file, "not found. Exiting.")
+    exit(1)
+
+rompath = file
+if file.endswith(".squashfs"):
+    (mount, ext) = os.path.splitext(file)
+    if not os.path.exists(mount):
+        os.mkdir(mount)
+    else:
+        if os.path.ismount(mount):
+            print("unmounting:", mount)
+            os.system("umount '{}'".format(mount))
+
+    cmd = '/usr/local/bin/squashfuse "{}" "{}"'.format(file, mount)
+
+    status = os.system(cmd)
+    if status != 0:
+        print("Failed to mount:", file)
+        exit(1)
+
+    # override
+    rompath = mount
+
+# ---
+
+cmd = '/Applications/#emu/xemu.app/Contents/MacOS/xemu -dvd_path "{}/{}"'.format(mount,os.path.basename(mount))
+
+# ---
+
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print("{} failed to exit cleanly (status={})".format(cmd.split()[0], status))

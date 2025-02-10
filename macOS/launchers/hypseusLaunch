@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import os
+import atexit
+from pathlib import Path
+
+parser = argparse.ArgumentParser()
+parser.add_argument("file")
+args = parser.parse_args()
+
+mount=None
+def exit_handler():
+    if mount:
+        if os.path.exists(mount):
+            if os.path.ismount(mount):
+                print("Unmounting and removing:", mount)
+                os.system('umount "{}"'.format(mount))
+                os.rmdir(mount)
+atexit.register(exit_handler)
+
+file = args.file
+if not os.path.exists(file):
+    print(file, "not found. Exiting.")
+    exit(1)
+
+rompath = file
+if file.endswith(".squashfs"):
+    (mount, ext) = os.path.splitext(file)
+    if not os.path.exists(mount):
+        os.mkdir(mount)
+    else:
+        if os.path.ismount(mount):
+            print("unmounting:", mount)
+            os.system("umount '{}'".format(mount))
+
+    cmd = '/usr/local/bin/squashfuse "{}" "{}"'.format(file, mount)
+
+    status = os.system(cmd)
+    if status != 0:
+        print("Failed to mount:", file)
+        exit(1)
+
+    # override
+    rompath = mount
+
+    basename = os.path.basename(file.removesuffix(".daphne.squashfs"))
+else:
+    basename = os.path.basename(file.removesuffix(".daphne"))
+
+print("Using basename:", basename)
+
+# ---
+
+datadir = Path("/userdata/system/configs/hypseus-singe")
+appexec = datadir / "bin" / "hypseus.bin"
+
+realdir = os.path.realpath(rompath)
+
+framefile = "{}/{}.txt".format(realdir, basename)
+script = "{}/{}.singe".format(realdir, basename)
+commands = "{}/{}.commands".format(realdir, basename)
+
+# $$ odd bug checking for file in squashfs mount returns False first time (!)
+print(os.path.exists(script))
+
+# https://stackoverflow.com/a/2802748/9983389
+singe = True if (os.path.exists(script)) else False
+
+# https://stackoverflow.com/a/3758255/9983389
+if (os.path.exists(commands)):
+    with open(commands) as f: extraOpts = f.read()
+else:
+    extraOpts = ""
+
+commandArray = [
+	str(appexec),
+	"singe" if singe else basename,
+	"vldp",
+	"-fullscreen",
+	"-gamepad",
+	"-framefile", framefile,
+	"-datadir", str(datadir),
+	"-homedir", str(datadir),
+	extraOpts
+	]
+
+if singe:
+    commandArray += [ "-script", script ]
+    commandArray += [ "-singedir", os.path.dirname(realdir) ]
+
+# ---
+
+cmd = ' '.join(commandArray)
+print("cmd:", cmd)
+
+status = os.system(cmd)
+if status != 0:
+    print("{} failed to exit cleanly (status={})".format(cmd.split()[0], status))
